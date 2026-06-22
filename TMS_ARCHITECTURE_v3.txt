@@ -1,0 +1,939 @@
+TRANSPORT MANAGEMENT SYSTEM
+Full-Stack Technical Architecture — v3.0
+Next.js | Node.js | MySQL | MSG91 | FASTag API | Fuel Card API
+RBAC | i18n EN/HI/GU | RCM Invoicing | Audit Logs | Micro-animations
+| Next.js 14 | Node.js | MySQL 8 | Tailwind | FASTag | Fuel Card |
+
+# Table of Contents
+1.  Project Overview & Tech Stack	3
+2.  Roles & Permissions Matrix	4
+3.  User Flow & Authentication (MSG91)	5
+4.  Database Design — Full Schema	7
+5.  API Design — Pagination, Filters & Queries	15
+6.  FASTag Integration	20
+7.  Fuel Card Integration	23
+8.  Invoice Management & RCM (GST)	26
+9.  i18n — Hindi / Gujarati / English	30
+10.  Audit Log System	32
+11.  Micro-animation & Task Completion FX	33
+12.  Frontend Architecture & Dashboard	35
+13.  Brand Identity & Theme System	38
+14.  Public Website Pages	40
+15.  Shared Component Library	41
+16.  Folder Structure	43
+17.  Environment & Deployment	45
+# 1. Project Overview & Tech Stack
+The Transport Management System (TMS) is a single-company platform built for one transport business. It covers the full operations lifecycle: trip planning, driver assignment, fleet management, real-time FASTag toll tracking, fuel card expense management, GST/RCM invoicing, and financial reporting — all in one dashboard with role-based access for every team member.
+## 1.1 Tech Stack
+| Layer | Technology | Purpose |
+| Frontend | Next.js 14 (App Router) | Public site + Admin dashboard, SSR/SSG/ISR |
+| Backend | Node.js + Express | REST API, business logic, third-party integrations |
+| Database | MySQL 8 via Prisma ORM | All relational data, RBAC, audit trail |
+| Auth | JWT + Refresh Tokens + MSG91 | OTP-based login, role-scoped sessions |
+| Styling | Tailwind CSS v3 | Company-branded design system |
+| Animation | Framer Motion + GSAP | Page transitions, task completion FX |
+| OTP | MSG91 Flow API | Mobile OTP for all user logins |
+| FASTag | NETC FASTag API / IHMCL API | Real-time toll deductions, vehicle tag management |
+| Fuel Card | HPCL FleetCard API / IOCL XtraRewards API | Fuel transactions, card balance, reports |
+| File Store | AWS S3 | POD images, receipts, invoice PDFs |
+| PDF | Puppeteer / PDFKit | Invoice PDF generation with GST layout |
+| Hosting | Vercel (Frontend) + Railway or EC2 (API) | Production deployment |
+
+## 1.2 Core Modules
+| Module | Description |
+| Trip Management | Create, assign, track, and close trips. Kanban board with status flow. |
+| Driver Management | Driver profiles, license docs, assigned vehicle, trip history, performance. |
+| Vehicle Management | Fleet register, RC/insurance/permit expiry alerts, availability tracking. |
+| FASTag Manager | Wallet balance, real-time toll deductions per vehicle, monthly reports. |
+| Fuel Card Manager | Card assignment per vehicle/driver, transaction feed, usage limits, reports. |
+| Expense Management | Driver expense claims (fuel, toll, loading), Finance approval queue. |
+| Invoice & Billing | Client invoicing with RCM/forward GST, TDS, PDF generation, payment tracking. |
+| Reports & Analytics | Trip P&L, vehicle utilisation, client revenue, driver performance. |
+| Audit Logs | Full immutable history of every action with before/after snapshot. |
+| i18n | Dashboard and public pages in English, Hindi, and Gujarati. |
+
+# 2. Roles & Permissions Matrix
+Five built-in roles. Admin can create custom roles and fine-tune permissions from the Role Manager. All permission enforcement is server-side — client-side only conditionally renders UI elements.
+## 2.1 Role Overview
+| ADMINFull system access. Manages users, roles, settings, audit logs, FASTag + Fuel Card admin. | TRIP MANAGERCreates and manages trips, assigns drivers and vehicles, monitors live status, views FASTag tolls. |
+| FINANCE MANAGERApproves expenses, manages invoices, reconciles FASTag + Fuel Card transactions, P&L reports. | ACCOUNT MANAGERManages clients, generates LRs, creates invoices, tracks delivery and payment status. |
+| DRIVER  (Mobile-first)Sees assigned trip, logs expenses, uploads POD, updates trip status. No access to financial or admin data. |  |
+
+## 2.2 Granular Permission Matrix
+| Resource | Admin | Trip Mgr | Finance | Acc Mgr | Driver |
+| users | CRUD | — | — | — | — |
+| roles | CRUD | — | — | — | — |
+| trips | CRUD | CRUD | R | R | R(own) + status update |
+| vehicles | CRUD | CRUD | R | — | — |
+| drivers | CRUD | CRUD | — | — | — |
+| trip_expenses | CRUD + APPROVE | C+R | APPROVE | R | C(own) + R(own) |
+| fastag_wallets | CRUD + RECHARGE | R | R + RECONCILE | — | — |
+| fastag_transactions | R + EXPORT | R | R + EXPORT | — | — |
+| fuel_cards | CRUD + ASSIGN | R | R + RECONCILE | — | — |
+| fuel_transactions | R + EXPORT | R | R + EXPORT | — | — |
+| invoices | CRUD + APPROVE | — | CRUD + APPROVE | CRUD | — |
+| clients | CRUD | R | R | CRUD | — |
+| lr | CRUD | CRUD | R | CRUD | R(own) |
+| reports | ALL | TRIPS + FASTAG | FINANCE + FUEL | CLIENTS | — |
+| audit_logs | R | — | — | — | — |
+
+# 3. User Flow & Authentication
+## 3.1 OTP Login Flow (MSG91)
+| Step | Action | Detail |
+| 1 | User enters mobile | 10-digit mobile on /login page |
+| 2 | API validates user | SELECT from users WHERE mobile = ? AND is_active = TRUE |
+| 3 | MSG91 triggered | POST to api.msg91.com/api/v5/flow with flow_id + OTP variable |
+| 4 | OTP stored | { mobile, msg91_request_id, expires_at: +5min } in otp_sessions |
+| 5 | User enters OTP | 6-digit OTP on /verify-otp page |
+| 6 | API verifies | GET msg91.com/verify?otp=X&mobile=Y — checks request_id |
+| 7 | JWT issued | Access token (15 min) + Refresh token (7 days) in httpOnly cookies |
+| 8 | Redirect | Next.js middleware reads role from JWT, routes to correct dashboard |
+
+## 3.2 MSG91 Config
+| Variable | Value |
+| MSG91_AUTH_KEY | From MSG91 dashboard > Developers > Auth Key |
+| MSG91_FLOW_ID | OTP Flow ID from MSG91 > Flows (create OTP flow with {{otp}} variable) |
+| MSG91_SENDER_ID | TMSAPP (6-char) |
+| MSG91_DLT_TE_ID | DLT Template Entity ID — mandatory for India |
+| OTP_EXPIRY_SEC | 300 (5 minutes) |
+| OTP_MAX_ATTEMPTS | 3 per mobile per 15 min, then lock 1 hour |
+| RESEND_COOLDOWN | 60 seconds |
+
+DLT Registration is mandatory for all transactional/OTP SMS in India. Register template at your telecom DLT portal before going live.
+## 3.3 JWT Payload
+{ "userId": 12, "role": "finance_manager", "name": "Priya Shah",
+  "branchId": 1, "permissions": ["invoices:read","invoices:approve","expenses:approve"],
+  "iat": 1720000000, "exp": 1720000900 }
+## 3.4 Role Dashboard Routing
+| Role | Login Redirect | Default View |
+| admin | /dashboard/admin | System overview + User management |
+| trip_manager | /dashboard/trips | Kanban trip board |
+| finance_manager | /dashboard/finance | Expense queue + Invoice approvals |
+| account_manager | /dashboard/accounts | Client list + LR board |
+| driver | /dashboard/driver | Active trip card (mobile-first) |
+
+# 4. Database Design — Full Schema
+Prisma ORM used as query layer. All queries are parameterised — no raw SQL. Soft deletes via deleted_at TIMESTAMP NULL on major entities.
+## 4.1 users
+| Column | Type | Constraints/Notes |
+| id | INT UNSIGNED | PK AUTO_INCREMENT |
+| name | VARCHAR(120) | NOT NULL |
+| mobile | VARCHAR(15) | UNIQUE NOT NULL — OTP login |
+| email | VARCHAR(180) | NULL |
+| role_id | INT UNSIGNED | FK → roles.id NOT NULL |
+| branch_id | INT UNSIGNED | FK → branches.id NULL |
+| language_pref | ENUM | en | hi | gu — DEFAULT en |
+| is_active | BOOLEAN | DEFAULT TRUE |
+| last_login_at | TIMESTAMP | NULL |
+| deleted_at | TIMESTAMP | NULL — soft delete |
+
+## 4.2 roles + role_permissions
+| Column | Type | Notes |
+| id | INT UNSIGNED | PK |
+| name | VARCHAR(60) | admin | trip_manager | finance_manager | account_manager | driver |
+| label | VARCHAR(80) | Display name |
+| is_system | BOOLEAN | TRUE = cannot delete |
+
+| Column | Type | Notes |
+| id | INT UNSIGNED | PK |
+| role_id | INT UNSIGNED | FK → roles.id |
+| resource | VARCHAR(60) | trips | expenses | invoices | fastag_wallets | fuel_cards | users... |
+| action | VARCHAR(20) | create | read | update | delete | approve | recharge |
+| scope | VARCHAR(20) | all | own | branch |
+
+## 4.3 vehicles
+| Column | Type | Notes |
+| id | INT UNSIGNED | PK |
+| registration_no | VARCHAR(20) | UNIQUE — Vehicle plate number |
+| vehicle_type | VARCHAR(60) | Truck | Trailer | Mini-truck | Tempo |
+| capacity_tons | DECIMAL(6,2) | Load capacity in tonnes |
+| model | VARCHAR(80) | Make and model |
+| owner_type | ENUM | own | attached | market |
+| driver_id | INT UNSIGNED | FK → users.id (current assigned driver, nullable) |
+| rc_expiry | DATE | RC document expiry |
+| insurance_expiry | DATE | Insurance expiry |
+| fitness_expiry | DATE | Fitness certificate expiry |
+| permit_expiry | DATE | National permit expiry |
+| fastag_tag_id | VARCHAR(30) | Associated FASTag tag ID (nullable) |
+| fuel_card_id | INT UNSIGNED | FK → fuel_cards.id (nullable) |
+| is_available | BOOLEAN | Current availability flag |
+| gps_device_id | VARCHAR(80) | GPS tracker device ID (optional) |
+
+## 4.4 trips
+| Column | Type | Notes |
+| id | INT UNSIGNED | PK |
+| lr_number | VARCHAR(30) | UNIQUE — Auto-generated LR number |
+| vehicle_id | INT UNSIGNED | FK → vehicles.id |
+| driver_id | INT UNSIGNED | FK → users.id (driver role) |
+| client_id | INT UNSIGNED | FK → clients.id |
+| branch_id | INT UNSIGNED | FK → branches.id |
+| origin_city | VARCHAR(100) | Pickup city |
+| origin_address | TEXT | Full pickup address |
+| destination_city | VARCHAR(100) | Delivery city |
+| destination_address | TEXT | Full delivery address |
+| cargo_type | VARCHAR(80) | Goods description |
+| cargo_weight_kg | DECIMAL(10,2) | Weight |
+| cargo_value | DECIMAL(12,2) | Declared cargo value |
+| planned_departure | DATETIME | Scheduled departure |
+| actual_departure | DATETIME | Actual start |
+| actual_arrival | DATETIME | POD upload timestamp |
+| status | ENUM | planned | loading | in_transit | delivered | cancelled |
+| trip_manager_id | INT UNSIGNED | FK → users.id (trip manager) |
+| pod_url | VARCHAR(500) | S3 URL of POD image |
+| eway_bill_no | VARCHAR(20) | E-way bill number |
+| eway_bill_expiry | DATETIME | E-way bill expiry |
+| freight_charges | DECIMAL(12,2) | Agreed freight amount |
+| estimated_fastag_toll | DECIMAL(10,2) | Pre-estimated toll (from route) |
+| actual_fastag_toll | DECIMAL(10,2) | Sum from fastag_transactions for this trip |
+| fuel_consumed_ltr | DECIMAL(8,2) | From fuel card transactions for this trip |
+| notes | TEXT | Internal notes |
+| created_at | TIMESTAMP | — |
+| deleted_at | TIMESTAMP | Soft delete |
+
+## 4.5 trip_expenses
+| Column | Type | Notes |
+| id | INT UNSIGNED | PK |
+| trip_id | INT UNSIGNED | FK → trips.id |
+| driver_id | INT UNSIGNED | FK → users.id |
+| expense_type | ENUM | fuel | toll | loading | unloading | repair | bata | halting | misc |
+| amount | DECIMAL(10,2) | Claimed amount in INR |
+| receipt_url | VARCHAR(500) | S3 URL of receipt photo |
+| description | VARCHAR(200) | Details |
+| expense_date | DATE | Date of expense |
+| is_fastag_synced | BOOLEAN | TRUE if auto-imported from FASTag (toll type) |
+| is_fuelcard_synced | BOOLEAN | TRUE if auto-imported from Fuel Card (fuel type) |
+| status | ENUM | pending | approved | rejected | auto_approved |
+| approved_by | INT UNSIGNED | FK → users.id (finance manager) |
+| approved_at | TIMESTAMP | Approval timestamp |
+| rejected_reason | TEXT | Rejection note |
+
+## 4.6 fastag_wallets
+| Column | Type | Notes |
+| id | INT UNSIGNED | PK |
+| vehicle_id | INT UNSIGNED | FK → vehicles.id UNIQUE |
+| tag_id | VARCHAR(30) | FASTag RFID tag ID |
+| tag_issuer | VARCHAR(40) | HDFC | SBI | ICICI | Paytm | IHMCL | etc. |
+| linked_mobile | VARCHAR(15) | Mobile linked to FASTag account |
+| balance | DECIMAL(10,2) | Current wallet balance (synced from API) |
+| balance_synced_at | TIMESTAMP | Last balance fetch time |
+| low_balance_alert | DECIMAL(10,2) | Alert threshold (default 200) |
+| is_active | BOOLEAN | Tag active status |
+| api_account_id | VARCHAR(80) | Account ID from FASTag issuer API |
+| created_at | TIMESTAMP | — |
+
+## 4.7 fastag_transactions
+| Column | Type | Notes |
+| id | INT UNSIGNED | PK |
+| fastag_wallet_id | INT UNSIGNED | FK → fastag_wallets.id |
+| vehicle_id | INT UNSIGNED | FK → vehicles.id |
+| trip_id | INT UNSIGNED | FK → trips.id (nullable — matched by date/vehicle) |
+| transaction_id | VARCHAR(80) | UNIQUE — Transaction ID from FASTag API |
+| plaza_name | VARCHAR(150) | Toll plaza name |
+| plaza_code | VARCHAR(20) | NETC plaza code |
+| highway | VARCHAR(100) | Highway name (e.g. NH-48) |
+| amount | DECIMAL(8,2) | Toll deducted in INR |
+| balance_after | DECIMAL(10,2) | Wallet balance after deduction |
+| transaction_at | DATETIME | Actual toll crossing time |
+| direction | ENUM | entry | exit | single |
+| vehicle_class | VARCHAR(20) | Vehicle class at plaza |
+| raw_response | JSON | Full API response stored for audit |
+| synced_at | TIMESTAMP | When fetched from API |
+
+## 4.8 fuel_cards
+| Column | Type | Notes |
+| id | INT UNSIGNED | PK |
+| card_number | VARCHAR(20) | Fuel card number (masked in UI as ****1234) |
+| card_type | ENUM | hpcl_fleetcard | iocl_xtrarewards | bpcl_smartfleet | shell | custom |
+| vehicle_id | INT UNSIGNED | FK → vehicles.id (nullable — card may float) |
+| driver_id | INT UNSIGNED | FK → users.id (nullable — current assigned driver) |
+| balance | DECIMAL(10,2) | Current card balance (synced) |
+| balance_synced_at | TIMESTAMP | Last balance sync |
+| monthly_limit | DECIMAL(10,2) | Spending limit per month |
+| per_txn_limit | DECIMAL(8,2) | Per-transaction limit |
+| allowed_products | JSON | ["HSD","MS","LDO"] — allowed fuel types |
+| is_active | BOOLEAN | Card active status |
+| api_card_id | VARCHAR(80) | Card ID from fuel company API |
+| expiry_date | DATE | Card physical expiry |
+| issued_at | DATE | Card issuance date |
+
+## 4.9 fuel_transactions
+| Column | Type | Notes |
+| id | INT UNSIGNED | PK |
+| fuel_card_id | INT UNSIGNED | FK → fuel_cards.id |
+| vehicle_id | INT UNSIGNED | FK → vehicles.id |
+| trip_id | INT UNSIGNED | FK → trips.id (nullable — matched by date/vehicle) |
+| transaction_id | VARCHAR(80) | UNIQUE — Transaction ID from fuel card API |
+| fuel_station_name | VARCHAR(150) | Pump / station name |
+| fuel_station_city | VARCHAR(80) | City |
+| product_type | VARCHAR(20) | HSD (diesel) | MS (petrol) | LDO |
+| quantity_ltr | DECIMAL(8,3) | Litres dispensed |
+| rate_per_ltr | DECIMAL(8,2) | Price per litre at time of transaction |
+| amount | DECIMAL(10,2) | Total amount |
+| odometer_km | INT UNSIGNED | Odometer reading at fill (if provided by API) |
+| transaction_at | DATETIME | Actual fuelling time |
+| raw_response | JSON | Full API response stored for audit |
+| synced_at | TIMESTAMP | When fetched from API |
+
+## 4.10 clients + invoices
+| Column | Type | Notes |
+| id | INT UNSIGNED | PK |
+| company_name | VARCHAR(150) | Client legal name |
+| gstin | VARCHAR(15) | Client GST number |
+| pan | VARCHAR(10) | PAN |
+| state_code | CHAR(2) | GST state code |
+| contact_name | VARCHAR(80) | Primary contact |
+| contact_mobile | VARCHAR(15) | Mobile |
+| billing_address | TEXT | Full billing address |
+| credit_days | TINYINT | Payment terms (0/7/15/30/45/60 days) |
+| rcm_applicable | BOOLEAN | RCM flag per client |
+| account_manager_id | INT UNSIGNED | FK → users.id |
+| deleted_at | TIMESTAMP | Soft delete |
+
+| Column (invoices) | Type | Notes |
+| id | INT UNSIGNED | PK |
+| invoice_number | VARCHAR(30) | INV-2024-25-0001 (sequential per financial year) |
+| invoice_type | ENUM | outward | credit_note | debit_note |
+| client_id | INT UNSIGNED | FK → clients.id |
+| trip_id | INT UNSIGNED | FK → trips.id (null = consolidated) |
+| billing_month | CHAR(7) | YYYY-MM for consolidated invoices |
+| freight_amount | DECIMAL(12,2) | Base freight |
+| loading_charges | DECIMAL(10,2) | — |
+| unloading_charges | DECIMAL(10,2) | — |
+| detention_charges | DECIMAL(10,2) | Demurrage |
+| other_charges | DECIMAL(10,2) | Misc charges |
+| subtotal | DECIMAL(12,2) | Sum of all charges |
+| is_rcm | BOOLEAN | TRUE = Reverse Charge applies |
+| igst_rate | DECIMAL(4,2) | IGST % (inter-state) |
+| cgst_rate | DECIMAL(4,2) | CGST % (intra-state, half of total rate) |
+| sgst_rate | DECIMAL(4,2) | SGST % (intra-state, half of total rate) |
+| igst_amount | DECIMAL(12,2) | Calculated IGST |
+| cgst_amount | DECIMAL(12,2) | Calculated CGST |
+| sgst_amount | DECIMAL(12,2) | Calculated SGST |
+| tds_rate | DECIMAL(4,2) | TDS % (Section 194C) |
+| tds_amount | DECIMAL(12,2) | TDS deduction amount |
+| total_amount | DECIMAL(12,2) | subtotal + GST - TDS |
+| status | ENUM | draft | pending_approval | approved | sent | paid | cancelled |
+| due_date | DATE | Payment due date |
+| paid_at | TIMESTAMP | Payment received |
+| paid_amount | DECIMAL(12,2) | Partial payment tracking |
+| created_by | INT UNSIGNED | FK → users.id (account manager) |
+| approved_by | INT UNSIGNED | FK → users.id (finance manager) |
+
+## 4.11 audit_logs
+| Column | Type | Notes |
+| id | BIGINT UNSIGNED | PK |
+| user_id | INT UNSIGNED | FK → users.id (who performed action) |
+| user_name | VARCHAR(120) | Snapshot of name at time of action |
+| user_role | VARCHAR(60) | Snapshot of role at time of action |
+| action | VARCHAR(80) | trip.created | expense.approved | fastag.recharged | fuel_card.assigned... |
+| resource_type | VARCHAR(60) | trips | invoices | fastag_wallets | fuel_cards | users... |
+| resource_id | INT UNSIGNED | Row ID affected |
+| resource_label | VARCHAR(100) | Human-readable label e.g. "LR# GJ-2024-001" |
+| before_state | JSON | Snapshot before change (NULL on create) |
+| after_state | JSON | Snapshot after change (NULL on delete) |
+| ip_address | VARCHAR(45) | Client IP address |
+| user_agent | VARCHAR(200) | Browser / app identifier |
+| created_at | TIMESTAMP | Event timestamp — immutable |
+
+# 5. API Design — Pagination, Filters & Query Params
+Base URL: https://api.yourdomain.com/v1 — All protected routes require Authorization: Bearer <jwt>. Role validated from JWT on every request via hasPermission(resource, action, scope) middleware.
+## 5.1 Standard Response Envelope
+{
+  "success": true,
+  "data": [ ...items ],
+  "meta": {
+    "total": 480,         // total matching records (ignoring pagination)
+    "page": 2,            // current page (1-indexed)
+    "limit": 25,          // items per page
+    "totalPages": 20,     // Math.ceil(total / limit)
+    "hasNext": true,
+    "hasPrev": true
+  },
+  "filters_applied": { "status": ["in_transit"], "driver_id": 5 }
+}
+## 5.2 Universal Query Params (all list endpoints)
+| Param | Type | Default | Description |
+| page | integer | 1 | Page number — 1-indexed |
+| limit | integer | 25 | Items per page — max 100 |
+| sort_by | string | created_at | Column to sort. Validated against allowed columns whitelist |
+| sort_order | string | desc | asc | desc |
+| search | string | — | Full-text search across indexed fields |
+| from_date | ISO date | — | created_at >= from_date |
+| to_date | ISO date | — | created_at <= to_date |
+| include | string | — | Comma-separated eager-load: include=client,driver,vehicle |
+
+## 5.3 Auth Routes
+| Method | Endpoint | Body / Params | Auth |
+| POST | /auth/request-otp | { mobile } | Public |
+| POST | /auth/verify-otp | { mobile, otp, requestId } | Public |
+| POST | /auth/refresh | Cookie: refreshToken | Cookie |
+| POST | /auth/logout | — | JWT |
+| GET | /auth/me | — | JWT |
+
+## 5.4 Trip Routes
+| Method | Endpoint | Key Query Params / Body | Auth |
+| GET | /trips | page, limit, sort_by, sort_order, search, from_date, to_date, status[]=in_transit, driver_id, vehicle_id, client_id, branch_id, origin_city, destination_city, include=client,driver,vehicle | TM/Admin/AM |
+| POST | /trips | { lr_number?, vehicle_id, driver_id, client_id, origin_city, origin_address, destination_city, destination_address, cargo_type, cargo_weight_kg, cargo_value, planned_departure, freight_charges, eway_bill_no, notes } | TM/Admin |
+| GET | /trips/:id | include=expenses,fastag_tolls,fuel_txns,client,driver,vehicle | All roles |
+| PUT | /trips/:id | Partial update body | TM/Admin |
+| PATCH | /trips/:id/status | { status, timestamp, notes } | TM/Driver(own) |
+| POST | /trips/:id/pod | multipart: file + { notes } | Driver(own) |
+| DELETE | /trips/:id | — | Admin |
+
+## 5.5 Expense Routes
+| Method | Endpoint | Key Query Params / Body | Auth |
+| GET | /expenses | page, limit, from_date, to_date, status[]=pending, trip_id, driver_id, expense_type[]=fuel, is_fastag_synced, is_fuelcard_synced, min_amount, max_amount | Finance/Admin |
+| POST | /expenses | multipart: { trip_id, expense_type, amount, description, expense_date } + file:receipt | Driver/TM |
+| PATCH | /expenses/:id/approve | { note? } | Finance/Admin |
+| PATCH | /expenses/:id/reject | { reason } | Finance/Admin |
+| GET | /expenses/summary | group_by=type|trip|driver|month, from_date, to_date | Finance/Admin |
+
+## 5.6 Invoice Routes
+| Method | Endpoint | Key Query Params / Body | Auth |
+| GET | /invoices | page, limit, from_date, to_date, status[], client_id, is_rcm, overdue=true, billing_month | Finance/AM/Admin |
+| POST | /invoices | { client_id, trip_id?, billing_month?, freight_amount, loading_charges?, unloading_charges?, detention_charges?, other_charges?, due_date } | AM/Admin |
+| PATCH | /invoices/:id/approve | { note? } | Finance/Admin |
+| PATCH | /invoices/:id/mark-paid | { paid_amount, paid_at, payment_ref } | Finance/Admin |
+| GET | /invoices/:id/pdf | — | Finance/AM/Admin |
+| POST | /invoices/:id/send | { email?, whatsapp? } | AM/Finance/Admin |
+
+## 5.7 User & Role Routes
+| Method | Endpoint | Key Params | Auth |
+| GET | /users | page, limit, search, role_id, branch_id, is_active | Admin |
+| POST | /users | { name, mobile, email?, role_id, branch_id?, language_pref } | Admin |
+| PUT | /users/:id | Partial update | Admin |
+| PATCH | /users/:id/toggle-active | — | Admin |
+| GET | /roles | — | Admin |
+| PUT | /roles/:id/permissions | { permissions: [{resource, action, scope}] } | Admin |
+
+## 5.8 Reports Routes
+| Method | Endpoint | Key Params | Auth |
+| GET | /reports/dashboard | from_date, to_date, branch_id | Admin/All |
+| GET | /reports/trips | from_date, to_date, group_by=status|driver|vehicle|route | TM/Admin |
+| GET | /reports/finance | from_date, to_date, group_by=month|client|type | Finance/Admin |
+| GET | /reports/fastag | from_date, to_date, vehicle_id, group_by=vehicle|month|highway | Finance/Admin/TM |
+| GET | /reports/fuel | from_date, to_date, vehicle_id, driver_id, group_by=vehicle|station|month | Finance/Admin/TM |
+| GET | /reports/clients | from_date, to_date, client_id, include=outstanding | AM/Finance/Admin |
+| GET | /reports/audit | page, limit, from_date, to_date, user_id, action, resource_type | Admin |
+
+# 6. FASTag Integration
+FASTag is mandatory for all commercial vehicles in India under NETC (National Electronic Toll Collection) programme by IHMCL/NPCI. Each FASTag is linked to a vehicle registration and pre-paid wallet. TMS integrates with FASTag issuer APIs to pull real-time toll deductions, wallet balance, and transaction history — and maps them automatically to trips.
+## 6.1 Integration Architecture
+| Component | Detail |
+| Protocol | REST API (HTTPS) — bank/issuer-specific endpoints |
+| Auth | OAuth 2.0 client credentials or API Key per issuer |
+| Trigger | Cron job every 15 min to pull new transactions + balance |
+| Mapping | fastag_transactions matched to trips by vehicle_id + transaction_at within trip date window |
+| Auto-expense | FASTag toll transactions auto-created as trip_expenses (expense_type=toll, is_fastag_synced=TRUE) |
+| Auto-approve | Toll expenses from FASTag are auto-approved (no Finance queue needed) |
+| Balance alert | Low balance SMS + dashboard notification when balance < threshold |
+
+## 6.2 Supported FASTag APIs
+| Provider | API Type | Coverage | Credentials Needed |
+| IHMCL (National) | NETC Toll Transaction API | All NETC plazas nationwide | Client ID + Secret from IHMCL partner portal |
+| HDFC Bank FASTag | Bank API / Axis-NETC | HDFC-issued tags | API Key from HDFC Corporate Banking |
+| SBI FASTag | REST API | SBI-issued tags | API credentials from SBI |
+| ICICI FASTag | REST API | ICICI-issued tags | API Key from ICICI |
+| Paytm FASTag | Paytm Business API | Paytm-issued tags | API Key from Paytm Business dashboard |
+| Airtel Payments Bank | REST API | Airtel FASTag | Partner API credentials |
+
+IHMCL NETC API is the recommended integration — it provides a single unified feed covering all toll plazas regardless of FASTag issuer. Apply at ihmcl.com/merchant-partner for API access.
+## 6.3 API Endpoints (TMS Backend)
+| Method | Endpoint | Query Params / Body | Auth |
+| GET | /fastag/wallets | page, limit, vehicle_id, low_balance=true, sort_by=balance | Admin/Finance/TM |
+| GET | /fastag/wallets/:id | include=vehicle,transactions | Admin/Finance/TM |
+| POST | /fastag/wallets | { vehicle_id, tag_id, tag_issuer, linked_mobile, api_account_id } | Admin |
+| PATCH | /fastag/wallets/:id | { low_balance_alert, is_active } | Admin |
+| POST | /fastag/wallets/:id/sync-balance | — (triggers API call to issuer) | Admin/Finance |
+| POST | /fastag/wallets/:id/recharge | { amount, payment_ref }  — logs manual recharge | Admin/Finance |
+| GET | /fastag/transactions | page, limit, from_date, to_date, vehicle_id, fastag_wallet_id, trip_id, min_amount, max_amount, plaza_name, highway, sort_by=transaction_at | Finance/Admin/TM |
+| POST | /fastag/transactions/sync | { from_date?, to_date?, vehicle_id? } — manual sync trigger | Admin |
+| POST | /fastag/transactions/match-trips | — re-runs trip matching algorithm | Admin |
+| GET | /fastag/transactions/export | from_date, to_date, vehicle_id — returns CSV download | Finance/Admin |
+
+## 6.4 FASTag Sync Worker (Node.js Cron)
+// workers/fastagSync.ts — runs every 15 minutes
+async function syncFastagTransactions() {
+  const wallets = await db.fastag_wallets.findMany({ where: { is_active: true } });
+  for (const wallet of wallets) {
+    const lastSync = wallet.balance_synced_at;
+    const txns = await fastagAPI.getTransactions(wallet.api_account_id, lastSync);
+    for (const txn of txns) {
+      const trip = await matchTripByVehicleAndTime(wallet.vehicle_id, txn.transaction_at);
+      await db.fastag_transactions.upsert({ where: { transaction_id: txn.id }, ... });
+      await db.trip_expenses.upsert({  // auto-create expense
+        expense_type: "toll", amount: txn.amount, is_fastag_synced: true,
+        status: "auto_approved", trip_id: trip?.id ... });
+    }
+    await updateWalletBalance(wallet.id);  // refresh balance
+  }
+}
+## 6.5 FASTag Dashboard Features
+Wallet cards per vehicle: tag ID, issuer, current balance, last synced, low-balance alert badge
+One-click balance sync: POST /fastag/wallets/:id/sync-balance with animated refresh spinner
+Transaction feed: paginated table with plaza, highway, amount, crossing time, trip link
+Low balance alert panel: vehicles below threshold listed with quick recharge action
+Monthly toll spend chart per vehicle (Bar chart via Recharts)
+Trip toll reconciliation: for each trip, shows all FASTag hits in timeline order
+Export: CSV/Excel of all FASTag transactions with filters (date, vehicle, highway)
+FASTag transactions are automatically matched to trips. If a transaction falls outside any trip window, it appears as Unmatched in the dashboard for manual assignment.
+# 7. Fuel Card Integration
+Fuel cards (fleet cards) are corporate fuel purchase cards assigned to vehicles or drivers. They allow fuel purchases at designated pumps with paperless billing. TMS integrates with fuel card company APIs to pull transaction data, track consumption per trip, enforce limits, and reconcile expenses automatically.
+## 7.1 Supported Fuel Card APIs
+| Provider | Card Name | API Access | Features via API |
+| HPCL | HPCL FleetCard | HPCL Corporate API — apply at hpclfleetcard.com | Transactions, balance, card control, limits, station list |
+| IOCL | IOCL XtraRewards | IOCL Fleet API — partner portal | Transactions, balance, card block/unblock |
+| BPCL | BPCL SmartFleet | BPCL Fleet Portal API | Transactions, card management, reports |
+| Shell India | Shell Fleet Plus | Shell Partner API | Transactions, multi-product support (HSD/MS/LDO) |
+| Indian Oil-Axis | Co-branded Fleet Card | Axis Bank Corporate API | Transactions, balance, limit management |
+
+HPCL FleetCard and IOCL XtraRewards cover 90%+ of Indian highway fuel stations. HPCL is recommended as primary integration due to comprehensive API and nationwide pump coverage.
+## 7.2 API Endpoints (TMS Backend)
+| Method | Endpoint | Query Params / Body | Auth |
+| GET | /fuel-cards | page, limit, vehicle_id, driver_id, card_type, is_active, low_balance=true | Admin/Finance |
+| POST | /fuel-cards | { card_number, card_type, vehicle_id?, driver_id?, monthly_limit, per_txn_limit, allowed_products, api_card_id } | Admin |
+| PATCH | /fuel-cards/:id | { vehicle_id, driver_id, monthly_limit, per_txn_limit, is_active } | Admin/Finance |
+| POST | /fuel-cards/:id/sync-balance | — triggers API call | Admin/Finance |
+| POST | /fuel-cards/:id/block | { reason }  — calls issuer API to block card | Admin |
+| POST | /fuel-cards/:id/unblock | — calls issuer API to unblock card | Admin |
+| GET | /fuel-transactions | page, limit, from_date, to_date, fuel_card_id, vehicle_id, driver_id, trip_id, product_type[]=HSD, station_city, min_amount, max_amount, sort_by=transaction_at | Finance/Admin/TM |
+| POST | /fuel-transactions/sync | { from_date?, vehicle_id? } — manual sync trigger | Admin |
+| POST | /fuel-transactions/match-trips | — re-runs trip matching | Admin |
+| GET | /fuel-transactions/export | from_date, to_date, vehicle_id, driver_id — CSV | Finance/Admin |
+
+## 7.3 Fuel Card Sync Worker
+// workers/fuelCardSync.ts — runs every 30 minutes
+async function syncFuelTransactions() {
+  const cards = await db.fuel_cards.findMany({ where: { is_active: true } });
+  for (const card of cards) {
+    const txns = await fuelCardAPI[card.card_type].getTransactions(card.api_card_id, lastSync);
+    for (const txn of txns) {
+      const trip = await matchTripByVehicleAndTime(card.vehicle_id, txn.transaction_at);
+      await db.fuel_transactions.upsert({ where: { transaction_id: txn.id }, ... });
+      await db.trip_expenses.upsert({  // auto-create expense
+        expense_type: "fuel", amount: txn.amount, is_fuelcard_synced: true,
+        status: "auto_approved", trip_id: trip?.id ... });
+      // Update trip.fuel_consumed_ltr running total
+      if (trip) await updateTripFuelTotal(trip.id, txn.quantity_ltr);
+    }
+  }
+}
+## 7.4 Fuel Card Dashboard Features
+Card list: card number (masked), issuer logo, vehicle, driver, balance, monthly spend vs limit
+Assign card to vehicle/driver inline with dropdown + confirm
+Block / Unblock card: one-click with reason input, calls issuer API, logs to audit
+Transaction feed: station name, city, fuel type, litres, rate, amount, odometer, trip link
+Mileage tracker: km/litre computed from odometer readings (where API provides odometer)
+Monthly usage chart: spend and litres per vehicle (dual-axis bar chart)
+Fuel efficiency report: litres per 100km per vehicle over selected period
+Export: CSV/Excel with all filters applied
+Unmatched transactions panel: fuel purchases outside any trip window
+Card number is encrypted in DB using AES-256 and displayed masked (****1234) in all UI surfaces. Only Admin can see last 4 digits.
+## 7.5 Trip Cost Breakdown (FASTag + Fuel Card)
+Once a trip is closed, TMS automatically computes the full cost breakdown combining manual expenses, FASTag tolls, and fuel card transactions:
+| Cost Component | Source | Auto or Manual |
+| Fuel cost | Fuel card transactions matched to trip dates | Auto (synced) |
+| Toll charges | FASTag transactions matched to trip vehicle + dates | Auto (synced) |
+| Driver bata | Driver expense claim | Manual (driver submits) |
+| Loading/Unloading | Driver expense claim with receipt | Manual |
+| Repair/Misc | Driver expense claim | Manual |
+| Total trip cost | Sum of all above after Finance approval | Computed |
+| Net P&L | freight_charges - total_trip_cost | Computed on invoice |
+
+# 8. Invoice Management & RCM (Reverse Charge Mechanism)
+Transport services under GTA (Goods Transport Agency) have special GST rules under Section 9(3) of the CGST Act. RCM shifts GST liability from the transporter to the recipient.
+## 8.1 When RCM Applies
+| Scenario | GST Treatment | Invoice Shows |
+| Recipient is GST-registered business (most B2B clients) | RCM — recipient pays GST to govt directly | No GST charged on invoice. Note: "Tax payable under Reverse Charge" |
+| Recipient is unregistered individual | Forward Charge — GTA collects and pays GST | GST (5%) added to invoice |
+| GTA opts for 12% with ITC | Forward Charge — GTA pays GST | GST (12%) added to invoice |
+| Exempt categories (agri produce etc) | Nil rated / Exempt | No GST, note exemption |
+
+## 8.2 GST Rate Reference (GTA)
+| Rate | ITC | Who Pays | Notes |
+| 5% | No ITC by GTA | RCM if recipient registered | Default GTA rate — most common |
+| 12% | GTA gets ITC | Forward charge by GTA | GTA opts in by declaration |
+| 0% | — | N/A | Exempt supply (specific categories) |
+
+## 8.3 Inter-state vs Intra-state (IGST vs CGST+SGST)
+// server/lib/gst.ts
+function determineGSTType(companyStateCode: string, clientStateCode: string) {
+  return companyStateCode === clientStateCode ? "intrastate" : "interstate";
+}
+function calculateGST(subtotal, rate, gstType, isRCM) {
+  if (isRCM) return { igst:0, cgst:0, sgst:0 };  // RCM — no tax on invoice
+  if (gstType === "interstate") return { igst: subtotal * rate/100, cgst:0, sgst:0 };
+  return { igst:0, cgst: subtotal * rate/200, sgst: subtotal * rate/200 };
+}
+## 8.4 Invoice Calculation Flow
+| Step | Calculation |
+| 1. Subtotal | freight + loading + unloading + detention + other_charges |
+| 2. Determine RCM | Check is_rcm flag (from client.rcm_applicable or manual override) |
+| 3. Determine GST type | Compare company.state_code vs client.state_code |
+| 4. Calculate GST | If RCM: all GST = 0. Else: IGST or CGST+SGST at applicable rate |
+| 5. TDS (Sec 194C) | If applicable: tds_amount = total * tds_rate / 100 |
+| 6. Net payable | subtotal + igst + cgst + sgst - tds_amount |
+| 7. Store all components | All values stored separately for audit and GST returns |
+
+## 8.5 Mandatory Invoice PDF Fields (GTA)
+Supplier: name, address, GSTIN, PAN, state code
+Invoice number (sequential per financial year: INV-2024-25-0001)
+Invoice date
+"Whether tax is payable on Reverse Charge: Yes / No" — mandatory field
+Client: name, address, GSTIN, state code
+Place of supply (client state name)
+Service description: "Road transport of goods from [Origin] to [Destination]"
+LR numbers covered
+E-way bill numbers
+Freight + other charges line-by-line
+IGST / CGST / SGST breakdown (or NIL if RCM with note)
+TDS deduction line (if applicable) with Section reference
+Total amount in figures AND words (in Hindi if bilingual)
+Bank account details (account number, IFSC, bank name)
+Authorised signatory with name and designation
+Digital signature (optional but recommended)
+## 8.6 Invoice Number Auto-generation
+function generateInvoiceNumber(financialYear: string, lastSeq: number): string {
+  // financialYear: "2024-25" derived from invoice date (Apr-Mar)
+  const seq = String(lastSeq + 1).padStart(4, "0");
+  return `INV-${financialYear}-${seq}`;  // e.g. INV-2024-25-0042
+}
+Sequence resets on April 1 each year. Use DB atomic counter (SELECT FOR UPDATE) to prevent duplicate numbers under concurrent invoice creation.
+# 9. i18n — Hindi / Gujarati / English
+## 9.1 Tech Implementation
+Library: next-intl (App Router native, server + client components)
+Locale files: /messages/en.json, /messages/hi.json, /messages/gu.json
+Fonts: Inter (EN), Hind Vadodara (HI), Noto Sans Gujarati (GU) — all via next/font
+Language stored in users.language_pref — loaded on login, set in cookie
+Change language: PATCH /users/me { language_pref: "gu" } + sets next-intl locale cookie
+## 9.2 Translation Namespaces
+| Namespace | Covers |
+| common | Buttons, status words, errors, nav items, table headers |
+| auth | Login page, OTP prompts, error messages |
+| dashboard | KPI labels, chart titles, summary widgets |
+| trips | Status labels, form fields, kanban columns, LR terms |
+| expenses | Expense types, approval messages, form labels |
+| invoices | Invoice status, GST terms, RCM notice, PDF headers, TDS label |
+| fastag | Wallet labels, plaza terms, balance alerts, transaction table |
+| fuel | Card labels, fuel types (HSD/MS), station terms, mileage labels |
+| roles | Role names and descriptions for UI display |
+| settings | Profile, language selector, notification preferences |
+
+## 9.3 Sample Translations
+| Key | English | Hindi | Gujarati |
+| trips.status.in_transit | In Transit | परिवहन में | ટ્રાન્ઝિટ માં |
+| trips.status.delivered | Delivered | डिलीवर हुआ | ડિલિવર થઈ |
+| invoices.rcm_notice | Tax on Reverse Charge | रिवर्स चार्ज पर कर | રિવર્સ ચાર્જ પર ટેક્સ |
+| fastag.low_balance | Low Balance Alert | कम बैलेंस अलर्ट | ઓછી બેલેન્સ ચેતવણી |
+| fastag.toll_deducted | Toll Deducted | टोल काटा गया | ટોલ કપાયો |
+| fuel.litres | Litres | लीटर | લિટર |
+| fuel.diesel | Diesel (HSD) | डीजल | ડીઝલ |
+| expenses.types.fuel | Fuel | ईंधन | ઇંધણ |
+| expenses.types.toll | Toll | टोल | ટોલ |
+| common.approve | Approve | स्वीकृत करें | મંજૂર કરો |
+| common.reject | Reject | अस्वीकार करें | નકારો |
+| common.sync_now | Sync Now | अभी सिंक करें | હવે સિંક કરો |
+
+# 10. Audit Log System
+## 10.1 Events Captured by Category
+| Category | Events Logged |
+| Auth | login_success, login_failed, otp_requested, logout, token_refreshed |
+| Users | user.created, user.updated, user.deactivated, role.assigned, language.changed |
+| Trips | trip.created, trip.updated, trip.status.changed, pod.uploaded, trip.cancelled |
+| Expenses | expense.submitted, expense.approved, expense.rejected |
+| Invoices | invoice.created, invoice.approved, invoice.sent, invoice.paid, invoice.cancelled |
+| FASTag | fastag.wallet.added, fastag.synced, fastag.recharged, fastag.low_balance_alert |
+| Fuel Card | fuel_card.created, fuel_card.assigned, fuel_card.blocked, fuel_card.synced |
+| Roles | role.created, permission.updated, role.deleted |
+| Settings | company_profile.updated, rcm_toggle.changed, logo.updated |
+
+## 10.2 Auto-logging Middleware
+// middleware/auditLogger.ts
+export async function auditLog(req, action, resourceType, resourceId, before?, after?) {
+  await db.audit_logs.create({
+    user_id: req.user.userId, user_name: req.user.name, user_role: req.user.role,
+    action, resource_type: resourceType, resource_id: resourceId,
+    before_state: before ?? null, after_state: after ?? null,
+    ip_address: req.ip, user_agent: req.headers["user-agent"],
+  });
+}
+## 10.3 Audit Log UI (Admin)
+Route: /dashboard/admin/audit-logs
+Table: Timestamp | User | Role | Action | Resource | Resource Label
+Filters: date range, user, role, action keyword, resource type
+Click row → modal with before/after JSON diff (highlighted added/removed lines)
+FASTag and Fuel Card sync events marked with API badge
+Export to CSV available with all filters applied
+Records are immutable — no edit or delete on audit_logs table (no soft delete column)
+# 11. Micro-animation & Task Completion FX
+## 11.1 Task Completion Animations
+| Trigger | Animation Detail | Library | Duration |
+| Expense Approved | Status badge cross-fades pending -> green "Approved" with scale bounce (1->1.1->1). Confetti burst (12 particles, amber + green) fires from approve button. Row background briefly flashes light green. | Framer Motion + canvas-confetti | 450ms |
+| Expense Rejected | Status badge shakes (translateX +-5px x 3 cycles). Row background flashes light red. Toast with rejection reason slides in from bottom-right. | Framer Motion keyframes | 350ms |
+| Trip Delivered | Status pill cross-fades amber -> green. Truck SVG icon animates right off card edge. Green glow border pulses on card (2 cycles). Card moves to Delivered column with spring physics. | Framer Motion spring | 600ms |
+| POD Uploaded | Checkmark SVG draws in (strokeDashoffset 100->0). Camera icon fades to checkmark. Card background briefly flashes teal. Toast: "POD Uploaded Successfully" | GSAP drawSVG | 700ms |
+| Invoice Sent | Envelope SVG flies up-right from Send button and fades. Button transforms: "Send" -> spinner -> "Sent" checkmark. Toast with client name. | GSAP + Framer Motion | 500ms |
+| Invoice Paid | Amount value gets gold glow text-shadow pulse (2 cycles). Status badge animates to "Paid" green. Paid stamp overlay fades in briefly on invoice row. | Framer Motion | 450ms |
+| FASTag Synced | Sync icon spins 360deg during fetch. On complete: balance number counts up/down to new value. Green flash on wallet card. | Framer Motion animate | sync duration + 300ms |
+| Fuel Card Blocked | Card thumbnail gets red overlay + lock icon fade-in. Status badge: Active -> Blocked. Warning toast with reason. | Framer Motion | 400ms |
+| Trip Created | New trip card slides into top of Kanban column with spring. Column count badge animates +1 with bounce. | Framer Motion spring | 350ms |
+| Form Submitted | Button: text fades -> spinner -> checkmark -> success text. Form fields briefly glow green on success. | Framer Motion AnimatePresence | Variable |
+
+## 11.2 Dashboard Data Animations
+KPI card numbers: count-up from 0 to value over 800ms (ease-out) on page mount
+Revenue bars: grow from y-axis baseline on chart mount, staggered 40ms per bar
+FASTag balance ring chart: segments draw in clockwise over 600ms on viewport entry
+Table rows: stagger fade-up (y:12->0, opacity 0->1) with 30ms between rows — max 15 rows animated
+Status change on Kanban: cross-fade between old/new badge colour over 300ms
+Notification bell: badge count increments with scale bounce when new alert arrives
+## 11.3 Animation Utility File
+// src/lib/animations.ts
+export const fadeUp = { initial:{opacity:0,y:16}, animate:{opacity:1,y:0}, transition:{duration:0.35} };
+export const stagger = { animate:{ transition:{ staggerChildren:0.04 } } };
+export const bounceIn = { initial:{scale:0.85,opacity:0}, animate:{scale:1,opacity:1},
+  transition:{ type:"spring", stiffness:280, damping:20 } };
+export const taskDone = { animate:{scale:[1,1.12,0.96,1]},
+  transition:{duration:0.4, times:[0,0.3,0.7,1]} };
+export const shake = { animate:{x:[0,-5,5,-5,5,0]},
+  transition:{duration:0.3} };
+export const cardHover = { whileHover:{scale:1.015}, transition:{duration:0.15} };
+All animations use transform/opacity only — GPU composited, no layout recalculation. prefers-reduced-motion media query disables all non-essential animations.
+# 12. Frontend Architecture & Dashboard
+## 12.1 Route Structure (Next.js App Router)
+| Route Group | Path Pattern | Auth |
+| (marketing) | /, /about, /services, /track, /pricing, /contact | None |
+| (auth) | /[locale]/login, /verify-otp | Guest only |
+| (dashboard) | /[locale]/dashboard/* | JWT + role check |
+
+## 12.2 Dashboard Pages
+| Page | Route | Key UI |
+| Admin Overview | /dashboard/admin | KPI cards x6, Activity feed, User table, Audit shortcuts |
+| Trip Kanban | /dashboard/trips | Kanban board (5 columns), QuickFilters, MapToggle, CreateTrip modal |
+| Expense Queue | /dashboard/finance/expenses | Approval table, ReceiptPreview lightbox, BulkApprove |
+| Invoice Manager | /dashboard/finance/invoices | InvoiceTable, RCM badge, PDF preview, Send button |
+| LR Board | /dashboard/accounts/lr | LR table, CreateLR modal, StatusBadge, QuickTrack |
+| Client Manager | /dashboard/accounts/clients | Client table, CreateClient modal, Credit terms editor |
+| FASTag Manager | /dashboard/fastag | WalletCards, TollFeed, LowBalancePanel, MonthlyChart, SyncButton |
+| Fuel Card Manager | /dashboard/fuel | CardList, TxnFeed, MileageChart, AssignCard, Block/Unblock |
+| Driver Home | /dashboard/driver | ActiveTripCard, StatusButtons, ExpenseForm, PODUpload |
+| Reports | /dashboard/reports | TripReport, FinanceReport, FasTagReport, FuelReport, ClientReport |
+| Audit Logs | /dashboard/admin/audit-logs | AuditTable, BeforeAfterDiff, FilterPanel, ExportCSV |
+| Role Manager | /dashboard/admin/roles | RoleList, PermissionGrid, ScopeSelector |
+| Translation Manager | /dashboard/admin/translations | 3-column table: EN | HI | GU with inline edit |
+
+## 12.3 State Management
+| Concern | Solution | Notes |
+| Server data (lists, details) | React Query (TanStack) | Cache, refetch, optimistic updates, pagination |
+| UI state (sidebar, modals, filters) | Zustand | Minimal, no boilerplate |
+| Form state + validation | React Hook Form + Zod | Schema shared with API validators |
+| Trip board real-time | SWR polling (30s) | Fallback to WebSocket for live driver updates |
+| i18n locale | next-intl + cookie | Persisted, loaded from user.language_pref on login |
+
+# 13. Brand Identity & Theme System
+## 13.1 Design Tokens (tailwind.config.ts)
+| Token | Hex | Usage |
+| brand.navy | #0B1E3D | Sidebar, page headers, logo background |
+| brand.blue | #1A56DB | Primary actions, active nav, links |
+| brand.amber | #D97706 | CTA buttons, accent, warning badges |
+| brand.surface | #F1F5F9 | Page backgrounds, card surfaces |
+| brand.text | #334155 | Body text, table cells |
+| brand.muted | #64748B | Placeholder, secondary text, labels |
+| brand.success | #065F46 | Delivered, approved, paid states |
+| brand.danger | #991B1B | Rejected, overdue, error states |
+| brand.fastag | #0F766E | FASTag module accent (teal) |
+| brand.fuel | #9A3412 | Fuel Card module accent (orange-red) |
+| brand.border | #E2E8F0 | Dividers, input borders, table lines |
+
+## 13.2 Typography
+| Role | Font | Weight | Usage |
+| Display | Plus Jakarta Sans | 700 Bold | Hero, major headings |
+| Heading | Plus Jakarta Sans | 600 SemiBold | Section titles, card headers |
+| Body | Inter | 400 Regular | Body text, table cells |
+| Mono | JetBrains Mono | 400 | LR numbers, invoice IDs, tag IDs, amounts |
+| Hindi | Hind Vadodara | 400/600 | i18n Hindi text |
+| Gujarati | Noto Sans Gujarati | 400/600 | i18n Gujarati text |
+
+## 13.3 Logo Setup
+File format: SVG preferred, PNG fallback at 2x resolution
+Sidebar: company logo (40x40px) + company name in Plus Jakarta Sans 600
+Public header: logo (max-height 48px) + tagline
+Invoice PDF header: logo left, company details right
+Dark variant: separate logo for use on dark navy backgrounds
+Favicon: 32x32 PNG, 180x180 Apple touch icon, generated via Sharp.js
+# 14. Public Website Pages
+| Page | Route | Key Sections | Animation |
+| Home | /[locale]/ | Hero, Stats Counter, Services Grid, How It Works, CTA | Word reveal, counter count-up, scroll stagger |
+| Services | /[locale]/services | Feature cards with role demos, comparison table | 3D card tilt hover, stagger entrance |
+| Track Shipment | /[locale]/track | LR number lookup, status timeline, map embed | Progress draw-in, active step pulse |
+| About | /[locale]/about | Mission, team, milestones | SVG timeline draw-in |
+| Pricing | /[locale]/pricing | Plan cards, FAQ accordion | Plan toggle animation, accordion expand |
+| Contact | /[locale]/contact | Form + map + office locations | Field slide-in stagger |
+
+All public pages use next-intl locale prefixes for EN/HI/GU. Language switcher in navbar. SSG with ISR for marketing pages.
+# 15. Shared Component Library
+| Component | Props Summary | Notes |
+| <Button /> | variant, size, loading, icon | primary | ghost | danger | outline — loading shows spinner |
+| <StatusBadge /> | status, size, pulse? | Color-coded pill. pulse=true adds glow ring animation |
+| <DataTable /> | columns, data, filters, pagination, onSort | TanStack Table v8, virtualized rows |
+| <KPICard /> | label, value, delta, icon, trend, loading | Count-up on mount, skeleton loading |
+| <TripCard /> | trip, onStatusChange, draggable? | Kanban card with drag handle |
+| <ExpenseRow /> | expense, onApprove, onReject | Receipt lightbox, inline approve/reject |
+| <InvoiceForm /> | mode, initialData, onSubmit | Multi-step: charges > GST/RCM > review |
+| <RCMBadge /> | isRcm | Amber "RCM" badge with tooltip explaining reverse charge |
+| <FasTagWalletCard /> | wallet, onSync, onRecharge | Balance, tag ID, low-balance alert, sync button |
+| <FuelCardItem /> | card, onAssign, onBlock | Card info, assign dropdown, block/unblock |
+| <TollTransactionRow /> | txn, trip? | Plaza, highway, amount, trip link |
+| <FuelTransactionRow /> | txn, trip? | Station, product, litres, amount, trip link |
+| <FormInput /> | label, error, icon, helpText | RHF compatible, animated error shake |
+| <OTPInput /> | length, onComplete, countdown | 6-cell, auto-advance, paste, resend timer |
+| <FileUpload /> | accept, maxSize, onUpload | Drag-drop + mobile camera capture |
+| <Modal /> | open, onClose, title, size | AnimatePresence scale-in, focus trap |
+| <CommandPalette /> | open, onSelect | K search: trips, clients, vehicles, invoices |
+| <Timeline /> | steps, activeStep | Vertical status stepper with icons |
+| <StatsCounter /> | to, duration, suffix | Count-up on viewport entry |
+| <AuditDiff /> | before, after | Before/after JSON diff with line highlights |
+| <LanguageSwitcher /> | current, onChange | EN | HI | GU selector |
+| <TaskCompleteFX /> | type, trigger, children | Wraps content, fires completion animation on trigger |
+
+# 16. Folder Structure
+## 16.1 Frontend (/apps/web/src)
+src/
+├── app/
+│   ├── [locale]/
+│   │   ├── (marketing)/          # Public pages
+│   │   │   ├── page.tsx          # Home
+│   │   │   ├── track/page.tsx    # LR tracker
+│   │   │   ├── services/page.tsx
+│   │   │   ├── pricing/page.tsx
+│   │   │   └── contact/page.tsx
+│   │   ├── (auth)/
+│   │   │   ├── login/page.tsx
+│   │   │   └── verify-otp/page.tsx
+│   │   └── dashboard/
+│   │       ├── admin/
+│   │       │   ├── page.tsx      # Overview
+│   │       │   ├── users/page.tsx
+│   │       │   ├── roles/page.tsx
+│   │       │   ├── audit-logs/page.tsx
+│   │       │   └── translations/page.tsx
+│   │       ├── trips/page.tsx
+│   │       ├── finance/
+│   │       │   ├── expenses/page.tsx
+│   │       │   └── invoices/page.tsx
+│   │       ├── accounts/
+│   │       │   ├── clients/page.tsx
+│   │       │   └── lr/page.tsx
+│   │       ├── fastag/page.tsx   # FASTag manager
+│   │       ├── fuel/page.tsx     # Fuel card manager
+│   │       ├── reports/page.tsx
+│   │       └── driver/page.tsx
+│   ├── layout.tsx
+│   └── middleware.ts             # Edge: auth + locale
+├── components/
+│   ├── ui/                       # Shared component library
+│   ├── marketing/                # Public page sections
+│   ├── dashboard/                # Dashboard-specific
+│   ├── fastag/                   # FASTag module components
+│   ├── fuel/                     # Fuel card components
+│   ├── forms/                    # Form components
+│   └── animations/               # Animation wrappers + TaskCompleteFX
+├── lib/
+│   ├── animations.ts             # Framer Motion variants
+│   ├── api.ts                    # Axios instance + interceptors
+│   ├── auth.ts                   # JWT decode helpers
+│   ├── gst.ts                    # RCM / GST calculation utils
+│   ├── i18n.ts                   # next-intl config
+│   └── utils.ts
+├── hooks/                        # useTrips, useFastag, useFuelCards...
+├── store/                        # Zustand: uiStore, filterStore
+└── types/                        # TypeScript interfaces for all entities
+## 16.2 Backend (/apps/api/src)
+src/
+├── routes/
+│   ├── auth.routes.ts
+│   ├── user.routes.ts
+│   ├── trip.routes.ts
+│   ├── expense.routes.ts
+│   ├── invoice.routes.ts
+│   ├── fastag.routes.ts        # FASTag wallet + transaction routes
+│   ├── fuel-card.routes.ts     # Fuel card + transaction routes
+│   └── reports.routes.ts
+├── controllers/
+├── middleware/
+│   ├── authenticate.ts         # JWT validation
+│   ├── hasPermission.ts        # RBAC check
+│   ├── rateLimiter.ts
+│   └── auditLogger.ts
+├── services/
+│   ├── msg91.service.ts        # OTP send + verify
+│   ├── fastag/
+│   │   ├── ihmcl.service.ts    # NETC/IHMCL API
+│   │   ├── hdfc.service.ts     # HDFC FASTag API
+│   │   └── fastagSync.service.ts  # Sync + trip-match logic
+│   ├── fuel-card/
+│   │   ├── hpcl.service.ts     # HPCL FleetCard API
+│   │   ├── iocl.service.ts     # IOCL API
+│   │   └── fuelSync.service.ts # Sync + trip-match logic
+│   ├── gst.service.ts          # RCM/GST calculations
+│   ├── pdf.service.ts          # Invoice PDF (Puppeteer)
+│   └── s3.service.ts           # File uploads
+├── workers/
+│   ├── fastagSync.worker.ts    # Cron: every 15 min
+│   ├── fuelSync.worker.ts      # Cron: every 30 min
+│   └── documentExpiry.worker.ts # Cron: daily RC/insurance alerts
+├── prisma/schema.prisma
+└── app.ts
+# 17. Environment Variables & Deployment
+## 17.1 API Environment (.env)
+| Variable | Example / Notes |
+| DATABASE_URL | mysql://user:pass@host:3306/tms_db |
+| JWT_SECRET | Min 256-bit hex random string |
+| JWT_REFRESH_SECRET | Separate 256-bit secret |
+| JWT_ACCESS_EXPIRY | 900 (15 minutes) |
+| JWT_REFRESH_EXPIRY | 604800 (7 days) |
+| MSG91_AUTH_KEY | From MSG91 dashboard > Developers |
+| MSG91_FLOW_ID | OTP Flow ID from MSG91 > Flows |
+| MSG91_SENDER_ID | TMSAPP (6-char DLT registered) |
+| MSG91_DLT_TE_ID | DLT Template Entity ID |
+| IHMCL_CLIENT_ID | NETC API Client ID from ihmcl.com |
+| IHMCL_CLIENT_SECRET | NETC API Secret |
+| IHMCL_BASE_URL | https://api.ihmcl.com/netc/v1 (example) |
+| HDFC_FASTAG_API_KEY | HDFC FASTag Corporate API Key (if using HDFC) |
+| HPCL_FLEET_API_KEY | HPCL FleetCard API Key from hpclfleetcard.com |
+| HPCL_FLEET_CLIENT_ID | HPCL OAuth Client ID |
+| IOCL_FLEET_API_KEY | IOCL Fleet API Key (if using IOCL) |
+| BPCL_FLEET_API_KEY | BPCL SmartFleet API Key (if using BPCL) |
+| FASTAG_SYNC_CRON | */15 * * * * (every 15 min) |
+| FUEL_SYNC_CRON | */30 * * * * (every 30 min) |
+| AWS_S3_BUCKET | tms-documents-prod |
+| AWS_REGION | ap-south-1 |
+| AWS_ACCESS_KEY_ID | IAM key |
+| AWS_SECRET_ACCESS_KEY | IAM secret |
+| REDIS_URL | redis://host:6379 (rate limiting, OTP sessions) |
+| CORS_ORIGIN | https://yourdomain.com |
+
+## 17.2 Deployment Architecture
+| Service | Platform | Notes |
+| Next.js | Vercel | Auto-deploy from main, Edge middleware, ISR, image opt |
+| Node.js API | Railway / AWS EC2 | Docker + PM2, auto-restart on crash |
+| MySQL | PlanetScale or AWS RDS | Managed MySQL with daily backups, read replica for reports |
+| Redis | Upstash or AWS ElastiCache | OTP sessions + rate limiting + cron lock |
+| File Storage | AWS S3 ap-south-1 | Private bucket, pre-signed URLs for POD/receipt access |
+| Cron Workers | node-cron inside API process | FASTag sync, Fuel sync, Document expiry alerts |
+| DNS | Cloudflare | DDoS protection, proxy, SSL |
+| Monitoring | Sentry + Axiom | Error tracking + structured log aggregation |
+
+## 17.3 Security Checklist
+Cookies: httpOnly + Secure + SameSite=Strict for JWT and refresh tokens
+CORS: whitelist only frontend domain — no wildcard origins in production
+Fuel card numbers: AES-256 encrypted in DB, displayed masked (****1234) in UI
+FASTag tag IDs: stored plain (not sensitive), but access gated by RBAC
+SQL: Prisma ORM only — zero raw SQL template literals
+File uploads: MIME + extension validation, 10MB max size limit
+OTP brute force: 3 attempts per mobile per 15 min, 1-hour lockout on exceed
+Third-party API keys: never exposed to frontend; all calls server-side only
+Audit log: immutable — no UPDATE or DELETE allowed on audit_logs table
+RCM/GST calculation: server-side only — client sends amounts for display only, server recalculates
+Invoice numbers: server-generated sequential with atomic DB lock — cannot be forged by client
+All third-party API credentials: environment variables only, never in code or git
+— End of TMS Architecture Document v3.0 —

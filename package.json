@@ -1,27 +1,31 @@
 {
-  "name": "transport-management-system",
-  "version": "0.0.0",
+  "name": "blackgaur-tms",
+  "version": "3.0.0",
   "private": true,
-  "description": "BlackBuck-style trucking super-app — monorepo root (backend + frontend + mobile + desktop)",
+  "description": "Blackgaur — Transport Management System (TMS). Enterprise SaaS: trips, fleet, FASTag, fuel cards, RCM/GST invoicing, RBAC, i18n EN/HI/GU.",
   "workspaces": [
     "apps/*"
   ],
   "scripts": {
-    "dev:backend": "npm run dev --workspace apps/backend",
-    "dev:frontend": "npm run dev --workspace apps/frontend",
-    "dev:mobile": "npm run start --workspace apps/mobile",
-    "dev:desktop": "npm run dev --workspace apps/desktop",
-    "build": "npm run build --workspaces --if-present",
+    "dev": "npm-run-all --parallel dev:api dev:web",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "build": "npm run build:api && npm run build:web",
+    "build:api": "npm run build --workspace=apps/api",
+    "build:web": "npm run build --workspace=apps/web",
     "lint": "npm run lint --workspaces --if-present",
-    "test": "npm run test --workspaces --if-present",
-    "format": "prettier --write \"**/*.{js,jsx,json,md,css,html}\"",
-    "format:check": "prettier --check \"**/*.{js,jsx,json,md,css,html}\""
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css}\"",
+    "prisma:generate": "npm run prisma:generate --workspace=apps/api",
+    "prisma:migrate": "npm run prisma:migrate --workspace=apps/api",
+    "seed": "npm run seed --workspace=apps/api"
   },
   "devDependencies": {
+    "npm-run-all": "^4.1.5",
     "prettier": "^3.3.3"
   },
   "engines": {
-    "node": ">=22.0.0",
-    "npm": ">=10.0.0"
+    "node": ">=20.0.0"
   }
 }

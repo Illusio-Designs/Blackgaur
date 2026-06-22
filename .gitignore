@@ -3,13 +3,10 @@ node_modules/
 
 # Build output
 dist/
-dist-electron/
 build/
 out/
 .next/
-.expo/
-.expo-shared/
-web-build/
+.turbo/
 
 # Env / secrets
 .env
@@ -17,6 +14,10 @@ web-build/
 .env.*.local
 !.env.example
 secrets/
+
+# Prisma
+apps/api/prisma/*.db
+apps/api/prisma/migrations/dev.db*
 
 # Logs
 logs/
@@ -26,6 +27,9 @@ npm-debug.log*
 # Coverage
 coverage/
 .nyc_output/
+
+# TypeScript
+*.tsbuildinfo
 
 # OS / editors
 .DS_Store
@@ -37,17 +41,3 @@ Thumbs.db
 # Cache
 .cache/
 .eslintcache
-.parcel-cache/
-
-# Misc
-*.pid
-*.seed
-
-# Native
-ios/
-android/
-*.keystore
-*.jks
-*.p8
-*.p12
-*.mobileprovision
