@@ -16,8 +16,12 @@ out/
 secrets/
 
 # Prisma
-apps/api/prisma/*.db
-apps/api/prisma/migrations/dev.db*
+backend/prisma/*.db
+backend/prisma/migrations/dev.db*
+
+# Backend local upload fallback
+backend/uploads/*
+!backend/uploads/.gitkeep
 
 # Logs
 logs/

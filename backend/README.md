@@ -8,7 +8,7 @@ integration, RCM/GST invoicing, audit logging, and reporting per
 ## Quick start
 
 ```bash
-cd apps/api
+cd backend
 cp .env.example .env          # fill DATABASE_URL + secrets (works with defaults in dev)
 npm install
 npm run prisma:generate
@@ -23,7 +23,7 @@ Health check: `GET /health`. All API routes are mounted under `/v1`.
 The API boots with **no external services**: MSG91, FASTag (IHMCL/HDFC), Fuel Card
 (HPCL/IOCL), and S3 all run in guarded **stub mode** when their credentials are blank.
 - OTP: in dev, the generated OTP is logged to the console and any 6-digit code is accepted.
-- File uploads fall back to local disk under `apps/api/uploads/`.
+- File uploads fall back to local disk under `backend/uploads/`.
 - PDF generation requires the optional `pdfkit` dependency.
 
 ## Environment

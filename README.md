@@ -39,8 +39,8 @@ blackgaur-tms/
 npm install
 
 # 2. Configure environment
-cp .env.example apps/api/.env
-cp .env.example apps/web/.env.local   # only NEXT_PUBLIC_* are used
+cp .env.example backend/.env
+cp .env.example frontend/.env.local   # only NEXT_PUBLIC_* are used
 
 # 3. Database — generate client, push schema, seed roles + admin
 npm run prisma:generate
@@ -63,5 +63,5 @@ action, scope)` middleware. The client only conditionally renders UI.
 Trips · Drivers · Vehicles · FASTag Manager · Fuel Card Manager · Expenses ·
 Invoices & RCM/GST Billing · Reports & Analytics · Audit Logs · i18n.
 
-See [`apps/api/README.md`](apps/api/README.md) and
-[`apps/web/README.md`](apps/web/README.md) for module-level documentation.
+See [`backend/README.md`](backend/README.md) and
+[`frontend/README.md`](frontend/README.md) for module-level documentation.

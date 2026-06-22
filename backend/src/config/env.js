@@ -3,7 +3,7 @@
 const path = require('path');
 const dotenv = require('dotenv');
 
-// Load .env from apps/api root if present.
+// Load .env from backend root if present.
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 /** @param {string} key @param {string} [fallback] */

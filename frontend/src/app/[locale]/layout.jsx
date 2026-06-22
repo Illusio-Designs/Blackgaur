@@ -24,7 +24,7 @@ const jetbrains = JetBrains_Mono({
   display: 'swap',
 });
 const hind = Hind_Vadodara({
-  subsets: ['latin', 'devanagari'],
+  subsets: ['latin'],
   weight: ['400', '600'],
   variable: '--font-hindi',
   display: 'swap',
