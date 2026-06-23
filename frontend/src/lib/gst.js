@@ -26,7 +26,6 @@ export function computeInvoice({
   other_charges = 0,
   is_rcm = false,
   gst_rate = 5,
-  tds_rate = 0,
   client_state_code = COMPANY_STATE_CODE,
 }) {
   const subtotal =
@@ -39,8 +38,8 @@ export function computeInvoice({
   const gstType = determineGSTType(COMPANY_STATE_CODE, client_state_code);
   const { igst, cgst, sgst } = calculateGST(subtotal, gst_rate, gstType, is_rcm);
   const gstTotal = igst + cgst + sgst;
-  const tds_amount = (subtotal * Number(tds_rate)) / 100;
-  const total_amount = subtotal + gstTotal - tds_amount;
+  // GTA does NOT deduct TDS on its sales invoice — the recipient deducts it.
+  const total_amount = subtotal + gstTotal;
 
   return {
     subtotal,
@@ -49,7 +48,6 @@ export function computeInvoice({
     cgst_amount: cgst,
     sgst_amount: sgst,
     gstTotal,
-    tds_amount,
     total_amount,
     is_rcm,
   };

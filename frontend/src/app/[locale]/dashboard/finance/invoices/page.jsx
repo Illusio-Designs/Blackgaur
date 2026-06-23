@@ -69,7 +69,6 @@ export default function InvoicesPage() {
       igst_amount: values.igst_amount ?? 0,
       cgst_amount: values.cgst_amount ?? 0,
       sgst_amount: values.sgst_amount ?? 0,
-      tds_amount: values.tds_amount ?? 0,
       total_amount: values.total_amount ?? 0,
       status: 'draft',
       due_date: values.due_date || '2026-07-31',
@@ -222,7 +221,6 @@ export default function InvoicesPage() {
                     {preview.sgst_amount > 0 && <tr><td className="py-2 text-brand-muted">{t('sgst')}</td><td className="py-2 text-right font-mono">{formatINR(preview.sgst_amount, { decimals: 2 })}</td></tr>}
                   </>
                 )}
-                {preview.tds_amount > 0 && <tr><td className="py-2 text-brand-muted">{t('tds')} (194C)</td><td className="py-2 text-right font-mono text-brand-danger">- {formatINR(preview.tds_amount, { decimals: 2 })}</td></tr>}
                 <tr className="font-semibold text-brand-navy"><td className="py-2.5">{t('totalAmount')}</td><td className="py-2.5 text-right font-mono text-base">{formatINR(preview.total_amount, { decimals: 2 })}</td></tr>
               </tbody>
             </table>

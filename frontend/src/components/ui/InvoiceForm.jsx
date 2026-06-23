@@ -9,6 +9,7 @@ import FormInput from '@/components/ui/FormInput';
 import RCMBadge from '@/components/ui/RCMBadge';
 import { mockClients } from '@/lib/mock';
 import { computeInvoice, amountInWords, COMPANY_STATE_CODE } from '@/lib/gst';
+import { useConfig } from '@/hooks/useConfig';
 import { formatINR, cn } from '@/lib/utils';
 
 const STEP_KEYS = ['charges', 'gst', 'review'];
@@ -20,17 +21,20 @@ const DEFAULTS = {
   detention_charges: 0,
   other_charges: 0,
   client_id: '',
-  is_rcm: false,
+  is_rcm: true,
   gst_rate: 5,
-  tds_rate: 0,
   client_state_code: COMPANY_STATE_CODE,
 };
 
 export default function InvoiceForm({ mode = 'create', initialData, onSubmit }) {
   const t = useTranslations('invoices');
   const tc = useTranslations('common');
+  const { config } = useConfig();
+  // RCM is driven by the company's own registration/opt-in (Settings → Tax & RCM).
+  // Registered under RCM → reverse charge (no GST on invoice); else forward charge.
+  const rcmDefault = config?.tax?.rcmDefault ?? true;
   const [step, setStep] = useState(0);
-  const [values, setValues] = useState({ ...DEFAULTS, ...(initialData || {}) });
+  const [values, setValues] = useState({ ...DEFAULTS, is_rcm: rcmDefault, ...(initialData || {}) });
 
   const set = (key, val) => setValues((v) => ({ ...v, [key]: val }));
   const num = (key) => (e) => set(key, Number(e.target.value) || 0);
@@ -139,15 +143,6 @@ export default function InvoiceForm({ mode = 'create', initialData, onSubmit }) 
                 <option value={0}>0% (Exempt)</option>
               </FormInput>
 
-              <FormInput
-                type="number"
-                min="0"
-                label={`${t('tds')} %`}
-                name="tds_rate"
-                value={values.tds_rate}
-                onChange={num('tds_rate')}
-              />
-
               <label className="flex cursor-pointer items-center justify-between rounded-xl border border-brand-border bg-white p-3 sm:col-span-2">
                 <span className="flex items-center gap-2">
                   <span className="text-sm font-medium text-brand-navy">{t('rcm_notice')}</span>
@@ -182,9 +177,6 @@ export default function InvoiceForm({ mode = 'create', initialData, onSubmit }) 
                     <Row label={`${t('cgst')} (${values.gst_rate / 2}%)`} value={formatINR(computed.cgst_amount, { decimals: 2 })} />
                     <Row label={`${t('sgst')} (${values.gst_rate / 2}%)`} value={formatINR(computed.sgst_amount, { decimals: 2 })} />
                   </>
-                )}
-                {computed.tds_amount > 0 && (
-                  <Row label={`${t('tds')} (${values.tds_rate}%)`} value={`- ${formatINR(computed.tds_amount, { decimals: 2 })}`} />
                 )}
                 <div className="flex items-center justify-between border-t border-brand-border pt-2.5">
                   <dt className="font-semibold text-brand-navy">{t('totalAmount')}</dt>

@@ -86,11 +86,11 @@ export const mockExpenses = [
 ];
 
 export const mockInvoices = [
-  { id: 1, invoice_number: 'INV-2024-25-0001', invoice_type: 'outward', client: mockClients[0], freight_amount: 48000, subtotal: 50500, is_rcm: true, igst_amount: 0, cgst_amount: 0, sgst_amount: 0, tds_amount: 1010, total_amount: 49490, status: 'sent', due_date: '2026-07-22', client_state_code: '24' },
-  { id: 2, invoice_number: 'INV-2024-25-0002', invoice_type: 'outward', client: mockClients[2], freight_amount: 36000, subtotal: 36000, is_rcm: false, igst_amount: 1800, cgst_amount: 0, sgst_amount: 0, tds_amount: 0, total_amount: 37800, status: 'paid', due_date: '2026-06-15', paid_at: '2026-06-12', client_state_code: '27' },
-  { id: 3, invoice_number: 'INV-2024-25-0003', invoice_type: 'outward', client: mockClients[1], freight_amount: 58000, subtotal: 61500, is_rcm: true, igst_amount: 0, cgst_amount: 0, sgst_amount: 0, tds_amount: 1230, total_amount: 60270, status: 'pending_approval', due_date: '2026-08-05', client_state_code: '27' },
-  { id: 4, invoice_number: 'INV-2024-25-0004', invoice_type: 'outward', client: mockClients[3], freight_amount: 72000, subtotal: 75000, is_rcm: true, igst_amount: 0, cgst_amount: 0, sgst_amount: 0, tds_amount: 1500, total_amount: 73500, status: 'overdue', due_date: '2026-06-01', client_state_code: '06' },
-  { id: 5, invoice_number: 'INV-2024-25-0005', invoice_type: 'outward', client: mockClients[4], freight_amount: 28000, subtotal: 30500, is_rcm: false, igst_amount: 0, cgst_amount: 762.5, sgst_amount: 762.5, tds_amount: 0, total_amount: 32025, status: 'draft', due_date: '2026-06-30', client_state_code: '24' },
+  { id: 1, invoice_number: 'INV-2024-25-0001', invoice_type: 'outward', client: mockClients[0], freight_amount: 48000, subtotal: 50500, is_rcm: true, igst_amount: 0, cgst_amount: 0, sgst_amount: 0, total_amount: 50500, status: 'sent', due_date: '2026-07-22', client_state_code: '24' },
+  { id: 2, invoice_number: 'INV-2024-25-0002', invoice_type: 'outward', client: mockClients[2], freight_amount: 36000, subtotal: 36000, is_rcm: false, igst_amount: 1800, cgst_amount: 0, sgst_amount: 0, total_amount: 37800, status: 'paid', due_date: '2026-06-15', paid_at: '2026-06-12', client_state_code: '27' },
+  { id: 3, invoice_number: 'INV-2024-25-0003', invoice_type: 'outward', client: mockClients[1], freight_amount: 58000, subtotal: 61500, is_rcm: true, igst_amount: 0, cgst_amount: 0, sgst_amount: 0, total_amount: 61500, status: 'pending_approval', due_date: '2026-08-05', client_state_code: '27' },
+  { id: 4, invoice_number: 'INV-2024-25-0004', invoice_type: 'outward', client: mockClients[3], freight_amount: 72000, subtotal: 75000, is_rcm: true, igst_amount: 0, cgst_amount: 0, sgst_amount: 0, total_amount: 75000, status: 'overdue', due_date: '2026-06-01', client_state_code: '06' },
+  { id: 5, invoice_number: 'INV-2024-25-0005', invoice_type: 'outward', client: mockClients[4], freight_amount: 28000, subtotal: 30500, is_rcm: false, igst_amount: 0, cgst_amount: 762.5, sgst_amount: 762.5, total_amount: 32025, status: 'draft', due_date: '2026-06-30', client_state_code: '24' },
 ];
 
 export const mockFastagWallets = [

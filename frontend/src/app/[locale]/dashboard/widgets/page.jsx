@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react';
 import {
   LayoutGrid, Truck, Receipt, FileText, Fuel, Radio, Plus, Search,
-  CheckCircle2, AlertTriangle, Wallet, Banknote, Inbox, Info,
+  CheckCircle2, AlertTriangle, Wallet, Banknote, Inbox, Info, Download,
 } from 'lucide-react';
 import PageHeader from '@/components/dashboard/PageHeader';
 
@@ -43,24 +43,33 @@ import FasTagWalletCard from '@/components/fastag/FasTagWalletCard';
 import FuelCardItem from '@/components/fuel/FuelCardItem';
 import TaskCompleteFX from '@/components/animations/TaskCompleteFX';
 import { useToast } from '@/components/ui/Toast';
+import { useBranding } from '@/hooks/useBranding';
+import { downloadInvoicePdf } from '@/lib/invoicePdf';
+import { downloadLrPdf } from '@/lib/lrPdf';
 
 import {
   mockTrips, mockExpenses, mockInvoices, mockTollTransactions,
   mockFuelTransactions, mockFastagWallets, mockFuelCards, mockClients,
 } from '@/lib/mock';
-import { formatINR, formatDate } from '@/lib/utils';
+import { formatINR, formatDate, cn } from '@/lib/utils';
 
 // A labelled cell that frames each widget on the gallery.
-function Showcase({ title, hint, children, span = 1 }) {
+// `bare` removes the card chrome so card-based children aren't double-wrapped.
+function Showcase({ title, hint, children, span = 1, bare = false, actions }) {
   return (
     <section
-      className={`rounded-2xl border border-brand-border bg-white p-5 shadow-card ${
-        span === 2 ? 'xl:col-span-2' : ''
-      } ${span === 3 ? 'xl:col-span-3' : ''}`}
+      className={cn(
+        !bare && 'rounded-2xl border border-brand-border bg-white p-5 shadow-card',
+        span === 2 && 'xl:col-span-2',
+        span === 3 && 'xl:col-span-3',
+      )}
     >
-      <div className="mb-4 flex items-baseline justify-between gap-3 border-b border-brand-border pb-3">
+      <div className={cn('mb-4 flex items-baseline justify-between gap-3', !bare && 'border-b border-brand-border pb-3')}>
         <h3 className="font-display text-sm font-semibold text-brand-navy">{title}</h3>
-        {hint && <span className="font-mono text-[11px] text-brand-muted">{hint}</span>}
+        <div className="flex items-center gap-2">
+          {actions}
+          {hint && <span className="font-mono text-[11px] text-brand-muted">{hint}</span>}
+        </div>
       </div>
       {children}
     </section>
@@ -69,6 +78,7 @@ function Showcase({ title, hint, children, span = 1 }) {
 
 export default function WidgetsPage() {
   const toast = useToast();
+  const { branding } = useBranding();
   const [modalOpen, setModalOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [fxTrigger, setFxTrigger] = useState(0);
@@ -237,8 +247,8 @@ export default function WidgetsPage() {
         </Showcase>
 
         {/* Expense row */}
-        <Showcase title="Expense row" hint="<ExpenseRow />" span={2}>
-          <div className="divide-y divide-brand-border/70">
+        <Showcase title="Expense row" hint="<ExpenseRow />" span={2} bare>
+          <div className="space-y-2.5">
             <ExpenseRow
               expense={mockExpenses[1]}
               onApprove={() => toast.success('Expense approved')}
@@ -267,8 +277,8 @@ export default function WidgetsPage() {
         </Showcase>
 
         {/* Toll + Fuel transaction rows */}
-        <Showcase title="Transaction rows" hint="<TollTransactionRow /> <FuelTransactionRow />">
-          <div className="divide-y divide-brand-border/70">
+        <Showcase title="Transaction rows" hint="<TollTransactionRow /> <FuelTransactionRow />" bare>
+          <div className="space-y-2.5">
             <TollTransactionRow txn={mockTollTransactions[0]} trip={mockTrips[3]} />
             <FuelTransactionRow txn={mockFuelTransactions[0]} trip={mockTrips[4]} />
           </div>
@@ -426,7 +436,11 @@ export default function WidgetsPage() {
         </Showcase>
 
         {/* LR (Lorry Receipt) preview */}
-        <Showcase title="LR preview" hint="Lorry Receipt document">
+        <Showcase
+          title="LR preview"
+          hint="Lorry Receipt"
+          actions={<Button size="sm" variant="outline" icon={Download} onClick={() => downloadLrPdf(mockTrips[3], branding)}>PDF</Button>}
+        >
           {(() => {
             const trip = mockTrips[3];
             return (
@@ -457,7 +471,12 @@ export default function WidgetsPage() {
         </Showcase>
 
         {/* Invoice (GST/RCM) preview */}
-        <Showcase title="Invoice preview" hint="GST / RCM invoice" span={2}>
+        <Showcase
+          title="Invoice preview"
+          hint="GST / RCM invoice"
+          span={2}
+          actions={<Button size="sm" variant="outline" icon={Download} onClick={() => downloadInvoicePdf(mockInvoices[0], branding)}>PDF</Button>}
+        >
           {(() => {
             const inv = mockInvoices[0];
             return (
@@ -482,7 +501,6 @@ export default function WidgetsPage() {
                   <div className="flex justify-between"><span className="text-brand-muted">Freight</span><span className="font-mono text-brand-text">{formatINR(inv.freight_amount)}</span></div>
                   <div className="flex justify-between"><span className="text-brand-muted">Subtotal</span><span className="font-mono text-brand-text">{formatINR(inv.subtotal)}</span></div>
                   <div className="flex justify-between"><span className="text-brand-muted">IGST / CGST / SGST</span><span className="font-mono text-brand-text">{inv.is_rcm ? 'RCM — NIL' : formatINR(inv.igst_amount + inv.cgst_amount + inv.sgst_amount)}</span></div>
-                  <div className="flex justify-between"><span className="text-brand-muted">TDS (194C)</span><span className="font-mono text-brand-danger">−{formatINR(inv.tds_amount)}</span></div>
                 </div>
                 <div className="mt-3 flex items-center justify-between border-t border-brand-border pt-3">
                   <span className="font-semibold text-brand-navy">Total payable</span>

@@ -114,12 +114,7 @@ export default function ExpensesPage() {
             <EmptyState icon={ReceiptText} title={tc('noData')} subtitle={t('subtitle')} />
           </div>
         ) : (
-          <motion.div
-            variants={stagger}
-            initial="initial"
-            animate="animate"
-            className="card divide-y divide-brand-border/70 px-4"
-          >
+          <motion.div variants={stagger} initial="initial" animate="animate" className="space-y-2.5">
             {filtered.map((exp) => (
               <motion.div key={exp.id} variants={staggerItem}>
                 <ExpenseRow

@@ -71,9 +71,9 @@ export default function FastagPage() {
       </motion.div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">
-        <motion.div {...fadeUp} className="card p-5 lg:col-span-2">
-          <h3 className="font-display text-base font-semibold text-brand-navy">{t('tollFeed')}</h3>
-          <div className="mt-1 divide-y divide-brand-border/70">
+        <motion.div {...fadeUp} className="lg:col-span-2">
+          <h3 className="mb-3 font-display text-base font-semibold text-brand-navy">{t('tollFeed')}</h3>
+          <div className="space-y-2.5">
             {txns.map((txn) => (
               <TollTransactionRow key={txn.id} txn={txn} trip={mockTrips.find((tr) => tr.id === txn.trip_id)} />
             ))}
