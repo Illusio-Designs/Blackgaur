@@ -1,6 +1,6 @@
-import { getTranslations } from 'next-intl/server';
 import { ShieldCheck, Truck, Radio, FileText } from 'lucide-react';
 import { Link } from '@/i18n/routing';
+import BrandLogo, { BrandName, BrandTagline } from '@/components/BrandLogo';
 
 const BULLETS = [
   { icon: Truck, label: 'Live trips from pickup to POD' },
@@ -9,9 +9,7 @@ const BULLETS = [
   { icon: ShieldCheck, label: 'Immutable audit trail' },
 ];
 
-export default async function AuthLayout({ children }) {
-  const tc = await getTranslations('common');
-
+export default function AuthLayout({ children }) {
   return (
     <div className="flex min-h-screen">
       {/* left brand panel */}
@@ -21,18 +19,13 @@ export default async function AuthLayout({ children }) {
           <div className="absolute -right-20 bottom-10 h-96 w-96 rounded-full bg-brand-amber/20 blur-3xl" />
         </div>
 
-        <Link href="/" className="relative flex items-center gap-2.5">
-          <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-amber font-display text-lg font-extrabold text-white">
-            B
-          </span>
-          <span className="font-display text-xl font-bold tracking-tight text-white">
-            Blackgaur
-          </span>
+        <Link href="/" className="relative">
+          <BrandLogo dark />
         </Link>
 
         <div className="relative max-w-md">
           <h2 className="font-display text-3xl font-bold leading-tight text-white">
-            {tc('tagline')}
+            <BrandTagline />
           </h2>
           <ul className="mt-8 space-y-4">
             {BULLETS.map((b) => {
@@ -49,7 +42,9 @@ export default async function AuthLayout({ children }) {
           </ul>
         </div>
 
-        <p className="relative text-xs text-slate-500">&copy; {new Date().getFullYear()} Blackgaur</p>
+        <p className="relative text-xs text-slate-500">
+          &copy; {new Date().getFullYear()} <BrandName />
+        </p>
       </div>
 
       {/* right form area */}

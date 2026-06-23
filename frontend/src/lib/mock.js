@@ -95,10 +95,10 @@ export const mockFuelTransactions = [
 ];
 
 export const mockUsers = [
-  { id: 1, name: 'Arjun Desai', mobile: '9824000001', email: 'arjun@blackgaur.in', role: 'admin', language_pref: 'en', is_active: true, last_login_at: '2026-06-22T07:10:00' },
-  { id: 2, name: 'Kavya Nair', mobile: '9824000002', email: 'kavya@blackgaur.in', role: 'trip_manager', language_pref: 'en', is_active: true, last_login_at: '2026-06-22T06:40:00' },
-  { id: 3, name: 'Priya Shah', mobile: '9824000003', email: 'priya@blackgaur.in', role: 'finance_manager', language_pref: 'gu', is_active: true, last_login_at: '2026-06-21T19:00:00' },
-  { id: 4, name: 'Rahul Verma', mobile: '9824000004', email: 'rahul@blackgaur.in', role: 'account_manager', language_pref: 'hi', is_active: true, last_login_at: '2026-06-22T05:55:00' },
+  { id: 1, name: 'Arjun Desai', mobile: '9824000001', email: 'arjun@transco.in', role: 'admin', language_pref: 'en', is_active: true, last_login_at: '2026-06-22T07:10:00' },
+  { id: 2, name: 'Kavya Nair', mobile: '9824000002', email: 'kavya@transco.in', role: 'trip_manager', language_pref: 'en', is_active: true, last_login_at: '2026-06-22T06:40:00' },
+  { id: 3, name: 'Priya Shah', mobile: '9824000003', email: 'priya@transco.in', role: 'finance_manager', language_pref: 'gu', is_active: true, last_login_at: '2026-06-21T19:00:00' },
+  { id: 4, name: 'Rahul Verma', mobile: '9824000004', email: 'rahul@transco.in', role: 'account_manager', language_pref: 'hi', is_active: true, last_login_at: '2026-06-22T05:55:00' },
   { id: 11, name: 'Ramesh Yadav', mobile: '9824111111', email: null, role: 'driver', language_pref: 'hi', is_active: true, last_login_at: '2026-06-22T04:20:00' },
 ];
 

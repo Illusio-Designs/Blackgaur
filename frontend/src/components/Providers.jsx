@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ToastViewport } from '@/components/ui/Toast';
+import ThemeProvider from '@/components/ThemeProvider';
 
 export default function Providers({ children }) {
   const [client] = useState(
@@ -20,7 +21,7 @@ export default function Providers({ children }) {
 
   return (
     <QueryClientProvider client={client}>
-      {children}
+      <ThemeProvider>{children}</ThemeProvider>
       <ToastViewport />
     </QueryClientProvider>
   );

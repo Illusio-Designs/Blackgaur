@@ -1,7 +1,7 @@
 'use strict';
 
 /**
- * Blackgaur TMS seed (idempotent).
+ * TMS seed (idempotent).
  * - 5 system roles with the full permission matrix (TMS Architecture §2.2)
  * - one default branch
  * - one admin user

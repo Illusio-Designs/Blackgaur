@@ -1,25 +1,20 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Check, X } from 'lucide-react';
+import { ArrowRight, CheckCircle2 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import ServicesGrid from '@/components/marketing/ServicesGrid';
+import { Link } from '@/i18n/routing';
+import Button from '@/components/ui/Button';
+import { serviceIcon } from '@/components/marketing/ServicesGrid';
+import WhyChooseUs from '@/components/marketing/WhyChooseUs';
+import { useBranding } from '@/hooks/useBranding';
 import { stagger, staggerItem } from '@/lib/animations';
-
-const COMPARISON = [
-  'Live trip tracking from pickup to POD',
-  'Automatic FASTag toll reconciliation',
-  'Fuel-card limits & mileage per vehicle',
-  'GST + RCM compliant invoicing',
-  'Trip-level P&L and utilisation reports',
-  'Immutable audit trail of every action',
-];
-
-const ROLES = ['admin', 'trip_manager', 'finance_manager', 'account_manager', 'driver'];
 
 export default function ServicesPage() {
   const t = useTranslations('marketing');
-  const tr = useTranslations('roles');
+  const tn = useTranslations('nav');
+  const { branding } = useBranding();
+  const services = branding.content.services || [];
 
   return (
     <div className="bg-white">
@@ -44,68 +39,71 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      <ServicesGrid />
-
-      {/* comparison table */}
+      {/* detailed service cards */}
       <section className="py-20 sm:py-28">
-        <div className="container-page max-w-3xl">
-          <h2 className="text-center font-display text-3xl font-bold tracking-tight text-brand-navy">
-            Manual ops vs Blackgaur
-          </h2>
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: '-60px' }}
-            transition={{ duration: 0.4 }}
-            className="card mt-10 overflow-hidden"
-          >
-            <div className="grid grid-cols-[1fr_auto_auto] items-center border-b border-brand-border bg-brand-surface px-5 py-3 text-sm font-semibold text-brand-navy">
-              <span>Capability</span>
-              <span className="w-20 text-center text-brand-muted">Manual</span>
-              <span className="w-20 text-center text-brand-blue">Blackgaur</span>
-            </div>
-            {COMPARISON.map((row) => (
-              <div
-                key={row}
-                className="grid grid-cols-[1fr_auto_auto] items-center border-b border-brand-border px-5 py-3.5 text-sm last:border-0"
-              >
-                <span className="pr-4 text-brand-text">{row}</span>
-                <span className="flex w-20 justify-center">
-                  <X className="h-5 w-5 text-brand-danger/70" />
-                </span>
-                <span className="flex w-20 justify-center">
-                  <Check className="h-5 w-5 text-brand-success" />
-                </span>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* role cards */}
-      <section className="bg-brand-surface py-20 sm:py-28">
         <div className="container-page">
-          <h2 className="text-center font-display text-3xl font-bold tracking-tight text-brand-navy">
-            Built for every role
-          </h2>
           <motion.div
             variants={stagger}
             initial="initial"
             whileInView="animate"
             viewport={{ once: true, margin: '-60px' }}
-            className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
+            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
           >
-            {ROLES.map((role) => (
-              <motion.div key={role} variants={staggerItem} className="card p-6">
-                <span className="inline-flex rounded-full bg-brand-blue/10 px-3 py-1 text-xs font-semibold text-brand-blue">
-                  {tr(role)}
-                </span>
-                <p className="mt-4 text-sm leading-relaxed text-brand-muted">
-                  {tr(`${role}_desc`)}
-                </p>
-              </motion.div>
-            ))}
+            {services.map((s) => {
+              const { Icon, tint } = serviceIcon(s.key);
+              return (
+                <motion.div
+                  key={s.key || s.title}
+                  variants={staggerItem}
+                  whileHover={{ y: -4 }}
+                  transition={{ type: 'spring', stiffness: 300, damping: 22 }}
+                  className="card flex flex-col p-7 transition-shadow hover:shadow-elevated"
+                >
+                  <span className={`inline-flex h-14 w-14 items-center justify-center rounded-2xl ${tint}`}>
+                    <Icon className="h-7 w-7" />
+                  </span>
+                  <h3 className="mt-6 font-display text-xl font-semibold text-brand-navy">
+                    {s.title}
+                  </h3>
+                  <p className="mt-2 flex-1 text-sm leading-relaxed text-brand-muted">
+                    {s.description}
+                  </p>
+                  <Link
+                    href="/quote"
+                    className="mt-5 inline-flex items-center gap-1.5 text-sm font-semibold text-brand-blue transition hover:gap-2.5"
+                  >
+                    {tn('getQuote')}
+                    <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </motion.div>
+              );
+            })}
           </motion.div>
+        </div>
+      </section>
+
+      <WhyChooseUs />
+
+      {/* closing band */}
+      <section className="bg-brand-surface py-20">
+        <div className="container-page">
+          <div className="card flex flex-col items-center gap-6 p-10 text-center sm:flex-row sm:justify-between sm:text-left">
+            <div>
+              <h2 className="font-display text-2xl font-bold text-brand-navy">
+                {t('servicesCtaTitle')}
+              </h2>
+              <p className="mt-2 max-w-xl text-brand-muted">{t('servicesCtaSubtitle')}</p>
+            </div>
+            <div className="flex items-center gap-2 text-sm font-medium text-brand-success">
+              <CheckCircle2 className="h-5 w-5" />
+              {t('servicesCtaNote')}
+              <Link href="/quote" className="ml-2">
+                <Button variant="amber" size="lg">
+                  {tn('getQuote')}
+                </Button>
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
     </div>

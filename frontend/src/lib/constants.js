@@ -92,6 +92,7 @@ export const NAV_ITEMS = [
   { key: 'driver', href: '/dashboard/driver', icon: 'SteeringWheel', roles: ['driver'] },
   { key: 'audit', href: '/dashboard/admin/audit-logs', icon: 'History', roles: ['admin'] },
   { key: 'translations', href: '/dashboard/admin/translations', icon: 'Languages', roles: ['admin'] },
+  { key: 'settings', href: '/dashboard/admin/settings', icon: 'Palette', roles: ['admin'] },
 ];
 
 export const INDIAN_CITIES = [

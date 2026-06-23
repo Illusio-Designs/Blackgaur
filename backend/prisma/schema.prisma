@@ -1,4 +1,4 @@
-// Blackgaur TMS — Prisma schema (MySQL 8)
+// TMS — Prisma schema (MySQL 8)
 // Full schema per TMS Architecture v3 §4. snake_case via @map/@@map.
 // Soft delete via deleted_at on major entities.
 

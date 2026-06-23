@@ -8,18 +8,20 @@ const config = {
   theme: {
     extend: {
       colors: {
+        // Driven by CSS variables (section 13) so opacity utilities like
+        // bg-brand-navy/10 keep working and buyers can re-theme at runtime.
         brand: {
-          navy: '#0B1E3D',
-          blue: '#1A56DB',
-          amber: '#D97706',
-          surface: '#F1F5F9',
-          text: '#334155',
-          muted: '#64748B',
-          success: '#065F46',
-          danger: '#991B1B',
-          fastag: '#0F766E',
-          fuel: '#9A3412',
-          border: '#E2E8F0',
+          navy: 'rgb(var(--brand-navy) / <alpha-value>)',
+          blue: 'rgb(var(--brand-blue) / <alpha-value>)',
+          amber: 'rgb(var(--brand-amber) / <alpha-value>)',
+          surface: 'rgb(var(--brand-surface) / <alpha-value>)',
+          text: 'rgb(var(--brand-text) / <alpha-value>)',
+          muted: 'rgb(var(--brand-muted) / <alpha-value>)',
+          success: 'rgb(var(--brand-success) / <alpha-value>)',
+          danger: 'rgb(var(--brand-danger) / <alpha-value>)',
+          fastag: 'rgb(var(--brand-fastag) / <alpha-value>)',
+          fuel: 'rgb(var(--brand-fuel) / <alpha-value>)',
+          border: 'rgb(var(--brand-border) / <alpha-value>)',
         },
       },
       fontFamily: {

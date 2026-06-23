@@ -6,35 +6,17 @@ import { Menu, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import Button from '@/components/ui/Button';
+import BrandLogo from '@/components/BrandLogo';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import { cn } from '@/lib/utils';
 
 const NAV_LINKS = [
   { key: 'home', href: '/' },
-  { key: 'about', href: '/about' },
   { key: 'services', href: '/services' },
   { key: 'track', href: '/track' },
-  { key: 'pricing', href: '/pricing' },
+  { key: 'about', href: '/about' },
   { key: 'contact', href: '/contact' },
 ];
-
-function Logo({ dark = false }) {
-  return (
-    <Link href="/" className="flex items-center gap-2.5">
-      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-brand-amber font-display text-lg font-extrabold text-white shadow-sm">
-        B
-      </span>
-      <span
-        className={cn(
-          'font-display text-xl font-bold tracking-tight',
-          dark ? 'text-white' : 'text-brand-navy',
-        )}
-      >
-        Blackgaur
-      </span>
-    </Link>
-  );
-}
 
 export default function Navbar() {
   const t = useTranslations('nav');
@@ -58,7 +40,9 @@ export default function Navbar() {
       )}
     >
       <nav className="container-page flex h-16 items-center justify-between">
-        <Logo />
+        <Link href="/" aria-label={t('home')}>
+          <BrandLogo />
+        </Link>
 
         <div className="hidden items-center gap-1 lg:flex">
           {NAV_LINKS.map((l) => (
@@ -80,9 +64,9 @@ export default function Navbar() {
           >
             {t('login')}
           </Link>
-          <Link href="/login">
+          <Link href="/quote">
             <Button variant="amber" size="md">
-              {t('getStarted')}
+              {t('getQuote')}
             </Button>
           </Link>
         </div>
@@ -116,7 +100,9 @@ export default function Navbar() {
               className="fixed right-0 top-0 z-50 flex h-full w-[82%] max-w-sm flex-col bg-white p-6 shadow-elevated lg:hidden"
             >
               <div className="flex items-center justify-between">
-                <Logo />
+                <Link href="/" onClick={() => setOpen(false)}>
+                  <BrandLogo />
+                </Link>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
@@ -147,9 +133,9 @@ export default function Navbar() {
                     {t('login')}
                   </Button>
                 </Link>
-                <Link href="/login" onClick={() => setOpen(false)}>
+                <Link href="/quote" onClick={() => setOpen(false)}>
                   <Button variant="amber" size="lg" className="w-full">
-                    {t('getStarted')}
+                    {t('getQuote')}
                   </Button>
                 </Link>
               </div>

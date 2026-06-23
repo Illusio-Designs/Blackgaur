@@ -9,6 +9,23 @@
     --font-mono: 'JetBrains Mono';
     --font-hindi: 'Hind Vadodara';
     --font-gujarati: 'Noto Sans Gujarati';
+
+    /* Brand colors as RGB channels (section 13.1) — DYNAMIC, overridden at
+       runtime by ThemeProvider from /v1/branding. Defaults match section 13.1
+       hexes so nothing changes visually until a buyer customizes. */
+    --brand-navy: 11 30 61; /* #0B1E3D — sidebar */
+    --brand-blue: 26 86 219; /* #1A56DB — primary */
+    --brand-amber: 217 119 6; /* #D97706 — accent */
+
+    /* Fixed tokens (not buyer-configurable) */
+    --brand-surface: 241 245 249; /* #F1F5F9 */
+    --brand-text: 51 65 85; /* #334155 */
+    --brand-muted: 100 116 139; /* #64748B */
+    --brand-success: 6 95 70; /* #065F46 */
+    --brand-danger: 153 27 27; /* #991B1B */
+    --brand-fastag: 15 118 110; /* #0F766E */
+    --brand-fuel: 154 52 18; /* #9A3412 */
+    --brand-border: 226 232 240; /* #E2E8F0 */
   }
 
   html {

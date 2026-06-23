@@ -1,13 +1,17 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import { Satellite, Radio, FileCheck2, Network } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useBranding } from '@/hooks/useBranding';
 import { stagger, staggerItem } from '@/lib/animations';
 
-const STEPS = ['one', 'two', 'three', 'four'];
+const ICONS = [Satellite, Radio, FileCheck2, Network];
 
-export default function HowItWorks() {
+export default function WhyChooseUs() {
   const t = useTranslations('marketing');
+  const { branding } = useBranding();
+  const why = branding.content.why || [];
 
   return (
     <section className="bg-white py-20 sm:py-28">
@@ -20,7 +24,7 @@ export default function HowItWorks() {
             transition={{ duration: 0.4 }}
             className="font-display text-3xl font-bold tracking-tight text-brand-navy sm:text-4xl"
           >
-            {t('howTitle')}
+            {t('whyTitle')}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 16 }}
@@ -29,7 +33,7 @@ export default function HowItWorks() {
             transition={{ duration: 0.4, delay: 0.08 }}
             className="mt-4 text-lg text-brand-muted"
           >
-            {t('howSubtitle')}
+            {t('whySubtitle')}
           </motion.p>
         </div>
 
@@ -38,24 +42,22 @@ export default function HowItWorks() {
           initial="initial"
           whileInView="animate"
           viewport={{ once: true, margin: '-60px' }}
-          className="relative mt-16 grid gap-10 lg:grid-cols-4"
+          className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-4"
         >
-          {/* connecting line (desktop) */}
-          <div className="absolute left-0 right-0 top-6 hidden h-px bg-gradient-to-r from-transparent via-brand-border to-transparent lg:block" />
-
-          {STEPS.map((step, i) => (
-            <motion.div key={step} variants={staggerItem} className="relative text-center lg:text-left">
-              <span className="relative z-10 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-navy font-display text-lg font-bold text-white shadow-elevated">
-                {i + 1}
-              </span>
-              <h3 className="mt-5 font-display text-lg font-semibold text-brand-navy">
-                {t(`step.${step}`)}
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-brand-muted">
-                {t(`step.${step}Desc`)}
-              </p>
-            </motion.div>
-          ))}
+          {why.map((w, i) => {
+            const Icon = ICONS[i % ICONS.length];
+            return (
+              <motion.div key={w.title} variants={staggerItem} className="card p-6">
+                <span className="inline-flex h-12 w-12 items-center justify-center rounded-xl bg-brand-navy text-white">
+                  <Icon className="h-6 w-6" />
+                </span>
+                <h3 className="mt-5 font-display text-lg font-semibold text-brand-navy">
+                  {w.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-brand-muted">{w.description}</p>
+              </motion.div>
+            );
+          })}
         </motion.div>
       </div>
     </section>

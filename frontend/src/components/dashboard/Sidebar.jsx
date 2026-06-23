@@ -6,6 +6,7 @@ import * as Icons from 'lucide-react';
 import { usePathname, Link } from '@/i18n/routing';
 import { NAV_ITEMS } from '@/lib/constants';
 import { useUiStore } from '@/store/uiStore';
+import { useBranding } from '@/hooks/useBranding';
 import { cn } from '@/lib/utils';
 
 function NavIcon({ name, className }) {
@@ -19,6 +20,9 @@ export default function Sidebar({ role = 'admin' }) {
   const collapsed = useUiStore((s) => s.sidebarCollapsed);
   const sidebarOpen = useUiStore((s) => s.sidebarOpen);
   const setSidebarOpen = useUiStore((s) => s.setSidebarOpen);
+  const { branding } = useBranding();
+  const companyName = branding.companyName || 'Company';
+  const logo = branding.logoDarkUrl || branding.logoUrl;
 
   const items = useMemo(
     () => NAV_ITEMS.filter((item) => item.roles.includes(role)),
@@ -42,11 +46,18 @@ export default function Sidebar({ role = 'admin' }) {
         )}
       >
         <div className="flex h-16 items-center gap-2.5 px-5">
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-amber font-display text-lg font-bold text-white">
-            B
-          </div>
-          {!collapsed && (
-            <span className="font-display text-lg font-bold tracking-tight">Blackgaur</span>
+          {logo ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={logo} alt={companyName} className="h-9 w-auto max-h-10 shrink-0 object-contain" />
+          ) : (
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-brand-amber font-display text-lg font-bold text-white">
+              {companyName.charAt(0).toUpperCase()}
+            </div>
+          )}
+          {!collapsed && !logo && (
+            <span className="truncate font-display text-lg font-bold tracking-tight">
+              {companyName}
+            </span>
           )}
         </div>
 

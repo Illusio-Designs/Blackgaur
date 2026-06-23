@@ -3,32 +3,28 @@
 import { motion } from 'framer-motion';
 import { Target, Compass, Users } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useBranding } from '@/hooks/useBranding';
 import { stagger, staggerItem } from '@/lib/animations';
-import { initials } from '@/lib/utils';
 
 const MILESTONES = [
-  { year: '2019', title: 'The first mile', desc: 'Founded in Ahmedabad to digitise a 200-truck fleet.' },
-  { year: '2021', title: 'FASTag & fuel sync', desc: 'Launched automated toll and fuel-card reconciliation.' },
-  { year: '2023', title: 'RCM invoicing', desc: 'Full GST + reverse-charge invoicing for GTA operators.' },
-  { year: '2024', title: '1,000+ vehicles', desc: 'Crossed a thousand tracked vehicles across 14 cities.' },
-  { year: '2026', title: 'One platform', desc: 'Pickup to payment, unified for India’s transport sector.' },
+  { year: '2015', title: 'First fleet on the road', desc: 'Started with a handful of trucks moving freight across Gujarat.' },
+  { year: '2018', title: 'Pan-India corridors', desc: 'Expanded into the western and northern industrial corridors.' },
+  { year: '2021', title: 'Tech-driven operations', desc: 'GPS tracking and FASTag-enabled fleet for full trip visibility.' },
+  { year: '2023', title: 'GST & RCM billing', desc: 'Compliant invoicing with e-way bill and reverse-charge handling.' },
+  { year: '2026', title: 'A trusted network', desc: 'A growing network of owned and attached vehicles nationwide.' },
 ];
 
-const TEAM = [
-  { name: 'Arjun Mehta', role: 'Founder & CEO' },
-  { name: 'Priya Nair', role: 'Head of Product' },
-  { name: 'Rohan Desai', role: 'VP Engineering' },
-  { name: 'Sneha Patel', role: 'Customer Success' },
-];
-
-const MISSION = [
-  { icon: Target, title: 'Transparency', desc: 'Every kilometre, toll and rupee accounted for in real time.' },
-  { icon: Compass, title: 'Control', desc: 'Plan, assign and reconcile from a single source of truth.' },
-  { icon: Users, title: 'Built for India', desc: 'GST, RCM, FASTag and fuel cards — native, not bolted on.' },
+const VALUES = [
+  { icon: Target, title: 'Reliability', desc: 'On-time pickup and delivery, every consignment, every route.' },
+  { icon: Compass, title: 'Transparency', desc: 'Live tracking and clear, GST-compliant billing — no surprises.' },
+  { icon: Users, title: 'Built for India', desc: 'Freight handling tuned to Indian highways, tolls and compliance.' },
 ];
 
 export default function AboutPage() {
   const t = useTranslations('marketing');
+  const { branding } = useBranding();
+  const about = branding.content.about;
+  const stats = branding.content.stats || [];
 
   return (
     <div className="bg-white">
@@ -41,7 +37,7 @@ export default function AboutPage() {
             transition={{ duration: 0.5 }}
             className="mx-auto max-w-3xl font-display text-4xl font-extrabold tracking-tight text-white sm:text-5xl"
           >
-            {t('aboutTitle')}
+            {about.heading}
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 20 }}
@@ -49,12 +45,35 @@ export default function AboutPage() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="mx-auto mt-5 max-w-2xl text-lg text-slate-300"
           >
-            {t('aboutSubtitle')}
+            {about.body}
           </motion.p>
         </div>
       </section>
 
-      {/* mission */}
+      {/* stats band */}
+      {stats.length > 0 && (
+        <section className="border-b border-brand-border bg-white py-14">
+          <div className="container-page grid grid-cols-2 gap-8 lg:grid-cols-4">
+            {stats.map((s, i) => (
+              <motion.div
+                key={`${s.label}-${i}`}
+                initial={{ opacity: 0, y: 16 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-60px' }}
+                transition={{ duration: 0.4, delay: i * 0.08 }}
+                className="text-center"
+              >
+                <div className="font-display text-3xl font-extrabold text-brand-navy sm:text-4xl">
+                  {s.value}
+                </div>
+                <p className="mt-2 text-sm font-medium text-brand-muted">{s.label}</p>
+              </motion.div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* values */}
       <section className="py-20 sm:py-28">
         <div className="container-page">
           <motion.div
@@ -64,7 +83,7 @@ export default function AboutPage() {
             viewport={{ once: true, margin: '-60px' }}
             className="grid gap-6 sm:grid-cols-3"
           >
-            {MISSION.map((m) => {
+            {VALUES.map((m) => {
               const Icon = m.icon;
               return (
                 <motion.div key={m.title} variants={staggerItem} className="card p-7">
@@ -82,11 +101,11 @@ export default function AboutPage() {
         </div>
       </section>
 
-      {/* milestones */}
+      {/* journey */}
       <section className="bg-brand-surface py-20 sm:py-28">
         <div className="container-page max-w-3xl">
           <h2 className="font-display text-3xl font-bold tracking-tight text-brand-navy">
-            Our journey
+            {t('aboutJourney')}
           </h2>
           <div className="relative mt-12 pl-8">
             <div className="absolute left-[7px] top-2 h-[calc(100%-1rem)] w-0.5 bg-brand-border" />
@@ -108,38 +127,6 @@ export default function AboutPage() {
               </motion.div>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* team */}
-      <section className="py-20 sm:py-28">
-        <div className="container-page">
-          <h2 className="text-center font-display text-3xl font-bold tracking-tight text-brand-navy">
-            The team
-          </h2>
-          <motion.div
-            variants={stagger}
-            initial="initial"
-            whileInView="animate"
-            viewport={{ once: true, margin: '-60px' }}
-            className="mx-auto mt-12 grid max-w-4xl gap-6 sm:grid-cols-2 lg:grid-cols-4"
-          >
-            {TEAM.map((member) => (
-              <motion.div
-                key={member.name}
-                variants={staggerItem}
-                className="card flex flex-col items-center p-6 text-center"
-              >
-                <span className="flex h-16 w-16 items-center justify-center rounded-full bg-brand-navy font-display text-lg font-bold text-white">
-                  {initials(member.name)}
-                </span>
-                <p className="mt-4 font-display text-base font-semibold text-brand-navy">
-                  {member.name}
-                </p>
-                <p className="mt-1 text-sm text-brand-muted">{member.role}</p>
-              </motion.div>
-            ))}
-          </motion.div>
         </div>
       </section>
     </div>

@@ -1,13 +1,15 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, MapPin } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import Button from '@/components/ui/Button';
+import { useBranding } from '@/hooks/useBranding';
 
 export default function CTASection() {
   const t = useTranslations('marketing');
+  const { branding } = useBranding();
 
   return (
     <section className="bg-white py-20">
@@ -28,11 +30,22 @@ export default function CTASection() {
             <h2 className="mx-auto max-w-2xl font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
               {t('ctaTitle')}
             </h2>
-            <p className="mx-auto mt-4 max-w-xl text-lg text-slate-300">{t('ctaSubtitle')}</p>
-            <div className="mt-9 flex justify-center">
-              <Link href="/login">
+            <p className="mx-auto mt-4 max-w-xl text-lg text-slate-300">
+              {t('ctaSubtitle', { company: branding.companyName })}
+            </p>
+            <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+              <Link href="/quote">
                 <Button variant="amber" size="lg" iconRight={<ArrowRight className="h-5 w-5" />}>
-                  {t('heroCta')}
+                  {branding.content.hero.ctaPrimary}
+                </Button>
+              </Link>
+              <Link href="/track">
+                <Button
+                  size="lg"
+                  icon={MapPin}
+                  className="border border-white/25 bg-white/5 text-white hover:bg-white/10"
+                >
+                  {branding.content.hero.ctaSecondary}
                 </Button>
               </Link>
             </div>

@@ -1,21 +1,29 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Truck, Radio, Fuel, FileText, BarChart3, History } from 'lucide-react';
+import { Truck, Boxes, Container, Snowflake, Warehouse, MapPin, Package } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { useBranding } from '@/hooks/useBranding';
 import { stagger, staggerItem } from '@/lib/animations';
 
-const FEATURES = [
-  { key: 'trips', icon: Truck, tint: 'bg-brand-blue/10 text-brand-blue' },
-  { key: 'fastag', icon: Radio, tint: 'bg-teal-50 text-brand-fastag' },
-  { key: 'fuel', icon: Fuel, tint: 'bg-orange-50 text-brand-fuel' },
-  { key: 'invoices', icon: FileText, tint: 'bg-emerald-50 text-brand-success' },
-  { key: 'reports', icon: BarChart3, tint: 'bg-indigo-50 text-indigo-600' },
-  { key: 'audit', icon: History, tint: 'bg-amber-50 text-brand-amber' },
-];
+// Map a service key to an icon + tint. Falls back gracefully for custom keys.
+export const SERVICE_ICONS = {
+  ftl: { Icon: Truck, tint: 'bg-brand-blue/10 text-brand-blue' },
+  ptl: { Icon: Boxes, tint: 'bg-amber-50 text-brand-amber' },
+  container: { Icon: Container, tint: 'bg-indigo-50 text-indigo-600' },
+  coldchain: { Icon: Snowflake, tint: 'bg-teal-50 text-brand-fastag' },
+  warehousing: { Icon: Warehouse, tint: 'bg-emerald-50 text-brand-success' },
+  lastmile: { Icon: MapPin, tint: 'bg-orange-50 text-brand-fuel' },
+};
 
-export default function ServicesGrid() {
+export function serviceIcon(key) {
+  return SERVICE_ICONS[key] || { Icon: Package, tint: 'bg-brand-blue/10 text-brand-blue' };
+}
+
+export default function ServicesGrid({ heading, subtitle }) {
   const t = useTranslations('marketing');
+  const { branding } = useBranding();
+  const services = branding.content.services || [];
 
   return (
     <section className="bg-brand-surface py-20 sm:py-28">
@@ -28,7 +36,7 @@ export default function ServicesGrid() {
             transition={{ duration: 0.4 }}
             className="font-display text-3xl font-bold tracking-tight text-brand-navy sm:text-4xl"
           >
-            {t('servicesTitle')}
+            {heading || t('servicesTitle')}
           </motion.h2>
           <motion.p
             initial={{ opacity: 0, y: 16 }}
@@ -37,7 +45,7 @@ export default function ServicesGrid() {
             transition={{ duration: 0.4, delay: 0.08 }}
             className="mt-4 text-lg text-brand-muted"
           >
-            {t('servicesSubtitle')}
+            {subtitle || t('servicesSubtitle')}
           </motion.p>
         </div>
 
@@ -48,27 +56,23 @@ export default function ServicesGrid() {
           viewport={{ once: true, margin: '-60px' }}
           className="mt-14 grid gap-6 sm:grid-cols-2 lg:grid-cols-3"
         >
-          {FEATURES.map((f) => {
-            const Icon = f.icon;
+          {services.map((s) => {
+            const { Icon, tint } = serviceIcon(s.key);
             return (
               <motion.div
-                key={f.key}
+                key={s.key || s.title}
                 variants={staggerItem}
                 whileHover={{ scale: 1.025, y: -4 }}
                 transition={{ type: 'spring', stiffness: 300, damping: 22 }}
                 className="card group p-6 transition-shadow hover:shadow-elevated"
               >
-                <span
-                  className={`inline-flex h-12 w-12 items-center justify-center rounded-xl ${f.tint}`}
-                >
+                <span className={`inline-flex h-12 w-12 items-center justify-center rounded-xl ${tint}`}>
                   <Icon className="h-6 w-6" />
                 </span>
                 <h3 className="mt-5 font-display text-lg font-semibold text-brand-navy">
-                  {t(`feature.${f.key}`)}
+                  {s.title}
                 </h3>
-                <p className="mt-2 text-sm leading-relaxed text-brand-muted">
-                  {t(`feature.${f.key}Desc`)}
-                </p>
+                <p className="mt-2 text-sm leading-relaxed text-brand-muted">{s.description}</p>
               </motion.div>
             );
           })}

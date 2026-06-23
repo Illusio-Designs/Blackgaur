@@ -2,10 +2,10 @@
 
 import { motion } from 'framer-motion';
 import { ArrowRight, MapPin, Truck } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 import { Link } from '@/i18n/routing';
 import Button from '@/components/ui/Button';
 import StatusBadge from '@/components/ui/StatusBadge';
+import { useBranding } from '@/hooks/useBranding';
 import { formatINR } from '@/lib/utils';
 
 const wordContainer = {
@@ -17,8 +17,9 @@ const word = {
 };
 
 export default function Hero() {
-  const t = useTranslations('marketing');
-  const words = t('heroTitle').split(' ');
+  const { branding } = useBranding();
+  const hero = branding.content.hero;
+  const words = (hero.title || '').split(' ');
 
   return (
     <section className="relative overflow-hidden bg-brand-navy pt-32 pb-24 text-white sm:pt-40 sm:pb-32">
@@ -45,7 +46,7 @@ export default function Hero() {
             className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/5 px-3.5 py-1.5 text-xs font-medium text-slate-200"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-brand-amber" />
-            {t('trustedBy')}
+            {branding.tagline}
           </motion.span>
 
           <motion.h1
@@ -67,7 +68,7 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.4 }}
             className="mt-6 max-w-xl text-lg leading-relaxed text-slate-300"
           >
-            {t('heroSubtitle')}
+            {hero.subtitle}
           </motion.p>
 
           <motion.div
@@ -76,9 +77,9 @@ export default function Hero() {
             transition={{ duration: 0.5, delay: 0.55 }}
             className="mt-9 flex flex-col gap-3 sm:flex-row"
           >
-            <Link href="/login">
+            <Link href="/quote">
               <Button variant="amber" size="lg" iconRight={<ArrowRight className="h-5 w-5" />}>
-                {t('heroCta')}
+                {hero.ctaPrimary}
               </Button>
             </Link>
             <Link href="/track">
@@ -87,13 +88,13 @@ export default function Hero() {
                 className="border border-white/25 bg-white/5 text-white hover:bg-white/10"
                 icon={MapPin}
               >
-                {t('heroSecondary')}
+                {hero.ctaSecondary}
               </Button>
             </Link>
           </motion.div>
         </div>
 
-        {/* floating dashboard mock */}
+        {/* floating shipment-tracking mock */}
         <motion.div
           initial={{ opacity: 0, y: 40, scale: 0.96 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -169,8 +170,8 @@ export default function Hero() {
             transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
             className="absolute -bottom-6 -left-6 hidden rounded-2xl border border-white/10 bg-brand-amber px-4 py-3 text-white shadow-elevated sm:block"
           >
-            <p className="text-xs opacity-90">FASTag synced</p>
-            <p className="font-mono text-lg font-bold">99.9%</p>
+            <p className="text-xs opacity-90">On-time delivery</p>
+            <p className="font-mono text-lg font-bold">99.2%</p>
           </motion.div>
         </motion.div>
       </div>

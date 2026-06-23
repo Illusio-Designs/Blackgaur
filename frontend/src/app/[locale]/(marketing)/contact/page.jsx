@@ -2,18 +2,25 @@
 
 import { useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { User, Mail, Building2, MessageSquare, CheckCircle2, MapPin } from 'lucide-react';
+import {
+  User,
+  Mail,
+  Building2,
+  MessageSquare,
+  CheckCircle2,
+  MapPin,
+  Phone,
+  MessageCircle,
+} from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import FormInput from '@/components/ui/FormInput';
 import Button from '@/components/ui/Button';
-
-const OFFICES = [
-  { city: 'Ahmedabad', line: 'Prahlad Nagar, Ahmedabad, Gujarat 380015', tag: 'Headquarters' },
-  { city: 'Mumbai', line: 'Andheri East, Mumbai, Maharashtra 400069', tag: 'Operations' },
-];
+import { useBranding } from '@/hooks/useBranding';
 
 export default function ContactPage() {
   const t = useTranslations('marketing');
+  const { branding } = useBranding();
+  const contact = branding.contact;
   const [form, setForm] = useState({ name: '', email: '', company: '', message: '' });
   const [sent, setSent] = useState(false);
 
@@ -29,6 +36,32 @@ export default function ContactPage() {
     { key: 'email', label: t('contactForm.email'), icon: Mail, type: 'email' },
     { key: 'company', label: t('contactForm.company'), icon: Building2, type: 'text' },
   ];
+
+  const fullAddress = [contact.addressLine, contact.city, contact.state]
+    .filter(Boolean)
+    .join(', ');
+
+  const details = [
+    contact.addressLine && { Icon: MapPin, label: t('contactDetails.address'), value: fullAddress },
+    contact.phone && {
+      Icon: Phone,
+      label: t('contactDetails.phone'),
+      value: contact.phone,
+      href: `tel:${contact.phone}`,
+    },
+    contact.email && {
+      Icon: Mail,
+      label: t('contactDetails.email'),
+      value: contact.email,
+      href: `mailto:${contact.email}`,
+    },
+    contact.whatsapp && {
+      Icon: MessageCircle,
+      label: t('contactDetails.whatsapp'),
+      value: contact.whatsapp,
+      href: `https://wa.me/${contact.whatsapp.replace(/[^0-9]/g, '')}`,
+    },
+  ].filter(Boolean);
 
   return (
     <div className="bg-white">
@@ -131,28 +164,53 @@ export default function ContactPage() {
             </AnimatePresence>
           </div>
 
-          {/* side panel */}
+          {/* contact details + map */}
           <div className="space-y-6">
-            <div className="grid gap-4 sm:grid-cols-2">
-              {OFFICES.map((office) => (
-                <motion.div
-                  key={office.city}
-                  initial={{ opacity: 0, y: 16 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4 }}
-                  className="card p-5"
-                >
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-brand-blue/10 px-2.5 py-1 text-xs font-semibold text-brand-blue">
-                    <MapPin className="h-3.5 w-3.5" />
-                    {office.tag}
-                  </span>
-                  <p className="mt-3 font-display text-lg font-semibold text-brand-navy">
-                    {office.city}
-                  </p>
-                  <p className="mt-1 text-sm leading-relaxed text-brand-muted">{office.line}</p>
-                </motion.div>
-              ))}
+            <div className="card p-7">
+              <h2 className="font-display text-lg font-semibold text-brand-navy">
+                {branding.companyName}
+              </h2>
+              <ul className="mt-5 space-y-4">
+                {details.map((d) => (
+                  <li key={d.label} className="flex items-start gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-blue/10 text-brand-blue">
+                      <d.Icon className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wide text-brand-muted">
+                        {d.label}
+                      </p>
+                      {d.href ? (
+                        <a
+                          href={d.href}
+                          target={d.href.startsWith('http') ? '_blank' : undefined}
+                          rel="noopener noreferrer"
+                          className="text-sm font-medium text-brand-navy transition hover:text-brand-blue"
+                        >
+                          {d.value}
+                        </a>
+                      ) : (
+                        <p className="text-sm font-medium text-brand-navy">{d.value}</p>
+                      )}
+                    </div>
+                  </li>
+                ))}
+                {contact.gstin && (
+                  <li className="flex items-start gap-3">
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-brand-amber/10 text-brand-amber">
+                      <Building2 className="h-5 w-5" />
+                    </span>
+                    <div>
+                      <p className="text-xs font-medium uppercase tracking-wide text-brand-muted">
+                        GSTIN
+                      </p>
+                      <p className="font-mono text-sm font-medium text-brand-navy">
+                        {contact.gstin}
+                      </p>
+                    </div>
+                  </li>
+                )}
+              </ul>
             </div>
 
             <motion.div
@@ -160,7 +218,7 @@ export default function ContactPage() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.5 }}
-              className="relative min-h-[260px] overflow-hidden rounded-2xl border border-brand-border bg-gradient-to-br from-brand-navy via-brand-blue to-brand-navy"
+              className="relative min-h-[240px] overflow-hidden rounded-2xl border border-brand-border bg-gradient-to-br from-brand-navy via-brand-blue to-brand-navy"
             >
               <div
                 className="absolute inset-0 opacity-20"
@@ -170,14 +228,11 @@ export default function ContactPage() {
                   backgroundSize: '40px 40px',
                 }}
               />
-              <span className="absolute left-1/3 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
-                <MapPin className="h-7 w-7 text-brand-amber drop-shadow" />
-              </span>
-              <span className="absolute left-2/3 top-1/3 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
-                <MapPin className="h-7 w-7 text-white drop-shadow" />
+              <span className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+                <MapPin className="h-8 w-8 text-brand-amber drop-shadow" />
               </span>
               <div className="absolute bottom-4 left-4 rounded-lg bg-white/90 px-3 py-1.5 text-xs font-medium text-brand-navy backdrop-blur">
-                Our offices
+                {contact.city || t('contactDetails.ourLocation')}
               </div>
             </motion.div>
           </div>

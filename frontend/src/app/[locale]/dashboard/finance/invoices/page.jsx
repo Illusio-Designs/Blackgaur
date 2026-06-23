@@ -12,6 +12,7 @@ import Modal from '@/components/ui/Modal';
 import InvoiceForm from '@/components/ui/InvoiceForm';
 import { useToast } from '@/components/ui/Toast';
 import { useInvoices, useApproveInvoice, useSendInvoice, useCreateInvoice } from '@/hooks/useInvoices';
+import { useBranding } from '@/hooks/useBranding';
 import { formatINR, formatDate } from '@/lib/utils';
 import { amountInWords } from '@/lib/gst';
 
@@ -20,6 +21,7 @@ export default function InvoicesPage() {
   const tc = useTranslations('common');
   const toast = useToast();
   const { data } = useInvoices();
+  const { branding } = useBranding();
   const approve = useApproveInvoice();
   const send = useSendInvoice();
   const create = useCreateInvoice();
@@ -146,9 +148,15 @@ export default function InvoicesPage() {
           <div className="space-y-4 font-body text-sm">
             <div className="flex items-start justify-between border-b border-brand-border pb-4">
               <div>
-                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-amber font-display text-lg font-bold text-white">B</div>
-                <p className="mt-2 font-display font-bold text-brand-navy">Blackgaur Logistics Pvt Ltd</p>
-                <p className="text-xs text-brand-muted">GSTIN: 24ABCDE1234F1Z5 · Ahmedabad, Gujarat</p>
+                <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-amber font-display text-lg font-bold text-white">
+                  {(branding.companyName || 'C').charAt(0).toUpperCase()}
+                </div>
+                <p className="mt-2 font-display font-bold text-brand-navy">
+                  {branding.legalName || branding.companyName}
+                </p>
+                <p className="text-xs text-brand-muted">
+                  GSTIN: {branding.contact.gstin} · {branding.contact.city}, {branding.contact.state}
+                </p>
               </div>
               <div className="text-right">
                 <p className="font-mono font-semibold text-brand-navy">{preview.invoice_number}</p>
