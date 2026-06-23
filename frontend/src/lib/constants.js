@@ -85,6 +85,7 @@ export const NAV_ITEMS = [
   { key: 'vehicles', href: '/dashboard/vehicles', icon: 'Container', roles: ['admin', 'trip_manager', 'finance_manager'] },
   { key: 'expenses', href: '/dashboard/finance/expenses', icon: 'ReceiptText', roles: ['admin', 'finance_manager'] },
   { key: 'invoices', href: '/dashboard/finance/invoices', icon: 'FileText', roles: ['admin', 'finance_manager', 'account_manager'] },
+  { key: 'payments', href: '/dashboard/finance/payments', icon: 'Banknote', roles: ['admin', 'finance_manager', 'account_manager'] },
   { key: 'clients', href: '/dashboard/accounts/clients', icon: 'Building2', roles: ['admin', 'account_manager', 'finance_manager'] },
   { key: 'lr', href: '/dashboard/accounts/lr', icon: 'ScrollText', roles: ['admin', 'account_manager', 'trip_manager'] },
   { key: 'fastag', href: '/dashboard/fastag', icon: 'Radio', roles: ['admin', 'finance_manager', 'trip_manager'] },
@@ -95,6 +96,58 @@ export const NAV_ITEMS = [
   { key: 'translations', href: '/dashboard/admin/translations', icon: 'Languages', roles: ['admin'] },
   { key: 'settings', href: '/dashboard/admin/settings', icon: 'Palette', roles: ['admin'] },
   { key: 'widgets', href: '/dashboard/widgets', icon: 'LayoutGrid', roles: ['admin'] },
+];
+
+// Grouped navigation (collapsible dropdown sections by management area).
+export const NAV_GROUPS = [
+  {
+    key: 'general',
+    items: [
+      { key: 'admin', href: '/dashboard/admin', icon: 'LayoutDashboard', roles: ['admin'] },
+      { key: 'driver', href: '/dashboard/driver', icon: 'Navigation', roles: ['driver'] },
+    ],
+  },
+  {
+    key: 'grp_operations',
+    items: [
+      { key: 'trips', href: '/dashboard/trips', icon: 'Truck', roles: ['admin', 'trip_manager', 'finance_manager', 'account_manager'] },
+      { key: 'vehicles', href: '/dashboard/vehicles', icon: 'Container', roles: ['admin', 'trip_manager', 'finance_manager'] },
+      { key: 'lr', href: '/dashboard/accounts/lr', icon: 'ScrollText', roles: ['admin', 'account_manager', 'trip_manager'] },
+      { key: 'fastag', href: '/dashboard/fastag', icon: 'Radio', roles: ['admin', 'finance_manager', 'trip_manager'] },
+      { key: 'fuel', href: '/dashboard/fuel', icon: 'Fuel', roles: ['admin', 'finance_manager'] },
+    ],
+  },
+  {
+    key: 'grp_finance',
+    items: [
+      { key: 'expenses', href: '/dashboard/finance/expenses', icon: 'ReceiptText', roles: ['admin', 'finance_manager'] },
+      { key: 'invoices', href: '/dashboard/finance/invoices', icon: 'FileText', roles: ['admin', 'finance_manager', 'account_manager'] },
+      { key: 'payments', href: '/dashboard/finance/payments', icon: 'Banknote', roles: ['admin', 'finance_manager', 'account_manager'] },
+      { key: 'reports', href: '/dashboard/reports', icon: 'BarChart3', roles: ['admin', 'trip_manager', 'finance_manager', 'account_manager'] },
+    ],
+  },
+  {
+    key: 'grp_accounts',
+    items: [
+      { key: 'clients', href: '/dashboard/accounts/clients', icon: 'Building2', roles: ['admin', 'account_manager', 'finance_manager'] },
+    ],
+  },
+  {
+    key: 'grp_admin',
+    items: [
+      { key: 'users', href: '/dashboard/admin/users', icon: 'Users', roles: ['admin'] },
+      { key: 'roles', href: '/dashboard/admin/roles', icon: 'ShieldCheck', roles: ['admin'] },
+      { key: 'audit', href: '/dashboard/admin/audit-logs', icon: 'History', roles: ['admin'] },
+      { key: 'translations', href: '/dashboard/admin/translations', icon: 'Languages', roles: ['admin'] },
+      { key: 'settings', href: '/dashboard/admin/settings', icon: 'Palette', roles: ['admin'] },
+    ],
+  },
+  {
+    key: 'grp_tools',
+    items: [
+      { key: 'widgets', href: '/dashboard/widgets', icon: 'LayoutGrid', roles: ['admin'] },
+    ],
+  },
 ];
 
 export const INDIAN_CITIES = [

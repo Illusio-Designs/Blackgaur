@@ -73,7 +73,13 @@
     "getQuote": "क्वोट लें",
     "settings": "सेटिंग्स",
     "widgets": "विजेट्स",
-    "vehicles": "फ्लीट"
+    "vehicles": "फ्लीट",
+    "payments": "भुगतान",
+    "grp_operations": "संचालन",
+    "grp_finance": "वित्त",
+    "grp_accounts": "खाते",
+    "grp_admin": "प्रशासन",
+    "grp_tools": "टूल्स"
   },
   "auth": {
     "loginTitle": "वापसी पर स्वागत है",
@@ -637,5 +643,23 @@
     "all": "सभी",
     "unread": "अपठित",
     "empty": "सब कुछ पढ़ लिया गया है"
+  },
+  "payments": {
+    "title": "भुगतान और टीडीएस",
+    "subtitle": "प्राप्त भुगतान और ग्राहकों द्वारा काटा गया टीडीएस दर्ज करें",
+    "recordPayment": "भुगतान दर्ज करें",
+    "paymentsTab": "प्राप्त भुगतान",
+    "tdsTab": "टीडीएस जर्नल",
+    "invoice": "चालान",
+    "gross": "सकल राशि",
+    "tdsDeducted": "टीडीएस कटौती",
+    "received": "प्राप्त राशि",
+    "mode": "माध्यम",
+    "reference": "संदर्भ",
+    "date": "तारीख",
+    "section": "धारा",
+    "tdsAmount": "टीडीएस राशि",
+    "narration": "विवरण",
+    "saved": "भुगतान दर्ज हुआ"
   }
 }

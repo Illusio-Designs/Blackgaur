@@ -73,7 +73,13 @@
     "getQuote": "ક્વોટ મેળવો",
     "settings": "સેટિંગ્સ",
     "widgets": "વિજેટ્સ",
-    "vehicles": "ફ્લીટ"
+    "vehicles": "ફ્લીટ",
+    "payments": "ચુકવણીઓ",
+    "grp_operations": "ઓપરેશન્સ",
+    "grp_finance": "ફાઇનાન્સ",
+    "grp_accounts": "એકાઉન્ટ્સ",
+    "grp_admin": "વહીવટ",
+    "grp_tools": "ટૂલ્સ"
   },
   "auth": {
     "loginTitle": "પાછા આવવા બદલ સ્વાગત છે",
@@ -637,5 +643,23 @@
     "all": "બધી",
     "unread": "વાંચ્યા વગરની",
     "empty": "બધું વાંચી લીધું છે"
+  },
+  "payments": {
+    "title": "ચુકવણી અને TDS",
+    "subtitle": "પ્રાપ્ત ચુકવણી અને ગ્રાહકો દ્વારા કાપેલ TDS નોંધો",
+    "recordPayment": "ચુકવણી નોંધો",
+    "paymentsTab": "પ્રાપ્ત ચુકવણીઓ",
+    "tdsTab": "TDS જર્નલ",
+    "invoice": "ઈન્વોઈસ",
+    "gross": "કુલ રકમ",
+    "tdsDeducted": "TDS કપાત",
+    "received": "પ્રાપ્ત રકમ",
+    "mode": "રીત",
+    "reference": "સંદર્ભ",
+    "date": "તારીખ",
+    "section": "કલમ",
+    "tdsAmount": "TDS રકમ",
+    "narration": "વર્ણન",
+    "saved": "ચુકવણી નોંધાઈ"
   }
 }

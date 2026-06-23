@@ -202,3 +202,16 @@ export const mockTripStatusDist = [
 ];
 
 export const mockActivityFeed = mockAuditLogs;
+
+// Payments received against invoices. The client (recipient) deducts TDS @2%
+// (Sec 194C) on the freight value, so amount_received = gross − tds_deducted.
+export const mockPayments = [
+  { id: 1, invoice_number: 'INV-2024-25-0002', client: mockClients[2], gross: 37800, tds_deducted: 720, amount_received: 37080, mode: 'NEFT', reference: 'NEFT-0088231', date: '2026-06-12' },
+  { id: 2, invoice_number: 'INV-2024-25-0001', client: mockClients[0], gross: 50500, tds_deducted: 1010, amount_received: 49490, mode: 'RTGS', reference: 'RTGS-0044120', date: '2026-06-20' },
+];
+
+// TDS journal — TDS deducted by clients, recorded as TDS receivable (asset).
+export const mockTdsJournal = [
+  { id: 1, date: '2026-06-12', invoice_number: 'INV-2024-25-0002', client: mockClients[2], section: '194C', tds_amount: 720, narration: 'TDS receivable on INV-2024-25-0002 (Reliance Retail)' },
+  { id: 2, date: '2026-06-20', invoice_number: 'INV-2024-25-0001', client: mockClients[0], section: '194C', tds_amount: 1010, narration: 'TDS receivable on INV-2024-25-0001 (Adani Logistics Ltd)' },
+];

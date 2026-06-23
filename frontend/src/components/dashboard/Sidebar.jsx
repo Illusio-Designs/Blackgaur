@@ -1,10 +1,11 @@
 'use client';
 
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import * as Icons from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { usePathname, Link } from '@/i18n/routing';
-import { NAV_ITEMS } from '@/lib/constants';
+import { NAV_GROUPS } from '@/lib/constants';
 import { useUiStore } from '@/store/uiStore';
 import { useBranding } from '@/hooks/useBranding';
 import { cn } from '@/lib/utils';
@@ -24,19 +25,46 @@ export default function Sidebar({ role = 'admin' }) {
   const companyName = branding.companyName || 'Company';
   const logo = branding.logoDarkUrl || branding.logoUrl;
 
-  const items = useMemo(
-    () => NAV_ITEMS.filter((item) => item.roles.includes(role)),
+  const isActive = (href) =>
+    pathname === href || (href !== '/dashboard/admin' && pathname.startsWith(href));
+
+  // Visible groups for this role (group -> its allowed items).
+  const groups = useMemo(
+    () =>
+      NAV_GROUPS.map((g) => ({
+        ...g,
+        items: g.items.filter((it) => it.roles.includes(role)),
+      })).filter((g) => g.items.length > 0),
     [role],
+  );
+
+  // Collapsible state — every group starts open.
+  const [openGroups, setOpenGroups] = useState({});
+  const isOpen = (key) => openGroups[key] !== false;
+  const toggleGroup = (key) => setOpenGroups((s) => ({ ...s, [key]: s[key] === false }));
+
+  const ItemLink = ({ item }) => (
+    <Link
+      href={item.href}
+      onClick={() => setSidebarOpen(false)}
+      title={t(item.key)}
+      className={cn(
+        'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition',
+        isActive(item.href)
+          ? 'bg-brand-blue text-white shadow-sm'
+          : 'text-white/70 hover:bg-white/10 hover:text-white',
+        collapsed && 'justify-center',
+      )}
+    >
+      <NavIcon name={item.icon} className="h-5 w-5 shrink-0" />
+      {!collapsed && <span className="truncate">{t(item.key)}</span>}
+    </Link>
   );
 
   return (
     <>
-      {/* Mobile overlay */}
       {sidebarOpen && (
-        <div
-          className="fixed inset-0 z-30 bg-brand-navy/40 lg:hidden"
-          onClick={() => setSidebarOpen(false)}
-        />
+        <div className="fixed inset-0 z-30 bg-brand-navy/40 lg:hidden" onClick={() => setSidebarOpen(false)} />
       )}
       <aside
         className={cn(
@@ -55,45 +83,50 @@ export default function Sidebar({ role = 'admin' }) {
             </div>
           )}
           {!collapsed && !logo && (
-            <span className="truncate font-display text-lg font-bold tracking-tight">
-              {companyName}
-            </span>
+            <span className="truncate font-display text-lg font-bold tracking-tight">{companyName}</span>
           )}
         </div>
 
         <nav className="scrollbar-thin flex-1 space-y-1 overflow-y-auto px-3 py-4">
-          {items.map((item) => {
-            const active =
-              pathname === item.href ||
-              (item.href !== '/dashboard/admin' && pathname.startsWith(item.href));
-            return (
-              <Link
-                key={item.key}
-                href={item.href}
-                onClick={() => setSidebarOpen(false)}
-                className={cn(
-                  'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition',
-                  active
-                    ? 'bg-brand-blue text-white shadow-sm'
-                    : 'text-white/70 hover:bg-white/10 hover:text-white',
-                  collapsed && 'justify-center',
-                )}
-                title={t(item.key)}
-              >
-                <NavIcon name={item.icon} className="h-5 w-5 shrink-0" />
-                {!collapsed && <span className="truncate">{t(item.key)}</span>}
-              </Link>
-            );
-          })}
+          {collapsed
+            ? // Icon rail: flat icons, no group headers
+              groups.flatMap((g) => g.items).map((item) => <ItemLink key={item.key} item={item} />)
+            : groups.map((g) => {
+                // The "general" group has no header — render its items directly.
+                if (g.key === 'general') {
+                  return (
+                    <div key={g.key} className="space-y-1">
+                      {g.items.map((item) => (
+                        <ItemLink key={item.key} item={item} />
+                      ))}
+                    </div>
+                  );
+                }
+                const open = isOpen(g.key);
+                return (
+                  <div key={g.key} className="pt-2">
+                    <button
+                      type="button"
+                      onClick={() => toggleGroup(g.key)}
+                      className="flex w-full items-center justify-between rounded-lg px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/40 transition hover:text-white/70"
+                    >
+                      <span>{t(g.key)}</span>
+                      <ChevronDown className={cn('h-3.5 w-3.5 transition-transform', open ? '' : '-rotate-90')} />
+                    </button>
+                    {open && (
+                      <div className="mt-1 space-y-1">
+                        {g.items.map((item) => (
+                          <ItemLink key={item.key} item={item} />
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
         </nav>
 
         <div className="border-t border-white/10 px-3 py-3">
-          <div
-            className={cn(
-              'flex items-center gap-3 rounded-xl px-3 py-2 text-xs text-white/50',
-              collapsed && 'justify-center',
-            )}
-          >
+          <div className={cn('flex items-center gap-3 rounded-xl px-3 py-2 text-xs text-white/50', collapsed && 'justify-center')}>
             <Icons.ShieldCheck className="h-4 w-4" />
             {!collapsed && <span>RBAC enforced server-side</span>}
           </div>

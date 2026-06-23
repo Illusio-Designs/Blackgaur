@@ -73,7 +73,13 @@
     "audit": "Audit Logs",
     "translations": "Translations",
     "widgets": "Widgets",
-    "vehicles": "Fleet"
+    "vehicles": "Fleet",
+    "payments": "Payments",
+    "grp_operations": "Operations",
+    "grp_finance": "Finance",
+    "grp_accounts": "Accounts",
+    "grp_admin": "Administration",
+    "grp_tools": "Tools"
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -637,5 +643,23 @@
     "all": "All",
     "unread": "Unread",
     "empty": "You are all caught up"
+  },
+  "payments": {
+    "title": "Payments & TDS",
+    "subtitle": "Record payments received and TDS deducted by clients",
+    "recordPayment": "Record payment",
+    "paymentsTab": "Payments received",
+    "tdsTab": "TDS journal",
+    "invoice": "Invoice",
+    "gross": "Gross amount",
+    "tdsDeducted": "TDS deducted",
+    "received": "Amount received",
+    "mode": "Mode",
+    "reference": "Reference",
+    "date": "Date",
+    "section": "Section",
+    "tdsAmount": "TDS amount",
+    "narration": "Narration",
+    "saved": "Payment recorded"
   }
 }
