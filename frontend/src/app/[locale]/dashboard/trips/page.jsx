@@ -9,6 +9,7 @@ import Button from '@/components/ui/Button';
 import TripCard from '@/components/ui/TripCard';
 import Drawer from '@/components/ui/Drawer';
 import FormInput from '@/components/ui/FormInput';
+import DatePicker from '@/components/ui/DatePicker';
 import MultiSelect from '@/components/ui/MultiSelect';
 import { useToast } from '@/components/ui/Toast';
 import { useTrips, useUpdateTripStatus, useCreateTrip } from '@/hooks/useTrips';
@@ -35,8 +36,9 @@ export default function TripsPage() {
     [t],
   );
   const [form, setForm] = useState({
-    origin_city: 'Ahmedabad', destination_city: 'Mumbai', client_id: 1,
-    vehicle_id: 1, driver_id: 11, cargo_type: '', freight_charges: '',
+    origin_city: 'Ahmedabad', origin_address: '', destination_city: 'Mumbai', destination_address: '',
+    client_id: 1, vehicle_id: 1, driver_id: 11, cargo_type: '', cargo_weight_kg: '', cargo_value: '',
+    planned_departure: '', freight_charges: '', eway_bill_no: '', eway_bill_expiry: '', notes: '',
   });
 
   // Local board state seeded from query data
@@ -81,10 +83,23 @@ export default function TripsPage() {
       lr_number: `LR-2024-25-${String(board.length + 1).padStart(4, '0')}`,
       status: 'planned',
       origin_city: form.origin_city,
+      origin_address: form.origin_address,
       destination_city: form.destination_city,
+      destination_address: form.destination_address,
       client, vehicle, driver,
+      branch: { id: 1, name: 'Ahmedabad HQ' },
       cargo_type: form.cargo_type || 'General cargo',
+      cargo_weight_kg: Number(form.cargo_weight_kg) || 0,
+      cargo_value: Number(form.cargo_value) || 0,
+      planned_departure: form.planned_departure || null,
       freight_charges: Number(form.freight_charges) || 0,
+      eway_bill_no: form.eway_bill_no,
+      eway_bill_expiry: form.eway_bill_expiry || null,
+      estimated_fastag_toll: 0,
+      actual_fastag_toll: 0,
+      fuel_consumed_ltr: 0,
+      notes: form.notes,
+      created_at: new Date().toISOString(),
     };
     setTrips([newTrip, ...board]);
     createTrip.mutate(newTrip);
@@ -210,8 +225,16 @@ export default function TripsPage() {
           <FormInput as="select" label={t('driver')} value={form.driver_id} onChange={(e) => setForm({ ...form, driver_id: e.target.value })}>
             {mockDrivers.map((dr) => <option key={dr.id} value={dr.id}>{dr.name}</option>)}
           </FormInput>
+          <FormInput as="textarea" label={t('originAddress')} className="sm:col-span-2" placeholder="Full pickup address" value={form.origin_address} onChange={(e) => setForm({ ...form, origin_address: e.target.value })} />
+          <FormInput as="textarea" label={t('destinationAddress')} className="sm:col-span-2" placeholder="Full delivery address" value={form.destination_address} onChange={(e) => setForm({ ...form, destination_address: e.target.value })} />
+          <FormInput label={t('cargo')} placeholder="Industrial goods" value={form.cargo_type} onChange={(e) => setForm({ ...form, cargo_type: e.target.value })} />
+          <FormInput label={t('cargoWeight')} type="number" placeholder="14500" value={form.cargo_weight_kg} onChange={(e) => setForm({ ...form, cargo_weight_kg: e.target.value })} />
+          <FormInput label={t('cargoValue')} type="number" placeholder="2400000" value={form.cargo_value} onChange={(e) => setForm({ ...form, cargo_value: e.target.value })} />
           <FormInput label={t('freight')} type="number" placeholder="48000" value={form.freight_charges} onChange={(e) => setForm({ ...form, freight_charges: e.target.value })} />
-          <FormInput label={t('cargo')} className="sm:col-span-2" placeholder="Industrial goods" value={form.cargo_type} onChange={(e) => setForm({ ...form, cargo_type: e.target.value })} />
+          <DatePicker label={t('plannedDeparture')} value={form.planned_departure} onChange={(v) => setForm({ ...form, planned_departure: v })} />
+          <FormInput label={t('ewayBill')} placeholder="EWB-310024889" value={form.eway_bill_no} onChange={(e) => setForm({ ...form, eway_bill_no: e.target.value })} />
+          <DatePicker label={t('ewayBillExpiry')} value={form.eway_bill_expiry} onChange={(v) => setForm({ ...form, eway_bill_expiry: v })} />
+          <FormInput as="textarea" label={t('notes')} className="sm:col-span-2" placeholder="Internal notes" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
         </div>
       </Drawer>
     </div>

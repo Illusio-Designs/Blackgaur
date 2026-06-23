@@ -87,7 +87,9 @@
     "changeNumber": "Change number",
     "invalidMobile": "Enter a valid 10-digit mobile number",
     "demoNotice": "Demo: enter any 10-digit number, then any 6-digit OTP",
-    "selectRole": "Demo role (routes you to that dashboard)"
+    "selectRole": "Demo role (routes you to that dashboard)",
+    "verified": "Verified!",
+    "redirecting": "Taking you to your dashboard…"
   },
   "roles": {
     "admin": "Admin",
@@ -146,7 +148,15 @@
       "in_transit": "In Transit",
       "delivered": "Delivered",
       "cancelled": "Cancelled"
-    }
+    },
+    "originAddress": "Pickup address",
+    "destinationAddress": "Delivery address",
+    "cargoWeight": "Cargo weight (kg)",
+    "cargoValue": "Cargo value (₹)",
+    "plannedDeparture": "Planned departure",
+    "ewayBill": "E-way bill no.",
+    "ewayBillExpiry": "E-way bill expiry",
+    "notes": "Notes"
   },
   "expenses": {
     "title": "Expense Queue",

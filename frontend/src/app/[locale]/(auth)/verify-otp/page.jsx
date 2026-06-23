@@ -2,7 +2,8 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ShieldCheck } from 'lucide-react';
+import confetti from 'canvas-confetti';
+import { ArrowLeft, ShieldCheck, Check } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { Link, useRouter } from '@/i18n/routing';
@@ -24,6 +25,7 @@ function VerifyOtpInner() {
   const [otp, setOtp] = useState('');
   const [error, setError] = useState('');
   const [seconds, setSeconds] = useState(60);
+  const [verified, setVerified] = useState(false);
 
   useEffect(() => {
     if (seconds <= 0) return undefined;
@@ -42,13 +44,79 @@ function VerifyOtpInner() {
     } catch {
       // demo fallback already sets the session cookie inside the hook
     }
-    router.push(roleHome(role));
+    // Success micro-animation, then route to the role dashboard.
+    setVerified(true);
+    const reduce =
+      typeof window !== 'undefined' &&
+      window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+    if (!reduce) {
+      confetti({
+        particleCount: 70,
+        spread: 72,
+        startVelocity: 38,
+        origin: { y: 0.4 },
+        colors: ['#1A56DB', '#D97706', '#065F46'],
+      });
+    }
+    setTimeout(() => router.push(roleHome(role)), 1300);
   };
 
   const resend = () => {
     if (seconds > 0) return;
     setSeconds(60);
   };
+
+  if (verified) {
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="flex flex-col items-center justify-center py-12 text-center"
+      >
+        <div className="relative flex h-24 w-24 items-center justify-center">
+          {/* expanding pulse ring */}
+          <motion.span
+            initial={{ scale: 0.6, opacity: 0.6 }}
+            animate={{ scale: 1.8, opacity: 0 }}
+            transition={{ duration: 1, repeat: Infinity, ease: 'easeOut' }}
+            className="absolute inset-0 rounded-full bg-brand-success/30"
+          />
+          {/* success disc */}
+          <motion.span
+            initial={{ scale: 0, rotate: -25 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 15 }}
+            className="relative flex h-24 w-24 items-center justify-center rounded-full bg-brand-success text-white shadow-elevated"
+          >
+            <motion.span
+              initial={{ scale: 0, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              transition={{ delay: 0.18, type: 'spring', stiffness: 320, damping: 14 }}
+            >
+              <Check className="h-11 w-11" strokeWidth={3} />
+            </motion.span>
+          </motion.span>
+        </div>
+        <motion.h1
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="mt-6 font-display text-3xl font-bold tracking-tight text-brand-navy"
+        >
+          {t('verified')}
+        </motion.h1>
+        <motion.p
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.35 }}
+          className="mt-2 flex items-center gap-2 text-sm text-brand-muted"
+        >
+          <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-brand-blue/30 border-t-brand-blue" />
+          {t('redirecting')}
+        </motion.p>
+      </motion.div>
+    );
+  }
 
   return (
     <motion.div

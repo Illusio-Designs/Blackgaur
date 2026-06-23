@@ -10,6 +10,7 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import Modal from '@/components/ui/Modal';
 import Drawer from '@/components/ui/Drawer';
 import FormInput from '@/components/ui/FormInput';
+import DatePicker from '@/components/ui/DatePicker';
 import Timeline from '@/components/ui/Timeline';
 import { useToast } from '@/components/ui/Toast';
 import { useTrips } from '@/hooks/useTrips';
@@ -18,7 +19,11 @@ import { INDIAN_CITIES } from '@/lib/constants';
 import { mockClients, mockVehicles, mockDrivers } from '@/lib/mock';
 
 const STEP_ORDER = ['planned', 'loading', 'in_transit', 'delivered'];
-const EMPTY_LR = { client_id: '', origin_city: 'Ahmedabad', destination_city: 'Mumbai', vehicle_id: '', driver_id: '', freight_charges: '', cargo_type: '' };
+const EMPTY_LR = {
+  client_id: '', origin_city: 'Ahmedabad', origin_address: '', destination_city: 'Mumbai', destination_address: '',
+  vehicle_id: '', driver_id: '', cargo_type: '', cargo_weight_kg: '', cargo_value: '',
+  planned_departure: '', freight_charges: '', eway_bill_no: '', eway_bill_expiry: '', notes: '',
+};
 
 export default function LrBoardPage() {
   const t = useTranslations('lr');
@@ -70,7 +75,13 @@ export default function LrBoardPage() {
           <div>
             <div className="mb-4 rounded-xl bg-brand-surface p-3 text-sm">
               <p className="font-medium text-brand-navy">{track.origin_city} → {track.destination_city}</p>
-              <p className="text-xs text-brand-muted">{track.client?.company_name} · {track.vehicle?.registration_no}</p>
+              <p className="text-xs text-brand-muted">{track.client?.company_name} · {track.vehicle?.registration_no} · {track.driver?.name}</p>
+              <div className="mt-2 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-brand-muted">
+                <span>{tt('cargo')}: <span className="text-brand-text">{track.cargo_type}</span></span>
+                <span>{tt('cargoWeight')}: <span className="font-mono text-brand-text">{track.cargo_weight_kg} kg</span></span>
+                <span>{tt('freight')}: <span className="font-mono text-brand-text">{formatINR(track.freight_charges)}</span></span>
+                <span>{tt('ewayBill')}: <span className="font-mono text-brand-text">{track.eway_bill_no || '—'}</span></span>
+              </div>
             </div>
             <Timeline steps={trackSteps} />
           </div>
@@ -108,8 +119,16 @@ export default function LrBoardPage() {
             <option value="">—</option>
             {mockDrivers.map((dr) => <option key={dr.id} value={dr.id}>{dr.name}</option>)}
           </FormInput>
+          <FormInput as="textarea" label={tt('originAddress')} className="sm:col-span-2" placeholder="Full pickup address" value={form.origin_address} onChange={(e) => setForm({ ...form, origin_address: e.target.value })} />
+          <FormInput as="textarea" label={tt('destinationAddress')} className="sm:col-span-2" placeholder="Full delivery address" value={form.destination_address} onChange={(e) => setForm({ ...form, destination_address: e.target.value })} />
+          <FormInput label={tt('cargo')} placeholder="Industrial goods" value={form.cargo_type} onChange={(e) => setForm({ ...form, cargo_type: e.target.value })} />
+          <FormInput label={tt('cargoWeight')} type="number" placeholder="14500" value={form.cargo_weight_kg} onChange={(e) => setForm({ ...form, cargo_weight_kg: e.target.value })} />
+          <FormInput label={tt('cargoValue')} type="number" placeholder="2400000" value={form.cargo_value} onChange={(e) => setForm({ ...form, cargo_value: e.target.value })} />
           <FormInput label={tt('freight')} type="number" placeholder="48000" value={form.freight_charges} onChange={(e) => setForm({ ...form, freight_charges: e.target.value })} />
-          <FormInput label={tt('cargo')} className="sm:col-span-2" placeholder="Industrial goods" value={form.cargo_type} onChange={(e) => setForm({ ...form, cargo_type: e.target.value })} />
+          <DatePicker label={tt('plannedDeparture')} value={form.planned_departure} onChange={(v) => setForm({ ...form, planned_departure: v })} />
+          <FormInput label={tt('ewayBill')} placeholder="EWB-310024889" value={form.eway_bill_no} onChange={(e) => setForm({ ...form, eway_bill_no: e.target.value })} />
+          <DatePicker label={tt('ewayBillExpiry')} value={form.eway_bill_expiry} onChange={(v) => setForm({ ...form, eway_bill_expiry: v })} />
+          <FormInput as="textarea" label={tt('notes')} className="sm:col-span-2" placeholder="Internal notes" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
         </div>
       </Drawer>
     </div>

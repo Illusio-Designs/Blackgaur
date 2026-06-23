@@ -22,32 +22,55 @@ export const mockDrivers = [
   { id: 14, name: 'Dinesh Solanki', mobile: '9824444444', role: 'driver' },
 ];
 
+// Branches (backend: branches table referenced by trips/users)
+export const mockBranches = [
+  { id: 1, name: 'Ahmedabad HQ', city: 'Ahmedabad', state_code: '24' },
+  { id: 2, name: 'Mumbai Hub', city: 'Mumbai', state_code: '27' },
+];
+
+// Full trip shape — mirrors the backend `trips` schema (section 4.4) so the UI
+// can render every field the API will return.
 const baseTrip = (over) => ({
   vehicle: mockVehicles[0],
   driver: mockDrivers[0],
   client: mockClients[0],
+  branch: mockBranches[0],
+  branch_id: 1,
+  trip_manager: { id: 2, name: 'Kavya Nair' },
+  trip_manager_id: 2,
   origin_city: 'Ahmedabad',
+  origin_address: 'Transport Nagar, Sarkhej, Ahmedabad, Gujarat 382210',
   destination_city: 'Mumbai',
+  destination_address: 'Bhiwandi Logistics Park, Mumbai, Maharashtra 421302',
   cargo_type: 'Industrial goods',
   cargo_weight_kg: 14500,
+  cargo_value: 2400000,
   freight_charges: 48000,
   estimated_fastag_toll: 3200,
   actual_fastag_toll: 0,
+  fuel_consumed_ltr: 0,
   planned_departure: '2026-06-22T08:00:00',
-  status: 'planned',
+  actual_departure: null,
+  actual_arrival: null,
   eway_bill_no: 'EWB-310024889',
+  eway_bill_expiry: '2026-06-25T23:59:00',
+  pod_url: null,
+  notes: 'Handle with care — fragile machinery parts.',
+  created_at: '2026-06-20T10:00:00',
   ...over,
 });
 
+const POD_IMG = 'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=600';
+
 export const mockTrips = [
   baseTrip({ id: 1, lr_number: 'LR-2024-25-0001', status: 'planned', origin_city: 'Ahmedabad', destination_city: 'Mumbai', client: mockClients[0], vehicle: mockVehicles[0], driver: mockDrivers[0], freight_charges: 48000 }),
-  baseTrip({ id: 2, lr_number: 'LR-2024-25-0002', status: 'planned', origin_city: 'Surat', destination_city: 'Pune', client: mockClients[2], vehicle: mockVehicles[3], driver: mockDrivers[1], freight_charges: 36000 }),
-  baseTrip({ id: 3, lr_number: 'LR-2024-25-0003', status: 'loading', origin_city: 'Vadodara', destination_city: 'Indore', client: mockClients[4], vehicle: mockVehicles[1], driver: mockDrivers[2], freight_charges: 28000 }),
-  baseTrip({ id: 4, lr_number: 'LR-2024-25-0004', status: 'in_transit', origin_city: 'Ahmedabad', destination_city: 'Delhi', client: mockClients[3], vehicle: mockVehicles[2], driver: mockDrivers[3], actual_fastag_toll: 4120, actual_departure: '2026-06-21T06:30:00', freight_charges: 72000 }),
-  baseTrip({ id: 5, lr_number: 'LR-2024-25-0005', status: 'in_transit', origin_city: 'Rajkot', destination_city: 'Nagpur', client: mockClients[1], vehicle: mockVehicles[0], driver: mockDrivers[0], actual_fastag_toll: 2890, actual_departure: '2026-06-21T09:00:00', freight_charges: 58000 }),
-  baseTrip({ id: 6, lr_number: 'LR-2024-25-0006', status: 'delivered', origin_city: 'Mumbai', destination_city: 'Ahmedabad', client: mockClients[0], vehicle: mockVehicles[1], driver: mockDrivers[1], actual_fastag_toll: 3050, actual_arrival: '2026-06-20T18:00:00', freight_charges: 45000 }),
-  baseTrip({ id: 7, lr_number: 'LR-2024-25-0007', status: 'delivered', origin_city: 'Pune', destination_city: 'Surat', client: mockClients[2], vehicle: mockVehicles[3], driver: mockDrivers[2], actual_fastag_toll: 2400, actual_arrival: '2026-06-19T20:00:00', freight_charges: 33000 }),
-  baseTrip({ id: 8, lr_number: 'LR-2024-25-0008', status: 'cancelled', origin_city: 'Indore', destination_city: 'Jaipur', client: mockClients[3], vehicle: mockVehicles[2], driver: mockDrivers[3], freight_charges: 41000 }),
+  baseTrip({ id: 2, lr_number: 'LR-2024-25-0002', status: 'planned', origin_city: 'Surat', origin_address: 'Sachin GIDC, Surat, Gujarat 394230', destination_city: 'Pune', destination_address: 'Chakan MIDC, Pune, Maharashtra 410501', client: mockClients[2], vehicle: mockVehicles[3], driver: mockDrivers[1], cargo_type: 'Textiles', cargo_weight_kg: 6200, cargo_value: 880000, freight_charges: 36000 }),
+  baseTrip({ id: 3, lr_number: 'LR-2024-25-0003', status: 'loading', origin_city: 'Vadodara', destination_city: 'Indore', client: mockClients[4], vehicle: mockVehicles[1], driver: mockDrivers[2], cargo_type: 'Paints & coatings', cargo_weight_kg: 19800, cargo_value: 1560000, freight_charges: 28000 }),
+  baseTrip({ id: 4, lr_number: 'LR-2024-25-0004', status: 'in_transit', origin_city: 'Ahmedabad', destination_city: 'Delhi', client: mockClients[3], vehicle: mockVehicles[2], driver: mockDrivers[3], cargo_type: 'Auto parts', cargo_weight_kg: 16400, cargo_value: 3100000, actual_fastag_toll: 4120, fuel_consumed_ltr: 248, actual_departure: '2026-06-21T06:30:00', freight_charges: 72000 }),
+  baseTrip({ id: 5, lr_number: 'LR-2024-25-0005', status: 'in_transit', origin_city: 'Rajkot', destination_city: 'Nagpur', client: mockClients[1], vehicle: mockVehicles[0], driver: mockDrivers[0], cargo_type: 'Steel coils', cargo_weight_kg: 22000, cargo_value: 4200000, actual_fastag_toll: 2890, fuel_consumed_ltr: 196, actual_departure: '2026-06-21T09:00:00', freight_charges: 58000 }),
+  baseTrip({ id: 6, lr_number: 'LR-2024-25-0006', status: 'delivered', origin_city: 'Mumbai', destination_city: 'Ahmedabad', client: mockClients[0], vehicle: mockVehicles[1], driver: mockDrivers[1], actual_fastag_toll: 3050, fuel_consumed_ltr: 152, actual_departure: '2026-06-19T07:00:00', actual_arrival: '2026-06-20T18:00:00', pod_url: POD_IMG, freight_charges: 45000 }),
+  baseTrip({ id: 7, lr_number: 'LR-2024-25-0007', status: 'delivered', origin_city: 'Pune', destination_city: 'Surat', client: mockClients[2], vehicle: mockVehicles[3], driver: mockDrivers[2], actual_fastag_toll: 2400, fuel_consumed_ltr: 118, actual_departure: '2026-06-18T08:30:00', actual_arrival: '2026-06-19T20:00:00', pod_url: POD_IMG, freight_charges: 33000 }),
+  baseTrip({ id: 8, lr_number: 'LR-2024-25-0008', status: 'cancelled', origin_city: 'Indore', destination_city: 'Jaipur', client: mockClients[3], vehicle: mockVehicles[2], driver: mockDrivers[3], notes: 'Cancelled — client postponed dispatch.', freight_charges: 41000 }),
 ];
 
 export const mockExpenses = [

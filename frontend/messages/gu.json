@@ -87,7 +87,9 @@
     "changeNumber": "નંબર બદલો",
     "invalidMobile": "માન્ય 10-અંકનો મોબાઇલ નંબર દાખલ કરો",
     "demoNotice": "ડેમો: કોઈપણ 10-અંકનો નંબર દાખલ કરો, પછી કોઈપણ 6-અંકનો OTP",
-    "selectRole": "ડેમો ભૂમિકા (તમને તે ડેશબોર્ડ પર લઈ જાય છે)"
+    "selectRole": "ડેમો ભૂમિકા (તમને તે ડેશબોર્ડ પર લઈ જાય છે)",
+    "verified": "ચકાસાયું!",
+    "redirecting": "તમને તમારા ડેશબોર્ડ પર લઈ જઈ રહ્યા છીએ…"
   },
   "roles": {
     "admin": "એડમિન",
@@ -146,7 +148,15 @@
       "in_transit": "ટ્રાન્ઝિટ માં",
       "delivered": "ડિલિવર થઈ",
       "cancelled": "રદ થઈ"
-    }
+    },
+    "originAddress": "પિકઅપ સરનામું",
+    "destinationAddress": "ડિલિવરી સરનામું",
+    "cargoWeight": "કાર્ગો વજન (કિગ્રા)",
+    "cargoValue": "કાર્ગો મૂલ્ય (₹)",
+    "plannedDeparture": "આયોજિત પ્રસ્થાન",
+    "ewayBill": "ઈ-વે બિલ નં.",
+    "ewayBillExpiry": "ઈ-વે બિલ સમાપ્તિ",
+    "notes": "નોંધો"
   },
   "expenses": {
     "title": "ખર્ચ કતાર",

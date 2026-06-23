@@ -87,7 +87,9 @@
     "changeNumber": "नंबर बदलें",
     "invalidMobile": "एक वैध 10-अंकों का मोबाइल नंबर दर्ज करें",
     "demoNotice": "डेमो: कोई भी 10-अंकों का नंबर दर्ज करें, फिर कोई भी 6-अंकों का OTP",
-    "selectRole": "डेमो भूमिका (आपको उस डैशबोर्ड पर ले जाती है)"
+    "selectRole": "डेमो भूमिका (आपको उस डैशबोर्ड पर ले जाती है)",
+    "verified": "सत्यापित!",
+    "redirecting": "आपको आपके डैशबोर्ड पर ले जा रहे हैं…"
   },
   "roles": {
     "admin": "एडमिन",
@@ -146,7 +148,15 @@
       "in_transit": "परिवहन में",
       "delivered": "डिलीवर हुआ",
       "cancelled": "रद्द किया गया"
-    }
+    },
+    "originAddress": "पिकअप पता",
+    "destinationAddress": "डिलीवरी पता",
+    "cargoWeight": "माल वज़न (किग्रा)",
+    "cargoValue": "माल मूल्य (₹)",
+    "plannedDeparture": "नियोजित प्रस्थान",
+    "ewayBill": "ई-वे बिल नं.",
+    "ewayBillExpiry": "ई-वे बिल समाप्ति",
+    "notes": "टिप्पणियाँ"
   },
   "expenses": {
     "title": "खर्च कतार",
