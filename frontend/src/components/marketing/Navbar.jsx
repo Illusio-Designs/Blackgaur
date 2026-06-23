@@ -33,10 +33,8 @@ export default function Navbar() {
   return (
     <header
       className={cn(
-        'fixed inset-x-0 top-0 z-50 transition-all duration-300',
-        scrolled
-          ? 'border-b border-brand-border bg-white/90 shadow-sm backdrop-blur'
-          : 'border-b border-transparent bg-transparent',
+        'fixed inset-x-0 top-0 z-50 border-b border-brand-border bg-white/90 backdrop-blur transition-all duration-300',
+        scrolled ? 'shadow-sm' : '',
       )}
     >
       <nav className="container-page flex h-16 items-center justify-between">
