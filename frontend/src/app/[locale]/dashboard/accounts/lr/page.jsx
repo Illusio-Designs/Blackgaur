@@ -140,26 +140,26 @@ export default function LrBoardPage() {
                 </option>
               ))}
           </FormInput>
-          <FormInput as="select" label={`${tt('route')} — From`} value={form.origin_city} onChange={(e) => setForm({ ...form, origin_city: e.target.value })}>
+          <FormInput as="select" label={`${tt('route')} — ${tc('from')}`} value={form.origin_city} onChange={(e) => setForm({ ...form, origin_city: e.target.value })}>
             {INDIAN_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </FormInput>
-          <FormInput as="select" label={`${tt('route')} — To`} value={form.destination_city} onChange={(e) => setForm({ ...form, destination_city: e.target.value })}>
+          <FormInput as="select" label={`${tt('route')} — ${tc('to')}`} value={form.destination_city} onChange={(e) => setForm({ ...form, destination_city: e.target.value })}>
             {INDIAN_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </FormInput>
           <FormInput as="select" label={tt('driver')} value={form.driver_id} onChange={(e) => setForm({ ...form, driver_id: e.target.value })}>
             <option value="">—</option>
             {mockDrivers.map((dr) => <option key={dr.id} value={dr.id}>{dr.name}</option>)}
           </FormInput>
-          <FormInput as="textarea" label={tt('originAddress')} className="sm:col-span-2" placeholder="Full pickup address" value={form.origin_address} onChange={(e) => setForm({ ...form, origin_address: e.target.value })} />
-          <FormInput as="textarea" label={tt('destinationAddress')} className="sm:col-span-2" placeholder="Full delivery address" value={form.destination_address} onChange={(e) => setForm({ ...form, destination_address: e.target.value })} />
-          <FormInput label={tt('cargo')} placeholder="Industrial goods" value={form.cargo_type} onChange={(e) => setForm({ ...form, cargo_type: e.target.value })} />
+          <FormInput as="textarea" label={tt('originAddress')} className="sm:col-span-2" placeholder={tt('pickupAddressPlaceholder')} value={form.origin_address} onChange={(e) => setForm({ ...form, origin_address: e.target.value })} />
+          <FormInput as="textarea" label={tt('destinationAddress')} className="sm:col-span-2" placeholder={tt('deliveryAddressPlaceholder')} value={form.destination_address} onChange={(e) => setForm({ ...form, destination_address: e.target.value })} />
+          <FormInput label={tt('cargo')} placeholder={tt('cargoPlaceholder')} value={form.cargo_type} onChange={(e) => setForm({ ...form, cargo_type: e.target.value })} />
           <FormInput label={tt('cargoWeight')} type="number" placeholder="14500" value={form.cargo_weight_kg} onChange={(e) => setForm({ ...form, cargo_weight_kg: e.target.value })} />
           <FormInput label={tt('cargoValue')} type="number" placeholder="2400000" value={form.cargo_value} onChange={(e) => setForm({ ...form, cargo_value: e.target.value })} />
           <FormInput label={tt('freight')} type="number" placeholder="48000" value={form.freight_charges} onChange={(e) => setForm({ ...form, freight_charges: e.target.value })} />
           <DatePicker label={tt('plannedDeparture')} value={form.planned_departure} onChange={(v) => setForm({ ...form, planned_departure: v })} />
           <FormInput label={tt('ewayBill')} placeholder="EWB-310024889" value={form.eway_bill_no} onChange={(e) => setForm({ ...form, eway_bill_no: e.target.value })} />
           <DatePicker label={tt('ewayBillExpiry')} value={form.eway_bill_expiry} onChange={(v) => setForm({ ...form, eway_bill_expiry: v })} />
-          <FormInput as="textarea" label={tt('notes')} className="sm:col-span-2" placeholder="Internal notes" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+          <FormInput as="textarea" label={tt('notes')} className="sm:col-span-2" placeholder={tt('notesPlaceholder')} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
         </div>
       </Drawer>
     </div>

@@ -86,7 +86,7 @@ export default function TrackingPage() {
                   <Navigation className="h-3.5 w-3.5 text-brand-blue" /> {gps.near}
                 </p>
                 <div className="mt-2 flex items-center gap-4 text-xs text-brand-muted">
-                  <span className="inline-flex items-center gap-1"><Gauge className="h-3.5 w-3.5" /> {gps.speed} km/h</span>
+                  <span className="inline-flex items-center gap-1"><Gauge className="h-3.5 w-3.5" /> {gps.speed} {t('kmh')}</span>
                   <span className="inline-flex items-center gap-1"><Clock className="h-3.5 w-3.5" /> {t('eta')} {gps.eta}</span>
                 </div>
                 <div className="mt-2.5">

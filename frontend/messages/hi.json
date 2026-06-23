@@ -46,7 +46,24 @@
     "vehicle": "वाहन",
     "driver": "ड्राइवर",
     "collapseSidebar": "साइडबार छोटा करें",
-    "markAllRead": "सभी पढ़ा हुआ चिह्नित करें"
+    "markAllRead": "सभी पढ़ा हुआ चिह्नित करें",
+    "searchEllipsis": "खोजें…",
+    "noOptions": "कोई विकल्प नहीं",
+    "selectDate": "तारीख चुनें",
+    "from": "से",
+    "to": "तक",
+    "noResults": "कोई परिणाम नहीं मिला",
+    "kbdNavigate": "नेविगेट",
+    "kbdOpen": "खोलें",
+    "kbdClose": "बंद करें",
+    "capturePhoto": "फ़ोटो लें",
+    "dragDropHint": "खींचें और छोड़ें, या ब्राउज़ करने के लिए क्लिक करें · अधिकतम",
+    "rbacNote": "RBAC सर्वर-साइड लागू",
+    "created": "बनाया गया",
+    "deleted": "हटाया गया",
+    "commandSearch": "ट्रिप, क्लाइंट, वाहन, चालान खोजें…",
+    "mobile": "मोबाइल",
+    "applicable": "लागू"
   },
   "nav": {
     "home": "होम",
@@ -166,7 +183,11 @@
     "plannedDeparture": "नियोजित प्रस्थान",
     "ewayBill": "ई-वे बिल नं.",
     "ewayBillExpiry": "ई-वे बिल समाप्ति",
-    "notes": "टिप्पणियाँ"
+    "notes": "टिप्पणियाँ",
+    "pickupAddressPlaceholder": "पूरा पिकअप पता",
+    "deliveryAddressPlaceholder": "पूरा डिलीवरी पता",
+    "cargoPlaceholder": "औद्योगिक माल",
+    "notesPlaceholder": "आंतरिक टिप्पणियाँ"
   },
   "expenses": {
     "title": "खर्च कतार",
@@ -234,7 +255,14 @@
       "cancelled": "रद्द किया गया",
       "overdue": "अतिदेय"
     },
-    "downloadPdf": "पीडीएफ डाउनलोड करें"
+    "downloadPdf": "पीडीएफ डाउनलोड करें",
+    "loadingCharges": "लोडिंग शुल्क",
+    "unloadingCharges": "अनलोडिंग शुल्क",
+    "detentionCharges": "डिटेंशन शुल्क",
+    "otherCharges": "अन्य शुल्क",
+    "clientStateCode": "क्लाइंट राज्य कोड",
+    "exempt": "0% (छूट)",
+    "billTo": "बिल प्राप्तकर्ता"
   },
   "clients": {
     "title": "ग्राहक प्रबंधक",
@@ -448,7 +476,8 @@
     "gstin": "GSTIN",
     "rights": "सर्वाधिकार सुरक्षित।",
     "privacy": "गोपनीयता",
-    "terms": "शर्तें"
+    "terms": "शर्तें",
+    "poweredBy": "ब्लैकगौर TMS द्वारा संचालित"
   },
   "settingsPage": {
     "title": "ब्रांडिंग और थीम",
@@ -663,7 +692,9 @@
     "section": "धारा",
     "tdsAmount": "टीडीएस राशि",
     "narration": "विवरण",
-    "saved": "भुगतान दर्ज हुआ"
+    "saved": "भुगतान दर्ज हुआ",
+    "autoJournalNote": "एक TDS जर्नल प्रविष्टि (प्राप्य, धारा 194C) स्वचालित रूप से बनाई जाएगी।",
+    "referencePlaceholder": "NEFT / UTR / चेक नं."
   },
   "tracking": {
     "title": "जीपीएस ट्रैकिंग",
@@ -675,6 +706,7 @@
     "location": "वर्तमान स्थान",
     "progress": "ट्रिप प्रगति",
     "noActive": "कोई वाहन परिवहन में नहीं",
-    "mapNote": "लाइव मैप — जीपीएस डिवाइस स्थिति"
+    "mapNote": "लाइव मैप — जीपीएस डिवाइस स्थिति",
+    "kmh": "किमी/घंटा"
   }
 }

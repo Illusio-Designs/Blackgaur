@@ -3,6 +3,7 @@
 import { useAuth } from '@/hooks/useAuth';
 import Sidebar from '@/components/dashboard/Sidebar';
 import Topbar from '@/components/dashboard/Topbar';
+import DashboardFooter from '@/components/dashboard/DashboardFooter';
 import CommandPalette from '@/components/ui/CommandPalette';
 
 export default function DashboardShell({ children }) {
@@ -19,6 +20,7 @@ export default function DashboardShell({ children }) {
             {ready ? children : <div className="skeleton h-64 w-full rounded-2xl" />}
           </div>
         </main>
+        <DashboardFooter />
       </div>
       <CommandPalette />
     </div>

@@ -46,7 +46,24 @@
     "vehicle": "વાહન",
     "driver": "ડ્રાઇવર",
     "collapseSidebar": "સાઇડબાર સંકોચો",
-    "markAllRead": "બધા વાંચ્યા તરીકે ચિહ્નિત કરો"
+    "markAllRead": "બધા વાંચ્યા તરીકે ચિહ્નિત કરો",
+    "searchEllipsis": "શોધો…",
+    "noOptions": "કોઈ વિકલ્પ નથી",
+    "selectDate": "તારીખ પસંદ કરો",
+    "from": "થી",
+    "to": "સુધી",
+    "noResults": "કોઈ પરિણામ મળ્યું નથી",
+    "kbdNavigate": "નેવિગેટ",
+    "kbdOpen": "ખોલો",
+    "kbdClose": "બંધ કરો",
+    "capturePhoto": "ફોટો લો",
+    "dragDropHint": "ખેંચો અને છોડો, અથવા બ્રાઉઝ કરવા ક્લિક કરો · મહત્તમ",
+    "rbacNote": "RBAC સર્વર-સાઇડ લાગુ",
+    "created": "બનાવ્યું",
+    "deleted": "કાઢી નાખ્યું",
+    "commandSearch": "ટ્રિપ, ક્લાયન્ટ, વાહન, ઇન્વોઇસ શોધો…",
+    "mobile": "મોબાઇલ",
+    "applicable": "લાગુ"
   },
   "nav": {
     "home": "હોમ",
@@ -166,7 +183,11 @@
     "plannedDeparture": "આયોજિત પ્રસ્થાન",
     "ewayBill": "ઈ-વે બિલ નં.",
     "ewayBillExpiry": "ઈ-વે બિલ સમાપ્તિ",
-    "notes": "નોંધો"
+    "notes": "નોંધો",
+    "pickupAddressPlaceholder": "સંપૂર્ણ પિકઅપ સરનામું",
+    "deliveryAddressPlaceholder": "સંપૂર્ણ ડિલિવરી સરનામું",
+    "cargoPlaceholder": "ઔદ્યોગિક માલ",
+    "notesPlaceholder": "આંતરિક નોંધ"
   },
   "expenses": {
     "title": "ખર્ચ કતાર",
@@ -234,7 +255,14 @@
       "cancelled": "રદ થયેલ",
       "overdue": "મુદત વીતી ગયેલ"
     },
-    "downloadPdf": "પીડીએફ ડાઉનલોડ કરો"
+    "downloadPdf": "પીડીએફ ડાઉનલોડ કરો",
+    "loadingCharges": "લોડિંગ ચાર્જ",
+    "unloadingCharges": "અનલોડિંગ ચાર્જ",
+    "detentionCharges": "ડિટેન્શન ચાર્જ",
+    "otherCharges": "અન્ય ચાર્જ",
+    "clientStateCode": "ક્લાયન્ટ રાજ્ય કોડ",
+    "exempt": "0% (મુક્ત)",
+    "billTo": "બિલ મેળવનાર"
   },
   "clients": {
     "title": "ગ્રાહક મેનેજર",
@@ -448,7 +476,8 @@
     "gstin": "GSTIN",
     "rights": "સર્વાધિકાર સુરક્ષિત.",
     "privacy": "ગોપનીયતા",
-    "terms": "શરતો"
+    "terms": "શરતો",
+    "poweredBy": "બ્લેકગૌર TMS દ્વારા સંચાલિત"
   },
   "settingsPage": {
     "title": "બ્રાન્ડિંગ અને થીમ",
@@ -663,7 +692,9 @@
     "section": "કલમ",
     "tdsAmount": "TDS રકમ",
     "narration": "વર્ણન",
-    "saved": "ચુકવણી નોંધાઈ"
+    "saved": "ચુકવણી નોંધાઈ",
+    "autoJournalNote": "એક TDS જર્નલ એન્ટ્રી (પ્રાપ્ય, કલમ 194C) આપમેળે બનાવવામાં આવશે.",
+    "referencePlaceholder": "NEFT / UTR / ચેક નં."
   },
   "tracking": {
     "title": "જીપીએસ ટ્રેકિંગ",
@@ -675,6 +706,7 @@
     "location": "વર્તમાન સ્થાન",
     "progress": "ટ્રિપ પ્રગતિ",
     "noActive": "કોઈ વાહન ટ્રાન્ઝિટમાં નથી",
-    "mapNote": "લાઇવ મેપ — જીપીએસ ડિવાઇસ સ્થિતિ"
+    "mapNote": "લાઇવ મેપ — જીપીએસ ડિવાઇસ સ્થિતિ",
+    "kmh": "કિમી/કલાક"
   }
 }

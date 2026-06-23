@@ -204,7 +204,7 @@ export default function InvoicesPage() {
               </div>
             </div>
             <div>
-              <p className="text-xs uppercase tracking-wide text-brand-muted">Bill To</p>
+              <p className="text-xs uppercase tracking-wide text-brand-muted">{t('billTo')}</p>
               <p className="font-medium text-brand-navy">{preview.client?.company_name}</p>
               <p className="text-xs text-brand-muted">{preview.client?.gstin} · {preview.client?.billing_address}</p>
             </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import { ArrowRight } from 'lucide-react';
 import DatePicker from '@/components/ui/DatePicker';
 import { cn } from '@/lib/utils';
@@ -13,23 +14,24 @@ export default function DateRangePicker({
   to,
   onChange,
   label,
-  fromLabel = 'From',
-  toLabel = 'To',
+  fromLabel,
+  toLabel,
   className,
 }) {
+  const tc = useTranslations('common');
   return (
     <div className={cn('w-full', className)}>
       {label && <label className="label-base">{label}</label>}
       <div className="flex items-end gap-2">
         <DatePicker
-          label={fromLabel}
+          label={fromLabel || tc('from')}
           value={from}
           max={to}
           onChange={(next) => onChange?.({ from: next, to })}
         />
         <ArrowRight className="mb-3 h-4 w-4 shrink-0 text-brand-muted" />
         <DatePicker
-          label={toLabel}
+          label={toLabel || tc('to')}
           value={to}
           min={from}
           onChange={(next) => onChange?.({ from, to: next })}

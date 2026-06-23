@@ -8,6 +8,7 @@ import { usePathname, Link } from '@/i18n/routing';
 import { NAV_GROUPS } from '@/lib/constants';
 import { useUiStore } from '@/store/uiStore';
 import { useBranding } from '@/hooks/useBranding';
+import Tooltip from '@/components/ui/Tooltip';
 import { cn } from '@/lib/utils';
 
 function NavIcon({ name, className }) {
@@ -17,6 +18,7 @@ function NavIcon({ name, className }) {
 
 export default function Sidebar({ role = 'admin' }) {
   const t = useTranslations('nav');
+  const tc = useTranslations('common');
   const pathname = usePathname();
   const collapsed = useUiStore((s) => s.sidebarCollapsed);
   const sidebarOpen = useUiStore((s) => s.sidebarOpen);
@@ -43,23 +45,33 @@ export default function Sidebar({ role = 'admin' }) {
   const isOpen = (key) => openGroups[key] !== false;
   const toggleGroup = (key) => setOpenGroups((s) => ({ ...s, [key]: s[key] === false }));
 
-  const ItemLink = ({ item }) => (
-    <Link
-      href={item.href}
-      onClick={() => setSidebarOpen(false)}
-      title={t(item.key)}
-      className={cn(
-        'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition',
-        isActive(item.href)
-          ? 'bg-brand-blue text-white shadow-sm'
-          : 'text-white/70 hover:bg-white/10 hover:text-white',
-        collapsed && 'justify-center',
-      )}
-    >
-      <NavIcon name={item.icon} className="h-5 w-5 shrink-0" />
-      {!collapsed && <span className="truncate">{t(item.key)}</span>}
-    </Link>
-  );
+  const ItemLink = ({ item }) => {
+    const link = (
+      <Link
+        href={item.href}
+        onClick={() => setSidebarOpen(false)}
+        className={cn(
+          'group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition',
+          isActive(item.href)
+            ? 'bg-brand-blue text-white shadow-sm'
+            : 'text-white/70 hover:bg-white/10 hover:text-white',
+          collapsed && 'w-full justify-center',
+        )}
+      >
+        <NavIcon name={item.icon} className="h-5 w-5 shrink-0" />
+        {!collapsed && <span className="truncate">{t(item.key)}</span>}
+      </Link>
+    );
+    // When the rail is collapsed, surface the label as a hover/focus tooltip.
+    if (collapsed) {
+      return (
+        <Tooltip content={t(item.key)} side="right" block>
+          {link}
+        </Tooltip>
+      );
+    }
+    return link;
+  };
 
   return (
     <>
@@ -128,7 +140,7 @@ export default function Sidebar({ role = 'admin' }) {
         <div className="border-t border-white/10 px-3 py-3">
           <div className={cn('flex items-center gap-3 rounded-xl px-3 py-2 text-xs text-white/50', collapsed && 'justify-center')}>
             <Icons.ShieldCheck className="h-4 w-4" />
-            {!collapsed && <span>RBAC enforced server-side</span>}
+            {!collapsed && <span>{tc('rbacNote')}</span>}
           </div>
         </div>
       </aside>

@@ -1,3 +1,5 @@
+import { htmlDocToPdf } from '@/lib/pdf';
+
 function inr(n) {
   return '₹ ' + Number(n || 0).toLocaleString('en-IN');
 }
@@ -15,11 +17,10 @@ function dateOnly(d) {
 }
 
 /**
- * Opens a print-ready Lorry Receipt / consignment note (Bilty) in a new window
- * and triggers the browser print dialog (Save as PDF). Dense A4 landscape layout
- * mirroring a transporter LR.
+ * Directly downloads a Lorry Receipt / consignment note (Bilty) as an A4
+ * landscape .pdf file (no print dialog). Dense layout mirroring a transporter LR.
  */
-export function downloadLrPdf(trip, branding = {}) {
+export async function downloadLrPdf(trip, branding = {}) {
   if (typeof window === 'undefined' || !trip) return;
   const c = branding.contact || {};
   const company = branding.companyName || 'Transporter';
@@ -35,10 +36,7 @@ export function downloadLrPdf(trip, branding = {}) {
   const ewayExpiry = dateOnly(trip.eway_bill_expiry);
   const genOn = dateOnly(trip.created_at || trip.planned_departure);
 
-  const win = window.open('', '_blank', 'width=1180,height=860');
-  if (!win) return;
-
-  win.document.write(`<!doctype html><html><head><meta charset="utf-8"/>
+  const html = `<!doctype html><html><head><meta charset="utf-8"/>
   <title>${esc(trip.lr_number)}</title>
   <style>
     @page { size: A4 landscape; margin: 5mm; }
@@ -231,8 +229,7 @@ export function downloadLrPdf(trip, branding = {}) {
       </tr>
     </table>
   </div>
-  </body></html>`);
-  win.document.close();
-  win.focus();
-  setTimeout(() => { win.print(); }, 350);
+  </body></html>`;
+
+  await htmlDocToPdf(html, `${trip.lr_number || 'lorry-receipt'}.pdf`, { orientation: 'landscape' });
 }

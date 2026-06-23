@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { createPortal } from 'react-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Search, Truck, Building2, FileText, Box, CornerDownLeft } from 'lucide-react';
@@ -51,6 +52,7 @@ function buildItems() {
 }
 
 export default function CommandPalette() {
+  const tc = useTranslations('common');
   const router = useRouter();
   const open = useUiStore((s) => s.commandPaletteOpen);
   const closePalette = useUiStore((s) => s.closeCommandPalette);
@@ -161,7 +163,7 @@ export default function CommandPalette() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={onKeyDown}
-                placeholder="Search trips, clients, vehicles, invoices…"
+                placeholder={tc('commandSearch')}
                 className="h-12 w-full border-0 bg-transparent text-sm text-brand-navy outline-none ring-0 placeholder:text-brand-muted focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
               />
               <kbd className="hidden rounded border border-brand-border bg-brand-surface px-1.5 py-0.5 text-[10px] font-medium text-brand-muted sm:block">
@@ -171,7 +173,7 @@ export default function CommandPalette() {
 
             <div ref={listRef} className="scrollbar-thin max-h-80 overflow-y-auto p-2">
               {filtered.length === 0 ? (
-                <p className="px-3 py-8 text-center text-sm text-brand-muted">No results found</p>
+                <p className="px-3 py-8 text-center text-sm text-brand-muted">{tc('noResults')}</p>
               ) : (
                 Object.entries(grouped).map(([group, items]) => {
                   const GroupIcon = GROUP_ICONS[group] || Box;
@@ -216,16 +218,16 @@ export default function CommandPalette() {
                 <span className="flex items-center gap-1">
                   <kbd className="rounded border border-brand-border bg-white px-1.5 py-0.5 font-mono">↑</kbd>
                   <kbd className="rounded border border-brand-border bg-white px-1.5 py-0.5 font-mono">↓</kbd>
-                  navigate
+                  {tc('kbdNavigate')}
                 </span>
                 <span className="flex items-center gap-1">
                   <kbd className="rounded border border-brand-border bg-white px-1.5 py-0.5 font-mono">↵</kbd>
-                  open
+                  {tc('kbdOpen')}
                 </span>
               </span>
               <span className="flex items-center gap-1">
                 <kbd className="rounded border border-brand-border bg-white px-1.5 py-0.5 font-mono">esc</kbd>
-                close
+                {tc('kbdClose')}
               </span>
             </div>
           </motion.div>

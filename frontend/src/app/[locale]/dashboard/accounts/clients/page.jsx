@@ -76,10 +76,10 @@ export default function ClientsPage() {
           <FormInput label={t('gstin')} value={form.gstin} onChange={(e) => setForm({ ...form, gstin: e.target.value })} placeholder="24ABCDE1234F1Z5" />
           <FormInput label={t('creditDays')} type="number" value={form.credit_days} onChange={(e) => setForm({ ...form, credit_days: e.target.value })} />
           <FormInput label={t('contact')} value={form.contact_name} onChange={(e) => setForm({ ...form, contact_name: e.target.value })} />
-          <PhoneInput label="Mobile" name="contact_mobile" country="IN" value={form.contact_mobile} onChange={(digits) => setForm({ ...form, contact_mobile: digits })} />
+          <PhoneInput label={tc('mobile')} name="contact_mobile" country="IN" value={form.contact_mobile} onChange={(digits) => setForm({ ...form, contact_mobile: digits })} />
           <label className="flex items-center gap-2 sm:col-span-2">
             <input type="checkbox" checked={form.rcm_applicable} onChange={(e) => setForm({ ...form, rcm_applicable: e.target.checked })} className="h-4 w-4 rounded border-brand-border text-brand-blue" />
-            <span className="text-sm text-brand-text">{t('rcm')} applicable</span>
+            <span className="text-sm text-brand-text">{t('rcm')} {tc('applicable')}</span>
           </label>
         </div>
       </Drawer>

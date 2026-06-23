@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
@@ -48,11 +49,12 @@ export default function DatePicker({
   label,
   min,
   max,
-  placeholder = 'Select date',
+  placeholder,
   error,
   disabled = false,
   className,
 }) {
+  const tc = useTranslations('common');
   const [open, setOpen] = useState(false);
   const selected = parseValue(value);
   const today = new Date();
@@ -117,7 +119,7 @@ export default function DatePicker({
           )}
         >
           <span className={cn(!selected && 'text-brand-muted/70')}>
-            {selected ? formatDate(selected) : placeholder}
+            {selected ? formatDate(selected) : (placeholder || tc('selectDate'))}
           </span>
           <Calendar className="h-4 w-4 shrink-0 text-brand-muted" />
         </motion.button>

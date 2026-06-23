@@ -1,3 +1,5 @@
+import { htmlDocToPdf } from '@/lib/pdf';
+
 function inr(n) {
   const v = Number(n || 0);
   return '₹' + Math.abs(v).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -30,16 +32,14 @@ export function buildClientLedger(client, { invoices = [], payments = [], tds = 
   return rows;
 }
 
-/** Opens a print-ready client ledger / statement of account (A4 portrait). */
-export function downloadLedgerPdf(client, rows = [], branding = {}) {
+/** Directly downloads a client ledger / statement of account as A4-portrait .pdf. */
+export async function downloadLedgerPdf(client, rows = [], branding = {}) {
   if (typeof window === 'undefined' || !client) return;
   const c = branding.contact || {};
   const supplier = branding.legalName || branding.companyName || 'Company';
   const totDebit = rows.reduce((s, r) => s + r.debit, 0);
   const totCredit = rows.reduce((s, r) => s + r.credit, 0);
   const closing = rows.length ? rows[rows.length - 1].balance : 0;
-  const win = window.open('', '_blank', 'width=860,height=1020');
-  if (!win) return;
 
   const body = rows
     .map(
@@ -54,7 +54,7 @@ export function downloadLedgerPdf(client, rows = [], branding = {}) {
     )
     .join('');
 
-  win.document.write(`<!doctype html><html><head><meta charset="utf-8"/>
+  const html = `<!doctype html><html><head><meta charset="utf-8"/>
   <title>Ledger — ${esc(client.company_name)}</title>
   <style>
     @page { size: A4 portrait; margin: 10mm; }
@@ -93,8 +93,7 @@ export function downloadLedgerPdf(client, rows = [], branding = {}) {
     </table>
     <div class="foot"><span>Dr = receivable from party · Cr = advance/credit</span><span>For ${esc(supplier)}</span></div>
   </div>
-  </body></html>`);
-  win.document.close();
-  win.focus();
-  setTimeout(() => { win.print(); }, 350);
+  </body></html>`;
+
+  await htmlDocToPdf(html, `Ledger-${String(client.company_name || 'client').replace(/[^a-z0-9]+/gi, '-')}.pdf`, { orientation: 'portrait' });
 }

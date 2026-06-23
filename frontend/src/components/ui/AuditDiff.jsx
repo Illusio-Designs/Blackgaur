@@ -11,6 +11,7 @@ function fmt(value) {
 
 export default function AuditDiff({ before, after }) {
   const t = useTranslations('audit');
+  const tc = useTranslations('common');
 
   const keys = Array.from(new Set([...Object.keys(before || {}), ...Object.keys(after || {})]));
 
@@ -23,7 +24,7 @@ export default function AuditDiff({ before, after }) {
       </div>
       <div className="scrollbar-thin overflow-x-auto p-2 font-mono text-xs leading-relaxed">
         {data === null ? (
-          <p className="px-1 py-1 italic text-brand-muted">{side === 'before' ? 'created' : 'deleted'}</p>
+          <p className="px-1 py-1 italic text-brand-muted">{side === 'before' ? tc('created') : tc('deleted')}</p>
         ) : keys.length === 0 ? (
           <p className="px-1 py-1 italic text-brand-muted">—</p>
         ) : (

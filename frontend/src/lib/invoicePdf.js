@@ -1,4 +1,5 @@
 import { amountInWords } from '@/lib/gst';
+import { htmlDocToPdf } from '@/lib/pdf';
 
 function inr(n) {
   return '₹' + Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
@@ -13,14 +14,14 @@ function esc(s) {
 }
 
 /**
- * Opens a print-ready GST tax invoice (A4 portrait) in a new window and triggers
- * the browser print dialog (Save as PDF). Mirrors a standard Indian GST tax
- * invoice layout for a Goods Transport Agency.
+ * Directly downloads a GST tax invoice as an A4-portrait .pdf file (no print
+ * dialog). Mirrors a standard Indian GST tax invoice layout for a Goods
+ * Transport Agency.
  *
  * BUSINESS RULE: GTA invoices never show or deduct TDS (the recipient deducts it).
  * Total = taxable amount + GST. GST is NIL when reverse charge (RCM) applies.
  */
-export function downloadInvoicePdf(inv, branding = {}) {
+export async function downloadInvoicePdf(inv, branding = {}) {
   if (typeof window === 'undefined' || !inv) return;
   const c = branding.contact || {};
   const supplier = branding.legalName || branding.companyName || 'Company';
@@ -108,13 +109,10 @@ export function downloadInvoicePdf(inv, branding = {}) {
                <tr><td>SGST ${half}%</td><td class="amt">${inr(sgst)}</td></tr>`;
   }
 
-  const win = window.open('', '_blank', 'width=860,height=1020');
-  if (!win) return;
-
   const hsnRate = inv.is_rcm ? 0 : rate;
   const hsnTax = inv.is_rcm ? 0 : gstTotal;
 
-  win.document.write(`<!doctype html><html><head><meta charset="utf-8"/>
+  const html = `<!doctype html><html><head><meta charset="utf-8"/>
   <title>${esc(inv.invoice_number)}</title>
   <style>
     @page { size: A4 portrait; margin: 8mm; }
@@ -300,8 +298,7 @@ export function downloadInvoicePdf(inv, branding = {}) {
 
     <div class="ftr">${esc(branding.tagline || 'Goods Transport Agency')} &nbsp;·&nbsp; Page 1/1 &nbsp;·&nbsp; This is a digitally signed document.</div>
   </div>
-  </body></html>`);
-  win.document.close();
-  win.focus();
-  setTimeout(() => { win.print(); }, 350);
+  </body></html>`;
+
+  await htmlDocToPdf(html, `${inv.invoice_number || 'invoice'}.pdf`, { orientation: 'portrait' });
 }

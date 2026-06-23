@@ -15,19 +15,19 @@ const POSITIONS = {
  * Tooltip — hover/focus popover wrapping a single child.
  * props { content, side?, className }
  */
-export default function Tooltip({ content, side = 'top', children, className }) {
+export default function Tooltip({ content, side = 'top', children, className, block = false }) {
   const [open, setOpen] = useState(false);
   const id = useId();
 
   return (
     <span
-      className={cn('relative inline-flex', className)}
+      className={cn('relative inline-flex', block && 'w-full', className)}
       onMouseEnter={() => setOpen(true)}
       onMouseLeave={() => setOpen(false)}
       onFocus={() => setOpen(true)}
       onBlur={() => setOpen(false)}
     >
-      <span aria-describedby={open ? id : undefined}>{children}</span>
+      <span className={cn(block && 'flex w-full')} aria-describedby={open ? id : undefined}>{children}</span>
       <AnimatePresence>
         {open && content && (
           <motion.span

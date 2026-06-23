@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import { Upload, Camera, FileText, X } from 'lucide-react';
 import { useToast } from '@/components/ui/Toast';
 import { cn } from '@/lib/utils';
@@ -18,6 +19,7 @@ export default function FileUpload({
   onUpload,
   label = 'Upload file',
 }) {
+  const tc = useTranslations('common');
   const toast = useToast();
   const inputRef = useRef(null);
   const cameraRef = useRef(null);
@@ -120,7 +122,7 @@ export default function FileUpload({
           </span>
           <p className="text-sm font-medium text-brand-navy">{label}</p>
           <p className="text-xs text-brand-muted">
-            Drag &amp; drop, or click to browse · max {formatBytes(maxSize)}
+            {tc('dragDropHint')} {formatBytes(maxSize)}
           </p>
           <button
             type="button"
@@ -131,7 +133,7 @@ export default function FileUpload({
             className="mt-1 inline-flex items-center gap-1.5 rounded-lg border border-brand-border bg-white px-3 py-1.5 text-xs font-medium text-brand-navy transition hover:bg-brand-surface"
           >
             <Camera className="h-3.5 w-3.5" />
-            Capture photo
+            {tc('capturePhoto')}
           </button>
         </div>
       )}

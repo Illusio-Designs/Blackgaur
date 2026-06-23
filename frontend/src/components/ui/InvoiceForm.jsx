@@ -61,10 +61,10 @@ export default function InvoiceForm({ mode = 'create', initialData, onSubmit }) 
 
   const chargeFields = [
     ['freight_amount', t('freight')],
-    ['loading_charges', 'Loading Charges'],
-    ['unloading_charges', 'Unloading Charges'],
-    ['detention_charges', 'Detention Charges'],
-    ['other_charges', 'Other Charges'],
+    ['loading_charges', t('loadingCharges')],
+    ['unloading_charges', t('unloadingCharges')],
+    ['detention_charges', t('detentionCharges')],
+    ['other_charges', t('otherCharges')],
   ];
 
   return (
@@ -131,7 +131,7 @@ export default function InvoiceForm({ mode = 'create', initialData, onSubmit }) 
               </FormInput>
 
               <FormInput
-                label="Client State Code"
+                label={t('clientStateCode')}
                 name="client_state_code"
                 value={values.client_state_code}
                 onChange={(e) => set('client_state_code', e.target.value)}
@@ -140,7 +140,7 @@ export default function InvoiceForm({ mode = 'create', initialData, onSubmit }) 
               <FormInput as="select" label={t('gst')} name="gst_rate" value={values.gst_rate} onChange={num('gst_rate')}>
                 <option value={5}>5%</option>
                 <option value={12}>12%</option>
-                <option value={0}>0% (Exempt)</option>
+                <option value={0}>{t('exempt')}</option>
               </FormInput>
 
               <label className="flex cursor-pointer items-center justify-between rounded-xl border border-brand-border bg-white p-3 sm:col-span-2">

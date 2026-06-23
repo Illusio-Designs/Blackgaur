@@ -132,7 +132,7 @@ export default function PaymentsPage() {
             <DatePicker label={t('date')} value={form.date} onChange={(v) => setForm({ ...form, date: v })} />
             <Select label={t('mode')} value={form.mode} onChange={(v) => setForm({ ...form, mode: v })} options={MODES} />
           </div>
-          <FormInput label={t('reference')} placeholder="NEFT / UTR / Cheque no." value={form.reference} onChange={(e) => setForm({ ...form, reference: e.target.value })} />
+          <FormInput label={t('reference')} placeholder={t('referencePlaceholder')} value={form.reference} onChange={(e) => setForm({ ...form, reference: e.target.value })} />
           <FormInput label={`${t('tdsDeducted')} (194C)`} type="number" value={form.tds_deducted} onChange={(e) => setForm({ ...form, tds_deducted: e.target.value })} />
 
           {/* Computed summary */}
@@ -140,7 +140,7 @@ export default function PaymentsPage() {
             <div className="flex justify-between"><span className="text-brand-muted">{t('gross')}</span><span className="font-mono">{formatINR(gross)}</span></div>
             <div className="mt-1 flex justify-between"><span className="text-brand-muted">{t('tdsDeducted')}</span><span className="font-mono text-brand-danger">−{formatINR(tds)}</span></div>
             <div className="mt-2 flex justify-between border-t border-brand-border pt-2 font-semibold text-brand-navy"><span>{t('received')}</span><span className="font-mono text-brand-success">{formatINR(received)}</span></div>
-            {tds > 0 && <p className="mt-2 text-xs text-brand-muted">A TDS journal entry (receivable, Sec 194C) will be created automatically.</p>}
+            {tds > 0 && <p className="mt-2 text-xs text-brand-muted">{t('autoJournalNote')}</p>}
           </div>
         </div>
       </Drawer>

@@ -46,7 +46,24 @@
     "vehicle": "Vehicle",
     "driver": "Driver",
     "collapseSidebar": "Collapse sidebar",
-    "markAllRead": "Mark all read"
+    "markAllRead": "Mark all read",
+    "searchEllipsis": "Search…",
+    "noOptions": "No options",
+    "selectDate": "Select date",
+    "from": "From",
+    "to": "To",
+    "noResults": "No results found",
+    "kbdNavigate": "navigate",
+    "kbdOpen": "open",
+    "kbdClose": "close",
+    "capturePhoto": "Capture photo",
+    "dragDropHint": "Drag & drop, or click to browse · max",
+    "rbacNote": "RBAC enforced server-side",
+    "created": "created",
+    "deleted": "deleted",
+    "commandSearch": "Search trips, clients, vehicles, invoices…",
+    "mobile": "Mobile",
+    "applicable": "applicable"
   },
   "nav": {
     "home": "Home",
@@ -166,7 +183,11 @@
     "plannedDeparture": "Planned departure",
     "ewayBill": "E-way bill no.",
     "ewayBillExpiry": "E-way bill expiry",
-    "notes": "Notes"
+    "notes": "Notes",
+    "pickupAddressPlaceholder": "Full pickup address",
+    "deliveryAddressPlaceholder": "Full delivery address",
+    "cargoPlaceholder": "Industrial goods",
+    "notesPlaceholder": "Internal notes"
   },
   "expenses": {
     "title": "Expense Queue",
@@ -234,7 +255,14 @@
       "cancelled": "Cancelled",
       "overdue": "Overdue"
     },
-    "downloadPdf": "Download PDF"
+    "downloadPdf": "Download PDF",
+    "loadingCharges": "Loading Charges",
+    "unloadingCharges": "Unloading Charges",
+    "detentionCharges": "Detention Charges",
+    "otherCharges": "Other Charges",
+    "clientStateCode": "Client State Code",
+    "exempt": "0% (Exempt)",
+    "billTo": "Bill To"
   },
   "clients": {
     "title": "Client Manager",
@@ -448,7 +476,8 @@
     "gstin": "GSTIN",
     "rights": "All rights reserved.",
     "privacy": "Privacy",
-    "terms": "Terms"
+    "terms": "Terms",
+    "poweredBy": "Powered by Blackgaur TMS"
   },
   "settingsPage": {
     "title": "Branding & Theme",
@@ -663,7 +692,9 @@
     "section": "Section",
     "tdsAmount": "TDS amount",
     "narration": "Narration",
-    "saved": "Payment recorded"
+    "saved": "Payment recorded",
+    "autoJournalNote": "A TDS journal entry (receivable, Sec 194C) will be created automatically.",
+    "referencePlaceholder": "NEFT / UTR / Cheque no."
   },
   "tracking": {
     "title": "GPS Tracking",
@@ -675,6 +706,7 @@
     "location": "Current location",
     "progress": "Trip progress",
     "noActive": "No vehicles in transit",
-    "mapNote": "Live map — GPS device positions (map embed)"
+    "mapNote": "Live map — GPS device positions (map embed)",
+    "kmh": "km/h"
   }
 }

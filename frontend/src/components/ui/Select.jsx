@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ChevronDown, Check, Search } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -22,6 +23,7 @@ export default function Select({
   name,
   className,
 }) {
+  const tc = useTranslations('common');
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
   const [activeIndex, setActiveIndex] = useState(-1);
@@ -134,14 +136,14 @@ export default function Select({
                       setActiveIndex(0);
                     }}
                     onKeyDown={onKeyDown}
-                    placeholder="Search…"
+                    placeholder={tc('searchEllipsis')}
                     className="w-full bg-transparent text-sm text-brand-text placeholder:text-brand-muted/70 focus:outline-none"
                   />
                 </div>
               )}
               <ul role="listbox" className="scrollbar-thin max-h-60 overflow-y-auto p-1">
                 {filtered.length === 0 ? (
-                  <li className="px-3 py-2 text-sm text-brand-muted">No options</li>
+                  <li className="px-3 py-2 text-sm text-brand-muted">{tc('noOptions')}</li>
                 ) : (
                   filtered.map((opt, i) => {
                     const isSelected = opt.value === value;
