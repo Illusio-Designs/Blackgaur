@@ -503,3 +503,26 @@ model AuditLog {
   @@index([createdAt])
   @@map("audit_logs")
 }
+
+// ─────────────────────────────────────────────────────────────
+// Branding / Company Profile (singleton — single-company deployment, §1, §13)
+// One row, id = 1. Read publicly by the website + dashboard; edited by admins.
+// JSON columns never store secrets / API keys.
+// ─────────────────────────────────────────────────────────────
+model Branding {
+  id          Int      @id @default(1) @db.UnsignedInt
+  companyName String   @map("company_name") @db.VarChar(150)
+  legalName   String?  @map("legal_name") @db.VarChar(180)
+  tagline     String?  @db.VarChar(200)
+  logoUrl     String?  @map("logo_url") @db.VarChar(500)
+  logoDarkUrl String?  @map("logo_dark_url") @db.VarChar(500)
+  faviconUrl  String?  @map("favicon_url") @db.VarChar(500)
+  theme       Json?
+  contact     Json?
+  social      Json?
+  content     Json?
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  @@map("branding")
+}

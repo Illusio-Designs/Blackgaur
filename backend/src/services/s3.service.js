@@ -20,13 +20,15 @@ const ALLOWED_MIME = new Set([
  * Validate an uploaded file against MIME + size rules (TMS Architecture §17.3).
  * @param {{ mimetype: string, size: number }} file
  */
-function validateFile(file) {
+function validateFile(file, opts = {}) {
   if (!file) throw AppError.badRequest('No file provided');
-  if (!ALLOWED_MIME.has(file.mimetype)) {
+  const allowed = opts.allowedMime || ALLOWED_MIME;
+  const maxBytes = opts.maxBytes || env.MAX_UPLOAD_BYTES;
+  if (!allowed.has(file.mimetype)) {
     throw AppError.badRequest(`Unsupported file type: ${file.mimetype}`);
   }
-  if (file.size > env.MAX_UPLOAD_BYTES) {
-    throw AppError.badRequest(`File exceeds max size of ${env.MAX_UPLOAD_BYTES} bytes`);
+  if (file.size > maxBytes) {
+    throw AppError.badRequest(`File exceeds max size of ${maxBytes} bytes`);
   }
 }
 
@@ -38,10 +40,12 @@ function validateFile(file) {
  * @param {string} params.mimetype
  * @param {number} params.size
  * @param {string} [params.folder] logical folder e.g. "pod" | "receipts"
+ * @param {Set<string>} [params.allowedMime] optional MIME whitelist override
+ * @param {number} [params.maxBytes] optional size limit override
  * @returns {Promise<{ url: string, key: string, storage: 's3'|'local' }>}
  */
-async function uploadFile({ buffer, originalName, mimetype, size, folder = 'misc' }) {
-  validateFile({ mimetype, size });
+async function uploadFile({ buffer, originalName, mimetype, size, folder = 'misc', allowedMime, maxBytes }) {
+  validateFile({ mimetype, size }, { allowedMime, maxBytes });
 
   const ext = path.extname(originalName || '') || mimeToExt(mimetype);
   const key = `${folder}/${Date.now()}-${crypto.randomBytes(8).toString('hex')}${ext}`;
@@ -100,6 +104,9 @@ function mimeToExt(mime) {
     'image/png': '.png',
     'image/webp': '.webp',
     'image/heic': '.heic',
+    'image/svg+xml': '.svg',
+    'image/x-icon': '.ico',
+    'image/vnd.microsoft.icon': '.ico',
     'application/pdf': '.pdf',
   };
   return map[mime] || '';

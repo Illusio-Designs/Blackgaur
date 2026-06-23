@@ -17,6 +17,41 @@ const prisma = new PrismaClient();
 const SEED_ADMIN_MOBILE = process.env.SEED_ADMIN_MOBILE || '9000000001';
 const SEED_ADMIN_NAME = process.env.SEED_ADMIN_NAME || 'System Administrator';
 
+// Default public-website content for a transporter company (TMS Architecture §14).
+const BRANDING_CONTENT = {
+  hero: {
+    title: 'Your goods, delivered on time — across India',
+    subtitle:
+      'Full-truck-load, part-load and container movement backed by a GPS + FASTag-enabled fleet and GST-compliant billing.',
+    ctaPrimary: 'Get a quote',
+    ctaSecondary: 'Track shipment',
+  },
+  stats: [
+    { value: '50,000+', label: 'Trips delivered' },
+    { value: '1,200+', label: 'Vehicles in network' },
+    { value: '480+', label: 'Cities covered' },
+    { value: '99.2%', label: 'On-time delivery' },
+  ],
+  services: [
+    { key: 'ftl', title: 'Full Truck Load (FTL)', description: 'Dedicated trucks for bulk consignments, point to point.' },
+    { key: 'ptl', title: 'Part Load (PTL)', description: 'Cost-efficient shared-load movement for smaller consignments.' },
+    { key: 'container', title: 'Container & ODC', description: 'Containerised and over-dimensional cargo across highways and ports.' },
+    { key: 'coldchain', title: 'Cold Chain', description: 'Temperature-controlled reefer trucks for perishables and pharma.' },
+    { key: 'warehousing', title: 'Warehousing', description: 'Storage, cross-dock and distribution from strategic hubs.' },
+    { key: 'lastmile', title: 'Last-mile', description: 'Reliable city distribution and final-mile delivery.' },
+  ],
+  why: [
+    { title: 'Live GPS tracking', description: 'Track every shipment by LR number in real time.' },
+    { title: 'FASTag-enabled fleet', description: 'Seamless toll movement and transparent trip costs.' },
+    { title: 'GST & RCM compliant', description: 'Correct invoicing with e-way bill and reverse-charge handling.' },
+    { title: 'Pan-India network', description: 'Branches and partners across major industrial corridors.' },
+  ],
+  about: {
+    heading: 'Built for Indian road transport',
+    body: 'We move freight for manufacturers, distributors and e-commerce businesses with a modern, technology-driven fleet operation.',
+  },
+};
+
 const ROLES = [
   { name: 'admin', label: 'Administrator' },
   { name: 'trip_manager', label: 'Trip Manager' },
@@ -55,6 +90,7 @@ function permsFor(role) {
         ...crud('invoices', 'all', ['approve']),
         ...crud('clients'),
         ...crud('lr'),
+        ...crud('settings'),
         { resource: 'reports', action: 'read', scope: 'all' },
         { resource: 'audit_logs', action: 'read', scope: 'all' },
       ];
@@ -172,6 +208,34 @@ async function main() {
     },
   });
   console.log(`[seed] admin user: ${admin.name} (${admin.mobile}) #${admin.id}`);
+
+  // ── Branding / Company Profile (singleton, id=1) ──
+  // Sensible defaults for a sample transporter — clearly overridable from the
+  // admin panel (TMS Architecture §1, §13, §14). update:{} keeps the seed
+  // idempotent without clobbering admin edits on re-run.
+  const branding = await prisma.branding.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      id: 1,
+      companyName: 'TransCo Logistics',
+      legalName: 'TransCo Logistics Pvt Ltd',
+      tagline: 'Freight delivered on time, across India',
+      theme: { sidebar: '#0B1E3D', primary: '#1A56DB', accent: '#D97706' },
+      contact: {
+        email: 'ops@transco.in',
+        phone: '+91 79 4000 1234',
+        whatsapp: '+919900000000',
+        addressLine: 'Plot 12, Transport Nagar',
+        city: 'Ahmedabad',
+        state: 'Gujarat',
+        gstin: '24ABCDE1234F1Z5',
+      },
+      social: { linkedin: '', instagram: '', facebook: '', twitter: '' },
+      content: BRANDING_CONTENT,
+    },
+  });
+  console.log(`[seed] branding: ${branding.companyName} (#${branding.id})`);
 
   console.log('[seed] done.');
 }

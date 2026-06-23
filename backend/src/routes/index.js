@@ -16,6 +16,7 @@ const clientRoutes = require('./client.routes');
 const vehicleRoutes = require('./vehicle.routes');
 const reportsRoutes = require('./reports.routes');
 const auditRoutes = require('./audit.routes');
+const brandingRoutes = require('./branding.routes');
 
 /**
  * Mount all v1 routers (TMS Architecture §5, §6.3, §7.2).
@@ -27,9 +28,11 @@ function registerRoutes(app) {
 
   // Public.
   v1.use('/auth', authRoutes);
+  v1.use('/', brandingRoutes.publicRouter); // GET /branding — public theming/content.
 
   // Protected — authenticate once, then per-route RBAC.
   v1.use(authenticate);
+  v1.use('/settings', brandingRoutes.settingsRouter);
   v1.use('/users', userRoutes);
   v1.use('/roles', roleRoutes);
   v1.use('/trips', tripRoutes);
