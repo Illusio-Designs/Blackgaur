@@ -45,7 +45,8 @@
     "demoMode": "डेमो डेटा — बैकएंड कनेक्ट नहीं है",
     "vehicle": "वाहन",
     "driver": "ड्राइवर",
-    "collapseSidebar": "साइडबार छोटा करें"
+    "collapseSidebar": "साइडबार छोटा करें",
+    "markAllRead": "सभी पढ़ा हुआ चिह्नित करें"
   },
   "nav": {
     "home": "होम",

@@ -45,7 +45,8 @@
     "demoMode": "Demo data — backend not connected",
     "vehicle": "Vehicle",
     "driver": "Driver",
-    "collapseSidebar": "Collapse sidebar"
+    "collapseSidebar": "Collapse sidebar",
+    "markAllRead": "Mark all read"
   },
   "nav": {
     "home": "Home",

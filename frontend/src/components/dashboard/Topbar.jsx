@@ -2,21 +2,17 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { useTranslations } from 'next-intl';
-import { Menu, Bell, Search, LogOut, User, Settings, ChevronDown, PanelLeftClose } from 'lucide-react';
+import { Menu, Bell, Search, LogOut, User, Settings, ChevronDown, PanelLeftClose, CheckCheck } from 'lucide-react';
+import * as Icons from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useRouter } from '@/i18n/routing';
+import { useRouter, Link } from '@/i18n/routing';
 import { useUiStore } from '@/store/uiStore';
 import { useAuth } from '@/hooks/useAuth';
 import { ROLES } from '@/lib/constants';
-import { initials } from '@/lib/utils';
+import { initials, cn } from '@/lib/utils';
+import { mockNotifications, NOTIF_TYPES, NOTIF_SEVERITY } from '@/lib/notifications';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import Tooltip from '@/components/ui/Tooltip';
-
-const MOCK_NOTIFS = [
-  { id: 1, type: 'fastag', text: 'GJ-12-EF-9012 low FASTag balance (₹89)' },
-  { id: 2, type: 'expense', text: '4 expenses awaiting approval' },
-  { id: 3, type: 'invoice', text: 'INV-2024-25-0004 is overdue' },
-];
 
 export default function Topbar() {
   const t = useTranslations('common');
@@ -25,6 +21,15 @@ export default function Topbar() {
   const toggleCollapsed = useUiStore((s) => s.toggleCollapsed);
   const toggleCommandPalette = useUiStore((s) => s.toggleCommandPalette);
   const { user, logout } = useAuth();
+
+  const [notifs, setNotifs] = useState(mockNotifications);
+  const unread = notifs.filter((n) => !n.read).length;
+  const markAllRead = () => setNotifs((list) => list.map((n) => ({ ...n, read: true })));
+  const openNotif = (n) => {
+    setNotifs((list) => list.map((x) => (x.id === n.id ? { ...x, read: true } : x)));
+    setNotifOpen(false);
+    if (n.href) router.push(n.href);
+  };
 
   const [notifOpen, setNotifOpen] = useState(false);
   const [profileOpen, setProfileOpen] = useState(false);
@@ -88,13 +93,15 @@ export default function Topbar() {
             aria-label={t('notifications')}
           >
             <Bell className="h-5 w-5" />
-            <motion.span
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              className="absolute right-1.5 top-1.5 flex h-4 w-4 items-center justify-center rounded-full bg-brand-amber text-[10px] font-bold text-white"
-            >
-              {MOCK_NOTIFS.length}
-            </motion.span>
+            {unread > 0 && (
+              <motion.span
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-brand-amber text-[10px] font-bold text-white"
+              >
+                {unread}
+              </motion.span>
+            )}
           </button>
           </Tooltip>
           <AnimatePresence>
@@ -103,21 +110,56 @@ export default function Topbar() {
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -6 }}
-                className="absolute right-0 mt-2 w-80 overflow-hidden rounded-xl border border-brand-border bg-white shadow-elevated"
+                className="absolute right-0 mt-2 w-[360px] max-w-[92vw] overflow-hidden rounded-xl border border-brand-border bg-white shadow-elevated"
               >
-                <div className="border-b border-brand-border px-4 py-3 font-semibold text-brand-navy">
-                  {t('notifications')}
-                </div>
-                <div className="max-h-80 overflow-y-auto">
-                  {MOCK_NOTIFS.map((n) => (
-                    <div
-                      key={n.id}
-                      className="border-b border-brand-border/60 px-4 py-3 text-sm text-brand-text last:border-0 hover:bg-brand-surface"
+                <div className="flex items-center justify-between border-b border-brand-border px-4 py-3">
+                  <span className="font-semibold text-brand-navy">{t('notifications')}</span>
+                  {unread > 0 && (
+                    <button
+                      onClick={markAllRead}
+                      className="inline-flex items-center gap-1 text-xs font-medium text-brand-blue hover:underline"
                     >
-                      {n.text}
-                    </div>
-                  ))}
+                      <CheckCheck className="h-3.5 w-3.5" /> {t('markAllRead')}
+                    </button>
+                  )}
                 </div>
+                <div className="scrollbar-thin max-h-[420px] divide-y divide-brand-border/60 overflow-y-auto">
+                  {notifs.map((n) => {
+                    const meta = NOTIF_TYPES[n.type] || { icon: 'Bell', severity: 'info' };
+                    const sev = NOTIF_SEVERITY[meta.severity] || NOTIF_SEVERITY.info;
+                    const NIcon = Icons[meta.icon] || Icons.Bell;
+                    return (
+                      <button
+                        key={n.id}
+                        onClick={() => openNotif(n)}
+                        className={cn(
+                          'flex w-full items-start gap-3 px-4 py-3 text-left transition hover:bg-brand-surface',
+                          !n.read && 'bg-brand-blue/[0.04]',
+                        )}
+                      >
+                        <span className={cn('mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-lg', sev.chip)}>
+                          <NIcon className="h-4 w-4" />
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="flex items-center gap-2">
+                            <span className="truncate text-sm font-semibold text-brand-navy">{n.title}</span>
+                            {meta.api && <span className="rounded bg-brand-fastag/10 px-1 text-[9px] font-semibold text-brand-fastag">API</span>}
+                          </span>
+                          <span className="mt-0.5 block text-xs leading-snug text-brand-muted">{n.message}</span>
+                          <span className="mt-1 block text-[11px] text-brand-muted/80">{n.time}</span>
+                        </span>
+                        {!n.read && <span className={cn('mt-1.5 h-2 w-2 shrink-0 rounded-full', sev.dot)} />}
+                      </button>
+                    );
+                  })}
+                </div>
+                <Link
+                  href="/dashboard/admin/audit-logs"
+                  onClick={() => setNotifOpen(false)}
+                  className="block border-t border-brand-border px-4 py-2.5 text-center text-sm font-medium text-brand-blue hover:bg-brand-surface"
+                >
+                  {t('viewAll')}
+                </Link>
               </motion.div>
             )}
           </AnimatePresence>
