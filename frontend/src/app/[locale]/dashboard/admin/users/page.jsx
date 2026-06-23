@@ -7,7 +7,7 @@ import PageHeader from '@/components/dashboard/PageHeader';
 import Button from '@/components/ui/Button';
 import DataTable from '@/components/ui/DataTable';
 import StatusBadge from '@/components/ui/StatusBadge';
-import Modal from '@/components/ui/Modal';
+import Drawer from '@/components/ui/Drawer';
 import FormInput from '@/components/ui/FormInput';
 import { useToast } from '@/components/ui/Toast';
 import { mockUsers } from '@/lib/mock';
@@ -66,7 +66,7 @@ export default function UsersPage() {
       <PageHeader title={t('title')} subtitle={t('subtitle')} icon={Users} actions={<Button variant="amber" icon={Plus} onClick={() => setOpen(true)}>{t('createUser')}</Button>} />
       <DataTable columns={columns} data={users} pagination={{ page: 1, totalPages: 1, hasNext: false, hasPrev: false }} />
 
-      <Modal open={open} onClose={() => setOpen(false)} title={t('createUser')}
+      <Drawer open={open} onClose={() => setOpen(false)} title={t('createUser')}
         footer={<><Button variant="ghost" onClick={() => setOpen(false)}>{tc('cancel')}</Button><Button variant="amber" onClick={submit}>{tc('create')}</Button></>}>
         <div className="space-y-4">
           <FormInput label={t('name')} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
@@ -81,7 +81,7 @@ export default function UsersPage() {
             <option value="gu">ગુજરાતી</option>
           </FormInput>
         </div>
-      </Modal>
+      </Drawer>
     </div>
   );
 }

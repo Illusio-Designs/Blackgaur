@@ -7,7 +7,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import PageHeader from '@/components/dashboard/PageHeader';
 import Button from '@/components/ui/Button';
 import TripCard from '@/components/ui/TripCard';
-import Modal from '@/components/ui/Modal';
+import Drawer from '@/components/ui/Drawer';
 import FormInput from '@/components/ui/FormInput';
 import { useToast } from '@/components/ui/Toast';
 import { useTrips, useUpdateTripStatus, useCreateTrip } from '@/hooks/useTrips';
@@ -167,7 +167,7 @@ export default function TripsPage() {
         </div>
       )}
 
-      <Modal
+      <Drawer
         open={createOpen}
         onClose={() => setCreateOpen(false)}
         title={t('createTrip')}
@@ -198,7 +198,7 @@ export default function TripsPage() {
           <FormInput label={t('freight')} type="number" placeholder="48000" value={form.freight_charges} onChange={(e) => setForm({ ...form, freight_charges: e.target.value })} />
           <FormInput label={t('cargo')} className="sm:col-span-2" placeholder="Industrial goods" value={form.cargo_type} onChange={(e) => setForm({ ...form, cargo_type: e.target.value })} />
         </div>
-      </Modal>
+      </Drawer>
     </div>
   );
 }

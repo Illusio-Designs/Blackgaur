@@ -9,6 +9,7 @@ import DataTable from '@/components/ui/DataTable';
 import StatusBadge from '@/components/ui/StatusBadge';
 import RCMBadge from '@/components/ui/RCMBadge';
 import Modal from '@/components/ui/Modal';
+import Drawer from '@/components/ui/Drawer';
 import InvoiceForm from '@/components/ui/InvoiceForm';
 import { useToast } from '@/components/ui/Toast';
 import { useInvoices, useApproveInvoice, useSendInvoice, useCreateInvoice } from '@/hooks/useInvoices';
@@ -139,9 +140,9 @@ export default function InvoicesPage() {
         pagination={{ page: 1, totalPages: 1, hasNext: false, hasPrev: false }}
       />
 
-      <Modal open={createOpen} onClose={() => setCreateOpen(false)} title={t('createInvoice')} size="xl">
+      <Drawer open={createOpen} onClose={() => setCreateOpen(false)} title={t('createInvoice')} size="xl">
         <InvoiceForm mode="create" onSubmit={handleCreate} />
-      </Modal>
+      </Drawer>
 
       <Modal open={!!preview} onClose={() => setPreview(null)} title={`${t('previewPdf')} — ${preview?.invoice_number || ''}`} size="lg">
         {preview && (

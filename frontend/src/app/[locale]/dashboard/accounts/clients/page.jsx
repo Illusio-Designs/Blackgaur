@@ -7,7 +7,7 @@ import PageHeader from '@/components/dashboard/PageHeader';
 import Button from '@/components/ui/Button';
 import DataTable from '@/components/ui/DataTable';
 import RCMBadge from '@/components/ui/RCMBadge';
-import Modal from '@/components/ui/Modal';
+import Drawer from '@/components/ui/Drawer';
 import FormInput from '@/components/ui/FormInput';
 import { useToast } from '@/components/ui/Toast';
 import { useClients, useCreateClient } from '@/hooks/useClients';
@@ -52,7 +52,7 @@ export default function ClientsPage() {
       <PageHeader title={t('title')} subtitle={t('subtitle')} icon={Building2} actions={<Button variant="amber" icon={Plus} onClick={() => setOpen(true)}>{t('createClient')}</Button>} />
       <DataTable columns={columns} data={rows} pagination={{ page: 1, totalPages: 1, hasNext: false, hasPrev: false }} />
 
-      <Modal open={open} onClose={() => setOpen(false)} title={t('createClient')} size="lg"
+      <Drawer open={open} onClose={() => setOpen(false)} title={t('createClient')} size="lg"
         footer={<><Button variant="ghost" onClick={() => setOpen(false)}>{tc('cancel')}</Button><Button variant="amber" onClick={submit}>{tc('create')}</Button></>}>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormInput label={t('company')} className="sm:col-span-2" value={form.company_name} onChange={(e) => setForm({ ...form, company_name: e.target.value })} />
@@ -65,7 +65,7 @@ export default function ClientsPage() {
             <span className="text-sm text-brand-text">{t('rcm')} applicable</span>
           </label>
         </div>
-      </Modal>
+      </Drawer>
     </div>
   );
 }

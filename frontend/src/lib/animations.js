@@ -63,3 +63,18 @@ export const slideInRight = {
   exit: { opacity: 0, x: 24 },
   transition: { duration: 0.25 },
 };
+
+// Aside / slide-over panel (enters from the screen edge)
+export const drawerSlideRight = {
+  initial: { x: '100%' },
+  animate: { x: 0 },
+  exit: { x: '100%' },
+  transition: { type: 'spring', stiffness: 320, damping: 34 },
+};
+
+export const drawerSlideLeft = {
+  initial: { x: '-100%' },
+  animate: { x: 0 },
+  exit: { x: '-100%' },
+  transition: { type: 'spring', stiffness: 320, damping: 34 },
+};

@@ -67,7 +67,8 @@
     "reports": "Reports",
     "driver": "My Trip",
     "audit": "Audit Logs",
-    "translations": "Translations"
+    "translations": "Translations",
+    "widgets": "Widgets"
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -197,7 +198,11 @@
     "cgst": "CGST",
     "sgst": "SGST",
     "inWords": "Amount in words",
-    "steps": { "charges": "Charges", "gst": "GST / RCM", "review": "Review" },
+    "steps": {
+      "charges": "Charges",
+      "gst": "GST / RCM",
+      "review": "Review"
+    },
     "status": {
       "draft": "Draft",
       "pending_approval": "Pending Approval",
