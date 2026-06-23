@@ -630,5 +630,12 @@
     "renewals": "Documents & renewal",
     "details": "Vehicle details",
     "saveChanges": "Save changes"
+  },
+  "notificationsPage": {
+    "title": "Notifications",
+    "subtitle": "Alerts across trips, FASTag, fuel, invoices and documents",
+    "all": "All",
+    "unread": "Unread",
+    "empty": "You are all caught up"
   }
 }

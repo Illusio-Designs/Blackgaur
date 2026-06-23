@@ -10,7 +10,8 @@ import { useUiStore } from '@/store/uiStore';
 import { useAuth } from '@/hooks/useAuth';
 import { ROLES } from '@/lib/constants';
 import { initials, cn } from '@/lib/utils';
-import { mockNotifications, NOTIF_TYPES, NOTIF_SEVERITY } from '@/lib/notifications';
+import { NOTIF_TYPES, NOTIF_SEVERITY } from '@/lib/notifications';
+import { useNotifStore } from '@/store/notifStore';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import Tooltip from '@/components/ui/Tooltip';
 
@@ -22,11 +23,12 @@ export default function Topbar() {
   const toggleCommandPalette = useUiStore((s) => s.toggleCommandPalette);
   const { user, logout } = useAuth();
 
-  const [notifs, setNotifs] = useState(mockNotifications);
+  const notifs = useNotifStore((s) => s.notifications);
+  const markRead = useNotifStore((s) => s.markRead);
+  const markAllRead = useNotifStore((s) => s.markAllRead);
   const unread = notifs.filter((n) => !n.read).length;
-  const markAllRead = () => setNotifs((list) => list.map((n) => ({ ...n, read: true })));
   const openNotif = (n) => {
-    setNotifs((list) => list.map((x) => (x.id === n.id ? { ...x, read: true } : x)));
+    markRead(n.id);
     setNotifOpen(false);
     if (n.href) router.push(n.href);
   };
@@ -154,7 +156,7 @@ export default function Topbar() {
                   })}
                 </div>
                 <Link
-                  href="/dashboard/admin/audit-logs"
+                  href="/dashboard/notifications"
                   onClick={() => setNotifOpen(false)}
                   className="block border-t border-brand-border px-4 py-2.5 text-center text-sm font-medium text-brand-blue hover:bg-brand-surface"
                 >
