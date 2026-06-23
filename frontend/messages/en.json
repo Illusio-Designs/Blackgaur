@@ -42,7 +42,9 @@
     "language": "Language",
     "today": "Today",
     "thisMonth": "This Month",
-    "demoMode": "Demo data — backend not connected"
+    "demoMode": "Demo data — backend not connected",
+    "vehicle": "Vehicle",
+    "driver": "Driver"
   },
   "nav": {
     "home": "Home",
@@ -53,7 +55,7 @@
     "login": "Log in",
     "getStarted": "Get Started",
     "getQuote": "Get a quote",
-    "settings": "Branding & Theme",
+    "settings": "Settings",
     "admin": "Overview",
     "users": "Users",
     "roles": "Roles",
@@ -282,7 +284,8 @@
       "HSD": "Diesel (HSD)",
       "MS": "Petrol (MS)",
       "LDO": "LDO"
-    }
+    },
+    "cardLabel": "Fuel Card"
   },
   "reports": {
     "title": "Reports & Analytics",
@@ -487,6 +490,93 @@
       "aboutBody": "About body",
       "add": "Add",
       "remove": "Remove"
+    },
+    "hubTitle": "Settings",
+    "hubSubtitle": "Branding, company, tax & integrations",
+    "sections": {
+      "company": "Company & GST",
+      "branding": "Branding & Theme",
+      "tax": "Tax & RCM",
+      "integrations": "Integrations",
+      "alerts": "Alerts"
+    },
+    "company": {
+      "title": "Company & GST",
+      "subtitle": "Legal entity, GST and bank details used on invoices.",
+      "legalName": "Legal name",
+      "gstin": "GSTIN",
+      "pan": "PAN",
+      "stateCode": "State code",
+      "stateCodeHelp": "GST state code, e.g. 24 for Gujarat.",
+      "cin": "CIN",
+      "registeredAddress": "Registered address",
+      "bankTitle": "Bank details",
+      "bankName": "Bank name",
+      "bankAccount": "Account number",
+      "ifsc": "IFSC",
+      "invoiceTitle": "Invoice settings",
+      "invoiceHelp": "These details feed invoice PDFs and invoice numbering.",
+      "financialYear": "Financial year",
+      "invoicePrefix": "Invoice prefix",
+      "invoicePrefixHelp": "Prefix for generated invoice numbers, e.g. INV."
+    },
+    "tax": {
+      "title": "Tax & RCM",
+      "subtitle": "Default GST, reverse-charge and TDS behaviour for new invoices.",
+      "rcmDefault": "Reverse charge (RCM) by default",
+      "rcmHelp": "When on, GST is paid by the recipient (RCM); your invoice shows no GST and notes reverse charge applies.",
+      "placeOfSupplyAuto": "Auto place of supply",
+      "placeOfSupplyHelp": "Decide CGST+SGST (intra-state) vs IGST (inter-state) automatically from state codes.",
+      "itcEnabled": "Input tax credit (ITC) enabled",
+      "itcHelp": "Allow claiming input tax credit (typically with the 12% slab).",
+      "gstRate": "Default GST rate",
+      "gst0": "0% (exempt / nil-rated)",
+      "gst5": "5% (no ITC)",
+      "gst12": "12% (with ITC)",
+      "tdsTitle": "TDS",
+      "tdsRate": "TDS rate (%)",
+      "tdsSection": "TDS section",
+      "tdsSectionHelp": "e.g. 194C for transport.",
+      "exampleTitle": "Live example",
+      "exampleIntro": "For a sample subtotal of {subtotal}:",
+      "exSubtotal": "Subtotal",
+      "exGst": "GST ({rate}%)",
+      "exRcmNote": "Paid by recipient (RCM)",
+      "exTds": "TDS ({rate}%)",
+      "exTotal": "Invoice total",
+      "rcmExplain": "Reverse charge: the recipient pays GST directly to the government; no GST is added to your invoice.",
+      "fcmExplain": "Forward charge: GST is added to the invoice and collected from the client."
+    },
+    "integrations": {
+      "title": "Integrations",
+      "subtitle": "Provider preferences and sync schedules. No secrets are stored here.",
+      "secretsNote": "API keys & secrets are configured securely via server environment variables, not here.",
+      "configured": "Configured",
+      "notConfigured": "Not configured",
+      "otpTitle": "OTP / SMS",
+      "otpProvider": "OTP provider",
+      "msg91SenderId": "MSG91 sender ID",
+      "fastagTitle": "FASTag",
+      "fastagProvider": "FASTag provider",
+      "fastagLowBalanceDefault": "Default low-balance alert (₹)",
+      "fastagSyncCron": "FASTag sync schedule",
+      "fuelTitle": "Fuel cards",
+      "fuelProviders": "Fuel providers",
+      "fuelSyncCron": "Fuel sync schedule",
+      "cronHelp": "Cron expression (minute hour day month weekday)."
+    },
+    "alerts": {
+      "title": "Alerts",
+      "subtitle": "Thresholds and notification channels for operational alerts.",
+      "lowBalanceThreshold": "Low-balance threshold (₹)",
+      "lowBalanceHelp": "Notify when a FASTag wallet falls below this.",
+      "docExpiryLeadDays": "Document expiry lead (days)",
+      "docExpiryHelp": "Warn this many days before a document expires.",
+      "channelsTitle": "Notification channels",
+      "notifyEmail": "Email notifications",
+      "notifyEmailHelp": "Send alerts by email.",
+      "notifySms": "SMS notifications",
+      "notifySmsHelp": "Send alerts by SMS."
     }
   }
 }

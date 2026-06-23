@@ -88,7 +88,7 @@ export default function FastagPage() {
                 <XAxis dataKey="vehicle" stroke="#64748B" fontSize={11} tickLine={false} axisLine={false} />
                 <YAxis stroke="#64748B" fontSize={11} tickLine={false} axisLine={false} tickFormatter={(v) => `₹${v / 1000}k`} />
                 <Tooltip formatter={(v) => formatINR(v)} contentStyle={{ borderRadius: 12, border: '1px solid #E2E8F0' }} />
-                <Bar dataKey="toll" fill="#0F766E" radius={[6, 6, 0, 0]} />
+                <Bar dataKey="toll" fill="#0F766E" radius={[6, 6, 0, 0]} isAnimationActive={false} />
               </BarChart>
             </ResponsiveContainer>
           </div>

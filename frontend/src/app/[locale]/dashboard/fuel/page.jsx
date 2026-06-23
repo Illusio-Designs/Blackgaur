@@ -74,8 +74,8 @@ export default function FuelPage() {
                 <YAxis yAxisId="right" orientation="right" stroke="#64748B" fontSize={11} tickLine={false} axisLine={false} />
                 <Tooltip contentStyle={{ borderRadius: 12, border: '1px solid #E2E8F0' }} />
                 <Legend />
-                <Bar yAxisId="left" dataKey="spend" name={t('monthlySpend')} fill="#9A3412" radius={[6, 6, 0, 0]} />
-                <Bar yAxisId="right" dataKey="litres" name={t('litres')} fill="#D97706" radius={[6, 6, 0, 0]} />
+                <Bar yAxisId="left" dataKey="spend" name={t('monthlySpend')} fill="#9A3412" radius={[6, 6, 0, 0]} isAnimationActive={false} />
+                <Bar yAxisId="right" dataKey="litres" name={t('litres')} fill="#D97706" radius={[6, 6, 0, 0]} isAnimationActive={false} />
               </BarChart>
             </ResponsiveContainer>
           </div>

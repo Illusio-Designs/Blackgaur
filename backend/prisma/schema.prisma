@@ -526,3 +526,21 @@ model Branding {
 
   @@map("branding")
 }
+
+// ─────────────────────────────────────────────────────────────
+// App configuration (singleton — single-company deployment, §8, §13, §17)
+// One row, id = 1. ADMIN-ONLY (settings:read / settings:update). Never read by
+// the public branding endpoint. JSON columns never store secrets / API keys —
+// only non-secret preferences/toggles. Secrets live in server .env (§17).
+// ─────────────────────────────────────────────────────────────
+model AppConfig {
+  id           Int      @id @default(1) @db.UnsignedInt
+  company      Json?
+  tax          Json?
+  integrations Json?
+  alerts       Json?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  @@map("app_config")
+}

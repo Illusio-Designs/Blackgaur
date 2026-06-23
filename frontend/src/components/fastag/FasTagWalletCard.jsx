@@ -3,9 +3,9 @@
 import { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { AnimatePresence, motion } from 'framer-motion';
-import { RefreshCw, Radio, AlertTriangle, Wallet } from 'lucide-react';
+import { RefreshCw, Radio, AlertTriangle } from 'lucide-react';
 import Button from '@/components/ui/Button';
-import Modal from '@/components/ui/Modal';
+import Drawer from '@/components/ui/Drawer';
 import FormInput from '@/components/ui/FormInput';
 import { formatINR, timeAgo, mask, cn } from '@/lib/utils';
 
@@ -45,68 +45,85 @@ export default function FasTagWalletCard({ wallet, onSync, onRecharge }) {
     <motion.div
       animate={flash ? { boxShadow: '0 0 0 3px rgba(13,148,136,0.45)' } : { boxShadow: '0 0 0 0 rgba(13,148,136,0)' }}
       transition={{ duration: 0.5 }}
-      className={cn(
-        'card relative overflow-hidden border-l-4 border-l-brand-fastag p-4',
-        isLow && 'ring-1 ring-brand-danger/30',
-      )}
+      className={cn('card overflow-hidden p-0', isLow && 'ring-1 ring-brand-danger/40')}
     >
-      <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
-          <p className="font-mono text-sm font-semibold text-brand-navy">{wallet.vehicle?.registration_no}</p>
-          <p className="mt-0.5 flex items-center gap-1 font-mono text-xs text-brand-muted">
-            <Radio className="h-3 w-3" />
-            {mask(wallet.tag_id, 6)}
-          </p>
+      {/* ── NETC tag face ── */}
+      <div className="relative isolate overflow-hidden bg-gradient-to-br from-brand-fastag to-[#0a4f49] p-4 text-white">
+        {/* RFID wave motif */}
+        <div className="pointer-events-none absolute -right-6 -top-6 opacity-20">
+          <Radio className="h-28 w-28" strokeWidth={1} />
         </div>
-        <span className="inline-flex shrink-0 items-center rounded-full bg-teal-50 px-2 py-0.5 text-[11px] font-semibold text-brand-fastag">
-          {wallet.tag_issuer}
-        </span>
-      </div>
 
-      <div className="mt-4 flex items-end justify-between">
-        <div>
-          <p className="flex items-center gap-1 text-[11px] uppercase tracking-wide text-brand-muted">
-            <Wallet className="h-3 w-3" />
-            {t('balance')}
-          </p>
-          <p className={cn('font-mono text-2xl font-bold', isLow ? 'text-brand-danger' : 'text-brand-navy')}>
-            {formatINR(wallet.balance)}
-          </p>
-        </div>
-        {isLow && (
-          <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-1 text-[11px] font-semibold text-brand-danger">
-            <AlertTriangle className="h-3 w-3" />
-            {t('low_balance')}
+        <div className="relative flex items-start justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-white/15">
+              <Radio className="h-4 w-4" />
+            </span>
+            <div className="leading-tight">
+              <p className="font-display text-sm font-bold tracking-wide">FASTag</p>
+              <p className="text-[9px] font-medium uppercase tracking-[0.2em] text-white/70">NETC</p>
+            </div>
+          </div>
+          <span className="rounded-full bg-white/20 px-2 py-0.5 text-[11px] font-semibold backdrop-blur">
+            {wallet.tag_issuer}
           </span>
-        )}
+        </div>
+
+        <p className="relative mt-3 font-mono text-xs tracking-wider text-white/80">
+          {mask(wallet.tag_id, 6)}
+        </p>
+
+        <div className="relative mt-3 flex items-end justify-between gap-3">
+          <div>
+            <p className="text-[10px] uppercase tracking-wide text-white/60">{tc('vehicle')}</p>
+            <p className="font-mono text-sm font-semibold">{wallet.vehicle?.registration_no}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-[10px] uppercase tracking-wide text-white/60">{t('balance')}</p>
+            <p className={cn('font-mono text-xl font-bold', isLow ? 'text-amber-300' : 'text-white')}>
+              {formatINR(wallet.balance)}
+            </p>
+          </div>
+        </div>
+
+        <AnimatePresence>
+          {flash && (
+            <motion.span
+              initial={{ opacity: 0, y: 4 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              className="absolute right-3 top-3 rounded-full bg-emerald-400/90 px-2 py-0.5 text-[11px] font-medium text-emerald-950"
+            >
+              {t('synced')}
+            </motion.span>
+          )}
+        </AnimatePresence>
       </div>
 
-      <p className="mt-2 text-xs text-brand-muted">{t('lastSynced', { time: timeAgo(wallet.balance_synced_at) })}</p>
+      {/* ── Body ── */}
+      <div className="p-4">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-brand-muted">{t('lastSynced', { time: timeAgo(wallet.balance_synced_at) })}</p>
+          {isLow && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-red-50 px-2 py-1 text-[11px] font-semibold text-brand-danger">
+              <AlertTriangle className="h-3 w-3" />
+              {t('low_balance')}
+            </span>
+          )}
+        </div>
 
-      <div className="mt-4 flex items-center gap-2">
-        <Button variant="outline" size="sm" onClick={handleSync} disabled={isSyncing} className="flex-1">
-          <RefreshCw className={cn('h-4 w-4', isSyncing && 'animate-spin')} />
-          {isSyncing ? t('syncing') : tc('sync_now')}
-        </Button>
-        <Button variant="navy" size="sm" onClick={() => setRechargeOpen(true)} className="flex-1">
-          {t('recharge')}
-        </Button>
+        <div className="mt-3 flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={handleSync} disabled={isSyncing} className="flex-1">
+            <RefreshCw className={cn('h-4 w-4', isSyncing && 'animate-spin')} />
+            {isSyncing ? t('syncing') : tc('sync_now')}
+          </Button>
+          <Button variant="navy" size="sm" onClick={() => setRechargeOpen(true)} className="flex-1">
+            {t('recharge')}
+          </Button>
+        </div>
       </div>
 
-      <AnimatePresence>
-        {flash && (
-          <motion.span
-            initial={{ opacity: 0, y: 4 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0 }}
-            className="absolute right-3 top-3 rounded-full bg-emerald-50 px-2 py-0.5 text-[11px] font-medium text-brand-success"
-          >
-            {t('synced')}
-          </motion.span>
-        )}
-      </AnimatePresence>
-
-      <Modal
+      <Drawer
         open={rechargeOpen}
         onClose={() => setRechargeOpen(false)}
         title={`${t('recharge')} — ${wallet.vehicle?.registration_no}`}
@@ -131,7 +148,7 @@ export default function FasTagWalletCard({ wallet, onSync, onRecharge }) {
           onChange={(e) => setAmount(e.target.value)}
           placeholder="0"
         />
-      </Modal>
+      </Drawer>
     </motion.div>
   );
 }

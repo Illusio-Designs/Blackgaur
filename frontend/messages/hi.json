@@ -42,7 +42,9 @@
     "language": "भाषा",
     "today": "आज",
     "thisMonth": "इस महीने",
-    "demoMode": "डेमो डेटा — बैकएंड कनेक्ट नहीं है"
+    "demoMode": "डेमो डेटा — बैकएंड कनेक्ट नहीं है",
+    "vehicle": "वाहन",
+    "driver": "ड्राइवर"
   },
   "nav": {
     "home": "होम",
@@ -67,7 +69,7 @@
     "audit": "ऑडिट लॉग",
     "translations": "अनुवाद",
     "getQuote": "क्वोट लें",
-    "settings": "ब्रांडिंग और थीम",
+    "settings": "सेटिंग्स",
     "widgets": "विजेट्स"
   },
   "auth": {
@@ -282,7 +284,8 @@
       "HSD": "डीजल (HSD)",
       "MS": "पेट्रोल (MS)",
       "LDO": "LDO"
-    }
+    },
+    "cardLabel": "फ्यूल कार्ड"
   },
   "reports": {
     "title": "रिपोर्ट और विश्लेषण",
@@ -487,6 +490,93 @@
       "aboutBody": "अबाउट विवरण",
       "add": "जोड़ें",
       "remove": "हटाएँ"
+    },
+    "hubTitle": "सेटिंग्स",
+    "hubSubtitle": "ब्रांडिंग, कंपनी, कर और इंटीग्रेशन",
+    "sections": {
+      "company": "कंपनी और GST",
+      "branding": "ब्रांडिंग और थीम",
+      "tax": "कर और RCM",
+      "integrations": "इंटीग्रेशन",
+      "alerts": "अलर्ट"
+    },
+    "company": {
+      "title": "कंपनी और GST",
+      "subtitle": "चालान पर उपयोग की जाने वाली कानूनी इकाई, GST और बैंक जानकारी।",
+      "legalName": "कानूनी नाम",
+      "gstin": "GSTIN",
+      "pan": "PAN",
+      "stateCode": "राज्य कोड",
+      "stateCodeHelp": "GST राज्य कोड, जैसे गुजरात के लिए 24।",
+      "cin": "CIN",
+      "registeredAddress": "पंजीकृत पता",
+      "bankTitle": "बैंक विवरण",
+      "bankName": "बैंक का नाम",
+      "bankAccount": "खाता संख्या",
+      "ifsc": "IFSC",
+      "invoiceTitle": "चालान सेटिंग्स",
+      "invoiceHelp": "ये विवरण चालान PDF और चालान संख्या में उपयोग होते हैं।",
+      "financialYear": "वित्तीय वर्ष",
+      "invoicePrefix": "चालान उपसर्ग",
+      "invoicePrefixHelp": "जनरेट किए गए चालान संख्या के लिए उपसर्ग, जैसे INV।"
+    },
+    "tax": {
+      "title": "कर और RCM",
+      "subtitle": "नए चालान के लिए डिफ़ॉल्ट GST, रिवर्स-चार्ज और TDS व्यवहार।",
+      "rcmDefault": "डिफ़ॉल्ट रूप से रिवर्स चार्ज (RCM)",
+      "rcmHelp": "चालू होने पर GST प्राप्तकर्ता द्वारा भुगतान किया जाता है (RCM); आपके चालान पर कोई GST नहीं दिखता।",
+      "placeOfSupplyAuto": "स्वतः आपूर्ति स्थान",
+      "placeOfSupplyHelp": "राज्य कोड से स्वतः CGST+SGST (अंतर-राज्यीय) बनाम IGST (अंतरराज्यीय) तय करें।",
+      "itcEnabled": "इनपुट टैक्स क्रेडिट (ITC) सक्षम",
+      "itcHelp": "इनपुट टैक्स क्रेडिट का दावा करने की अनुमति दें (आमतौर पर 12% स्लैब के साथ)।",
+      "gstRate": "डिफ़ॉल्ट GST दर",
+      "gst0": "0% (छूट / निल-रेटेड)",
+      "gst5": "5% (बिना ITC)",
+      "gst12": "12% (ITC के साथ)",
+      "tdsTitle": "TDS",
+      "tdsRate": "TDS दर (%)",
+      "tdsSection": "TDS धारा",
+      "tdsSectionHelp": "जैसे परिवहन के लिए 194C।",
+      "exampleTitle": "लाइव उदाहरण",
+      "exampleIntro": "{subtotal} के नमूना उप-योग के लिए:",
+      "exSubtotal": "उप-योग",
+      "exGst": "GST ({rate}%)",
+      "exRcmNote": "प्राप्तकर्ता द्वारा भुगतान (RCM)",
+      "exTds": "TDS ({rate}%)",
+      "exTotal": "चालान कुल",
+      "rcmExplain": "रिवर्स चार्ज: प्राप्तकर्ता सीधे सरकार को GST का भुगतान करता है; आपके चालान में GST नहीं जोड़ा जाता।",
+      "fcmExplain": "फॉरवर्ड चार्ज: GST चालान में जोड़ा जाता है और ग्राहक से वसूला जाता है।"
+    },
+    "integrations": {
+      "title": "इंटीग्रेशन",
+      "subtitle": "प्रदाता प्राथमिकताएँ और सिंक शेड्यूल। यहाँ कोई गोपनीय जानकारी संग्रहीत नहीं होती।",
+      "secretsNote": "API कुंजियाँ और गोपनीय जानकारी सर्वर एनवायरनमेंट वेरिएबल के माध्यम से सुरक्षित रूप से कॉन्फ़िगर की जाती हैं, यहाँ नहीं।",
+      "configured": "कॉन्फ़िगर किया गया",
+      "notConfigured": "कॉन्फ़िगर नहीं",
+      "otpTitle": "OTP / SMS",
+      "otpProvider": "OTP प्रदाता",
+      "msg91SenderId": "MSG91 प्रेषक ID",
+      "fastagTitle": "FASTag",
+      "fastagProvider": "FASTag प्रदाता",
+      "fastagLowBalanceDefault": "डिफ़ॉल्ट कम-बैलेंस अलर्ट (₹)",
+      "fastagSyncCron": "FASTag सिंक शेड्यूल",
+      "fuelTitle": "फ्यूल कार्ड",
+      "fuelProviders": "ईंधन प्रदाता",
+      "fuelSyncCron": "ईंधन सिंक शेड्यूल",
+      "cronHelp": "क्रॉन एक्सप्रेशन (मिनट घंटा दिन माह सप्ताह-दिन)।"
+    },
+    "alerts": {
+      "title": "अलर्ट",
+      "subtitle": "परिचालन अलर्ट के लिए सीमाएँ और सूचना चैनल।",
+      "lowBalanceThreshold": "कम-बैलेंस सीमा (₹)",
+      "lowBalanceHelp": "जब FASTag वॉलेट इससे नीचे गिरे तो सूचित करें।",
+      "docExpiryLeadDays": "दस्तावेज़ समाप्ति लीड (दिन)",
+      "docExpiryHelp": "दस्तावेज़ समाप्त होने से इतने दिन पहले चेतावनी दें।",
+      "channelsTitle": "सूचना चैनल",
+      "notifyEmail": "ईमेल सूचनाएँ",
+      "notifyEmailHelp": "ईमेल द्वारा अलर्ट भेजें।",
+      "notifySms": "SMS सूचनाएँ",
+      "notifySmsHelp": "SMS द्वारा अलर्ट भेजें।"
     }
   }
 }

@@ -42,7 +42,9 @@
     "language": "ભાષા",
     "today": "આજે",
     "thisMonth": "આ મહિને",
-    "demoMode": "ડેમો ડેટા — બેકએન્ડ કનેક્ટ નથી"
+    "demoMode": "ડેમો ડેટા — બેકએન્ડ કનેક્ટ નથી",
+    "vehicle": "વાહન",
+    "driver": "ડ્રાઇવર"
   },
   "nav": {
     "home": "હોમ",
@@ -67,7 +69,7 @@
     "audit": "ઑડિટ લૉગ",
     "translations": "અનુવાદ",
     "getQuote": "ક્વોટ મેળવો",
-    "settings": "બ્રાન્ડિંગ અને થીમ",
+    "settings": "સેટિંગ્સ",
     "widgets": "વિજેટ્સ"
   },
   "auth": {
@@ -282,7 +284,8 @@
       "HSD": "ડીઝલ (HSD)",
       "MS": "પેટ્રોલ (MS)",
       "LDO": "LDO"
-    }
+    },
+    "cardLabel": "ફ્યુઅલ કાર્ડ"
   },
   "reports": {
     "title": "રિપોર્ટ અને વિશ્લેષણ",
@@ -487,6 +490,93 @@
       "aboutBody": "અબાઉટ વર્ણન",
       "add": "ઉમેરો",
       "remove": "દૂર કરો"
+    },
+    "hubTitle": "સેટિંગ્સ",
+    "hubSubtitle": "બ્રાન્ડિંગ, કંપની, કર અને ઇન્ટિગ્રેશન",
+    "sections": {
+      "company": "કંપની અને GST",
+      "branding": "બ્રાન્ડિંગ અને થીમ",
+      "tax": "કર અને RCM",
+      "integrations": "ઇન્ટિગ્રેશન",
+      "alerts": "એલર્ટ"
+    },
+    "company": {
+      "title": "કંપની અને GST",
+      "subtitle": "ઇન્વોઇસ પર વપરાતી કાનૂની એન્ટિટી, GST અને બેંક વિગતો.",
+      "legalName": "કાનૂની નામ",
+      "gstin": "GSTIN",
+      "pan": "PAN",
+      "stateCode": "રાજ્ય કોડ",
+      "stateCodeHelp": "GST રાજ્ય કોડ, જેમ કે ગુજરાત માટે 24.",
+      "cin": "CIN",
+      "registeredAddress": "નોંધાયેલ સરનામું",
+      "bankTitle": "બેંક વિગતો",
+      "bankName": "બેંકનું નામ",
+      "bankAccount": "ખાતા નંબર",
+      "ifsc": "IFSC",
+      "invoiceTitle": "ઇન્વોઇસ સેટિંગ્સ",
+      "invoiceHelp": "આ વિગતો ઇન્વોઇસ PDF અને ઇન્વોઇસ નંબરિંગમાં વપરાય છે.",
+      "financialYear": "નાણાકીય વર્ષ",
+      "invoicePrefix": "ઇન્વોઇસ ઉપસર્ગ",
+      "invoicePrefixHelp": "જનરેટ થયેલા ઇન્વોઇસ નંબર માટે ઉપસર્ગ, જેમ કે INV."
+    },
+    "tax": {
+      "title": "કર અને RCM",
+      "subtitle": "નવા ઇન્વોઇસ માટે ડિફૉલ્ટ GST, રિવર્સ-ચાર્જ અને TDS વર્તન.",
+      "rcmDefault": "ડિફૉલ્ટ રૂપે રિવર્સ ચાર્જ (RCM)",
+      "rcmHelp": "ચાલુ હોય ત્યારે GST પ્રાપ્તકર્તા ભરે છે (RCM); તમારા ઇન્વોઇસ પર GST દેખાતો નથી.",
+      "placeOfSupplyAuto": "સ્વતઃ સપ્લાય સ્થાન",
+      "placeOfSupplyHelp": "રાજ્ય કોડ પરથી સ્વતઃ CGST+SGST (આંતર-રાજ્ય) વિ. IGST (આંતરરાજ્ય) નક્કી કરો.",
+      "itcEnabled": "ઇનપુટ ટેક્સ ક્રેડિટ (ITC) સક્ષમ",
+      "itcHelp": "ઇનપુટ ટેક્સ ક્રેડિટ દાવો કરવાની મંજૂરી (સામાન્ય રીતે 12% સ્લેબ સાથે).",
+      "gstRate": "ડિફૉલ્ટ GST દર",
+      "gst0": "0% (મુક્તિ / નિલ-રેટેડ)",
+      "gst5": "5% (ITC વગર)",
+      "gst12": "12% (ITC સાથે)",
+      "tdsTitle": "TDS",
+      "tdsRate": "TDS દર (%)",
+      "tdsSection": "TDS કલમ",
+      "tdsSectionHelp": "જેમ કે પરિવહન માટે 194C.",
+      "exampleTitle": "લાઇવ ઉદાહરણ",
+      "exampleIntro": "{subtotal} ના નમૂના સબટોટલ માટે:",
+      "exSubtotal": "સબટોટલ",
+      "exGst": "GST ({rate}%)",
+      "exRcmNote": "પ્રાપ્તકર્તા ભરે (RCM)",
+      "exTds": "TDS ({rate}%)",
+      "exTotal": "ઇન્વોઇસ કુલ",
+      "rcmExplain": "રિવર્સ ચાર્જ: પ્રાપ્તકર્તા સીધો સરકારને GST ભરે છે; તમારા ઇન્વોઇસમાં GST ઉમેરાતો નથી.",
+      "fcmExplain": "ફોરવર્ડ ચાર્જ: GST ઇન્વોઇસમાં ઉમેરાય છે અને ગ્રાહક પાસેથી વસૂલાય છે."
+    },
+    "integrations": {
+      "title": "ઇન્ટિગ્રેશન",
+      "subtitle": "પ્રદાતા પસંદગીઓ અને સિંક શેડ્યૂલ. અહીં કોઈ ગુપ્ત માહિતી સંગ્રહાતી નથી.",
+      "secretsNote": "API કી અને ગુપ્ત માહિતી સર્વર એન્વાયર્નમેન્ટ વેરિએબલ દ્વારા સુરક્ષિત રીતે ગોઠવાય છે, અહીં નહીં.",
+      "configured": "ગોઠવાયેલ",
+      "notConfigured": "ગોઠવાયેલ નથી",
+      "otpTitle": "OTP / SMS",
+      "otpProvider": "OTP પ્રદાતા",
+      "msg91SenderId": "MSG91 પ્રેષક ID",
+      "fastagTitle": "FASTag",
+      "fastagProvider": "FASTag પ્રદાતા",
+      "fastagLowBalanceDefault": "ડિફૉલ્ટ લો-બેલેન્સ એલર્ટ (₹)",
+      "fastagSyncCron": "FASTag સિંક શેડ્યૂલ",
+      "fuelTitle": "ફ્યુઅલ કાર્ડ",
+      "fuelProviders": "ઇંધણ પ્રદાતા",
+      "fuelSyncCron": "ઇંધણ સિંક શેડ્યૂલ",
+      "cronHelp": "ક્રોન એક્સપ્રેશન (મિનિટ કલાક દિવસ માસ સપ્તાહ-દિવસ)."
+    },
+    "alerts": {
+      "title": "એલર્ટ",
+      "subtitle": "ઓપરેશનલ એલર્ટ માટે થ્રેશોલ્ડ અને સૂચના ચેનલ.",
+      "lowBalanceThreshold": "લો-બેલેન્સ થ્રેશોલ્ડ (₹)",
+      "lowBalanceHelp": "FASTag વોલેટ આનાથી નીચે જાય ત્યારે સૂચિત કરો.",
+      "docExpiryLeadDays": "દસ્તાવેજ સમાપ્તિ લીડ (દિવસ)",
+      "docExpiryHelp": "દસ્તાવેજ સમાપ્ત થાય તેના આટલા દિવસ પહેલાં ચેતવણી આપો.",
+      "channelsTitle": "સૂચના ચેનલ",
+      "notifyEmail": "ઇમેઇલ સૂચનાઓ",
+      "notifyEmailHelp": "ઇમેઇલ દ્વારા એલર્ટ મોકલો.",
+      "notifySms": "SMS સૂચનાઓ",
+      "notifySmsHelp": "SMS દ્વારા એલર્ટ મોકલો."
     }
   }
 }

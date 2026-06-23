@@ -237,6 +237,55 @@ async function main() {
   });
   console.log(`[seed] branding: ${branding.companyName} (#${branding.id})`);
 
+  // ── App configuration (singleton, id=1) — ADMIN-ONLY (§8, §13, §17) ──
+  // Company/GST, tax/RCM defaults, integration preferences and alert settings.
+  // Never exposed by the public branding endpoint; never stores secrets.
+  // update:{} keeps the seed idempotent without clobbering admin edits on re-run.
+  const appConfig = await prisma.appConfig.upsert({
+    where: { id: 1 },
+    update: {},
+    create: {
+      id: 1,
+      company: {
+        legalName: 'TransCo Logistics Pvt Ltd',
+        gstin: '24ABCDE1234F1Z5',
+        pan: 'ABCDE1234F',
+        stateCode: '24',
+        cin: '',
+        registeredAddress: 'Plot 12, Transport Nagar, Ahmedabad, Gujarat 380016',
+        bankName: 'HDFC Bank',
+        bankAccount: '50200012345678',
+        ifsc: 'HDFC0001234',
+        financialYear: '2024-25',
+        invoicePrefix: 'INV',
+      },
+      tax: {
+        rcmDefault: true,
+        gstRate: 5,
+        itcEnabled: false,
+        tdsRate: 2,
+        tdsSection: '194C',
+        placeOfSupplyAuto: true,
+      },
+      integrations: {
+        otpProvider: 'MSG91',
+        msg91SenderId: 'TMSAPP',
+        fastagProvider: 'IHMCL',
+        fastagLowBalanceDefault: 200,
+        fuelProviders: ['HPCL', 'IOCL'],
+        fastagSyncCron: '*/15 * * * *',
+        fuelSyncCron: '*/30 * * * *',
+      },
+      alerts: {
+        lowBalanceThreshold: 200,
+        docExpiryLeadDays: 30,
+        notifyEmail: true,
+        notifySms: false,
+      },
+    },
+  });
+  console.log(`[seed] app_config: #${appConfig.id}`);
+
   console.log('[seed] done.');
 }
 

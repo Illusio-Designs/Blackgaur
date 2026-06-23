@@ -61,8 +61,8 @@ export default function ReportsPage() {
                   <YAxis stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => formatINRCompact(v)} />
                   <Tooltip formatter={(v) => formatINR(v)} contentStyle={{ borderRadius: 12, border: '1px solid #E2E8F0' }} />
                   <Legend />
-                  <Bar dataKey="revenue" name={tc('total')} fill="#1A56DB" radius={[6, 6, 0, 0]} />
-                  <Bar dataKey="cost" name="Cost" fill="#D97706" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="revenue" name={tc('total')} fill="#1A56DB" radius={[6, 6, 0, 0]} isAnimationActive={false} />
+                  <Bar dataKey="cost" name="Cost" fill="#D97706" radius={[6, 6, 0, 0]} isAnimationActive={false} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -78,7 +78,7 @@ export default function ReportsPage() {
                   <XAxis dataKey="month" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => formatINRCompact(v)} />
                   <Tooltip formatter={(v) => formatINR(v)} contentStyle={{ borderRadius: 12, border: '1px solid #E2E8F0' }} />
-                  <Line type="monotone" dataKey="pnl" name="Net P&L" stroke="#065F46" strokeWidth={2.5} dot={{ r: 4 }} />
+                  <Line type="monotone" dataKey="pnl" name="Net P&L" stroke="#065F46" strokeWidth={2.5} dot={{ r: 4 }} isAnimationActive={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>
@@ -94,7 +94,7 @@ export default function ReportsPage() {
                   <XAxis dataKey="vehicle" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => formatINRCompact(v)} />
                   <Tooltip formatter={(v) => formatINR(v)} contentStyle={{ borderRadius: 12, border: '1px solid #E2E8F0' }} />
-                  <Bar dataKey="toll" fill="#0F766E" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="toll" fill="#0F766E" radius={[6, 6, 0, 0]} isAnimationActive={false} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -110,7 +110,7 @@ export default function ReportsPage() {
                   <XAxis dataKey="vehicle" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
                   <YAxis stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => formatINRCompact(v)} />
                   <Tooltip formatter={(v) => formatINR(v)} contentStyle={{ borderRadius: 12, border: '1px solid #E2E8F0' }} />
-                  <Bar dataKey="spend" fill="#9A3412" radius={[6, 6, 0, 0]} />
+                  <Bar dataKey="spend" fill="#9A3412" radius={[6, 6, 0, 0]} isAnimationActive={false} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -126,7 +126,7 @@ export default function ReportsPage() {
                   <XAxis type="number" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => formatINRCompact(v)} />
                   <YAxis type="category" dataKey="name" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} width={80} />
                   <Tooltip formatter={(v) => formatINR(v)} contentStyle={{ borderRadius: 12, border: '1px solid #E2E8F0' }} />
-                  <Bar dataKey="revenue" fill="#1A56DB" radius={[0, 6, 6, 0]} />
+                  <Bar dataKey="revenue" fill="#1A56DB" radius={[0, 6, 6, 0]} isAnimationActive={false} />
                 </BarChart>
               </ResponsiveContainer>
             </div>

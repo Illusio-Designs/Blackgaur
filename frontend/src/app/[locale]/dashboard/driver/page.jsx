@@ -8,6 +8,7 @@ import PageHeader from '@/components/dashboard/PageHeader';
 import Button from '@/components/ui/Button';
 import StatusBadge from '@/components/ui/StatusBadge';
 import Modal from '@/components/ui/Modal';
+import Drawer from '@/components/ui/Drawer';
 import FormInput from '@/components/ui/FormInput';
 import FileUpload from '@/components/ui/FileUpload';
 import Timeline from '@/components/ui/Timeline';
@@ -97,7 +98,7 @@ export default function DriverPage() {
         </motion.div>
       </TaskCompleteFX>
 
-      <Modal open={expenseOpen} onClose={() => setExpenseOpen(false)} title={t('logExpense')}
+      <Drawer open={expenseOpen} onClose={() => setExpenseOpen(false)} title={t('logExpense')}
         footer={<><Button variant="ghost" onClick={() => setExpenseOpen(false)}>{tc('cancel')}</Button><Button variant="amber" onClick={submitExpense}>{tc('submit')}</Button></>}>
         <div className="space-y-4">
           <FormInput as="select" label={t('expenseType')} value={exp.expense_type} onChange={(e) => setExp({ ...exp, expense_type: e.target.value })}>
@@ -107,7 +108,7 @@ export default function DriverPage() {
           <FormInput as="textarea" label={te('title')} value={exp.description} onChange={(e) => setExp({ ...exp, description: e.target.value })} />
           <FileUpload accept="image/*" maxSize={10 * 1024 * 1024} label={t('addReceipt')} onUpload={() => {}} />
         </div>
-      </Modal>
+      </Drawer>
 
       <Modal open={podOpen} onClose={() => setPodOpen(false)} title={t('uploadPod')}
         footer={<Button variant="success" onClick={() => { setPodOpen(false); toast.success(t('podUploaded'), trip.lr_number); }}>{tc('submit')}</Button>}>

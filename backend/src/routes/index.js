@@ -17,6 +17,7 @@ const vehicleRoutes = require('./vehicle.routes');
 const reportsRoutes = require('./reports.routes');
 const auditRoutes = require('./audit.routes');
 const brandingRoutes = require('./branding.routes');
+const configRoutes = require('./config.routes');
 
 /**
  * Mount all v1 routers (TMS Architecture §5, §6.3, §7.2).
@@ -33,6 +34,7 @@ function registerRoutes(app) {
   // Protected — authenticate once, then per-route RBAC.
   v1.use(authenticate);
   v1.use('/settings', brandingRoutes.settingsRouter);
+  v1.use('/settings', configRoutes);
   v1.use('/users', userRoutes);
   v1.use('/roles', roleRoutes);
   v1.use('/trips', tripRoutes);

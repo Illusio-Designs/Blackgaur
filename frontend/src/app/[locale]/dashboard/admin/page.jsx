@@ -85,8 +85,8 @@ export default function AdminOverviewPage() {
                 <XAxis dataKey="month" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
                 <YAxis stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => formatINRCompact(v)} />
                 <Tooltip formatter={(v) => formatINRCompact(v)} contentStyle={{ borderRadius: 12, border: '1px solid #E2E8F0' }} />
-                <Area type="monotone" dataKey="revenue" stroke="#1A56DB" strokeWidth={2} fill="url(#rev)" />
-                <Area type="monotone" dataKey="cost" stroke="#D97706" strokeWidth={2} fill="url(#cost)" />
+                <Area type="monotone" dataKey="revenue" stroke="#1A56DB" strokeWidth={2} fill="url(#rev)" isAnimationActive={false} />
+                <Area type="monotone" dataKey="cost" stroke="#D97706" strokeWidth={2} fill="url(#cost)" isAnimationActive={false} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
@@ -104,6 +104,7 @@ export default function AdminOverviewPage() {
                   innerRadius={55}
                   outerRadius={85}
                   paddingAngle={3}
+                  isAnimationActive={false}
                 >
                   {(d.tripStatus || []).map((entry, i) => (
                     <Cell key={entry.name} fill={PIE_COLORS[i % PIE_COLORS.length]} />
