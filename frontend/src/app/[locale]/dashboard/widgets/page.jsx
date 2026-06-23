@@ -247,7 +247,7 @@ export default function WidgetsPage() {
         </Showcase>
 
         {/* Expense row */}
-        <Showcase title="Expense row" hint="<ExpenseRow />" span={2} bare>
+        <Showcase title="Expense row" hint="<ExpenseRow />" span={2}>
           <div className="space-y-2.5">
             <ExpenseRow
               expense={mockExpenses[1]}
@@ -277,7 +277,7 @@ export default function WidgetsPage() {
         </Showcase>
 
         {/* Toll + Fuel transaction rows */}
-        <Showcase title="Transaction rows" hint="<TollTransactionRow /> <FuelTransactionRow />" bare>
+        <Showcase title="Transaction rows" hint="<TollTransactionRow /> <FuelTransactionRow />">
           <div className="space-y-2.5">
             <TollTransactionRow txn={mockTollTransactions[0]} trip={mockTrips[3]} />
             <FuelTransactionRow txn={mockFuelTransactions[0]} trip={mockTrips[4]} />

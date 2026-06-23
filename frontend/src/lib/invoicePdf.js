@@ -55,8 +55,8 @@ export function downloadInvoicePdf(inv, branding = {}) {
   for (let i = 0; i < inum.length; i++) h = (h * 31 + inum.charCodeAt(i)) >>> 0;
   const irn = (h.toString(16) + inum.replace(/[^a-z0-9]/gi, '').toLowerCase() + '0000000000000000').slice(0, 64);
 
-  const qrInvoice = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent(inum)}`;
-  const qrUpi = `https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=${encodeURIComponent('upi://pay?pa=demo@bank&am=' + total.toFixed(2))}`;
+  const qrInvoice = `https://api.qrserver.com/v1/create-qr-code/?size=92x92&data=${encodeURIComponent(inum)}`;
+  const qrUpi = `https://api.qrserver.com/v1/create-qr-code/?size=92x92&data=${encodeURIComponent('upi://pay?pa=demo@bank&am=' + total.toFixed(2))}`;
 
   // Build line items: the freight line plus any extra charges present.
   const items = [
@@ -117,44 +117,44 @@ export function downloadInvoicePdf(inv, branding = {}) {
   win.document.write(`<!doctype html><html><head><meta charset="utf-8"/>
   <title>${esc(inv.invoice_number)}</title>
   <style>
-    @page { size: A4 portrait; margin: 10mm; }
+    @page { size: A4 portrait; margin: 8mm; }
     *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;}
-    body{color:#0f172a;font-size:13px;}
-    .doc{border:1px solid #94a3b8;padding:24px;}
-    .strip{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
-    .strip .ttl{flex:1;text-align:center;font-size:18px;font-weight:700;color:#15803d;letter-spacing:.18em;}
+    body{color:#0f172a;font-size:10.5px;}
+    .doc{border:1px solid #94a3b8;padding:12px;}
+    .strip{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;}
+    .strip .ttl{flex:1;text-align:center;font-size:16px;font-weight:700;color:#15803d;letter-spacing:.18em;}
     .strip .orig{border:1px solid #94a3b8;padding:4px 8px;font-size:10px;font-weight:700;color:#0B1E3D;}
     table{width:100%;border-collapse:collapse;}
     .bx{border:1px solid #94a3b8;}
-    .bx td{border:1px solid #cbd5e1;padding:8px 10px;vertical-align:top;}
+    .bx td{border:1px solid #cbd5e1;padding:5px 8px;vertical-align:top;}
     .muted{color:#64748b;}
     .lbl{color:#64748b;font-size:11px;}
     .head td{vertical-align:top;}
     .metagrid{width:100%;border-collapse:collapse;}
-    .metagrid td{border:1px solid #cbd5e1;padding:4px 8px;font-size:12px;}
+    .metagrid td{border:1px solid #cbd5e1;padding:4px 8px;font-size:10px;}
     .metagrid td.k{color:#64748b;width:42%;}
-    .items{width:100%;border-collapse:collapse;margin-top:14px;}
-    .items th,.items td{border:1px solid #cbd5e1;padding:7px 8px;font-size:12px;}
+    .items{width:100%;border-collapse:collapse;margin-top:7px;}
+    .items th,.items td{border:1px solid #cbd5e1;padding:4px 7px;font-size:10px;}
     .items th{background:#0B1E3D;color:#fff;text-align:center;font-size:11px;}
-    .sec-h{color:#15803d;font-weight:700;font-size:12px;margin-bottom:4px;}
+    .sec-h{color:#15803d;font-weight:700;font-size:10px;margin-bottom:4px;}
     .totbox{width:320px;border-collapse:collapse;margin-left:auto;}
-    .totbox td{border:1px solid #cbd5e1;padding:6px 10px;}
+    .totbox td{border:1px solid #cbd5e1;padding:4px 8px;}
     .totbox td.amt{text-align:right;font-variant-numeric:tabular-nums;}
     .totbox tr.grand td{font-weight:700;color:#0B1E3D;background:#f1f5f9;}
-    .words{margin-top:12px;border:1px solid #cbd5e1;padding:8px 10px;font-size:12px;}
-    .hsn{width:100%;border-collapse:collapse;margin-top:14px;}
-    .hsn th,.hsn td{border:1px solid #cbd5e1;padding:6px 8px;font-size:11px;text-align:center;}
+    .words{margin-top:7px;border:1px solid #cbd5e1;padding:5px 8px;font-size:10px;}
+    .hsn{width:100%;border-collapse:collapse;margin-top:7px;}
+    .hsn th,.hsn td{border:1px solid #cbd5e1;padding:4px 6px;font-size:11px;text-align:center;}
     .hsn th{background:#f1f5f9;color:#0B1E3D;}
     .hsn td.amt,.hsn th.amt{text-align:right;}
-    .payblk{width:300px;border-collapse:collapse;margin-left:auto;margin-top:14px;}
-    .payblk td{border:1px solid #cbd5e1;padding:6px 10px;}
+    .payblk{width:300px;border-collapse:collapse;margin-left:auto;margin-top:7px;}
+    .payblk td{border:1px solid #cbd5e1;padding:4px 8px;}
     .payblk td.amt{text-align:right;font-variant-numeric:tabular-nums;}
     .payblk tr.grand td{font-weight:700;color:#0B1E3D;background:#f1f5f9;}
-    .rcm{margin-top:12px;background:#FEF3C7;color:#92400E;border:1px solid #f59e0b;padding:8px 12px;font-weight:600;font-size:12px;}
-    .bottom td{border:1px solid #cbd5e1;padding:10px;vertical-align:top;font-size:12px;}
-    .sign-space{height:46px;}
-    .notes td{border:1px solid #cbd5e1;padding:8px 10px;font-size:12px;vertical-align:top;}
-    .ftr{margin-top:10px;text-align:center;color:#64748b;font-size:11px;}
+    .rcm{margin-top:7px;background:#FEF3C7;color:#92400E;border:1px solid #f59e0b;padding:6px 10px;font-weight:600;font-size:10px;}
+    .bottom td{border:1px solid #cbd5e1;padding:6px 8px;vertical-align:top;font-size:10px;}
+    .sign-space{height:26px;}
+    .notes td{border:1px solid #cbd5e1;padding:5px 8px;font-size:10px;vertical-align:top;}
+    .ftr{margin-top:6px;text-align:center;color:#64748b;font-size:11px;}
     .amt{text-align:right;font-variant-numeric:tabular-nums;}
   </style></head><body>
   <div class="doc">
@@ -171,10 +171,10 @@ export function downloadInvoicePdf(inv, branding = {}) {
             <td style="border:0;width:64px;padding:0 12px 0 0">${logo}</td>
             <td style="border:0;padding:0">
               <div style="font-size:16px;font-weight:700;color:#0B1E3D">${esc(supplier)}</div>
-              <div class="muted" style="font-size:12px;margin-top:2px">GSTIN: ${esc(c.gstin || '—')}</div>
-              <div class="muted" style="font-size:12px">${esc([c.addressLine, c.city, c.state].filter(Boolean).join(', ') || '—')}</div>
-              <div class="muted" style="font-size:12px">Mobile: ${esc(c.phone || '—')}</div>
-              <div class="muted" style="font-size:12px">Email: ${esc(c.email || '—')}</div>
+              <div class="muted" style="font-size:10px;margin-top:2px">GSTIN: ${esc(c.gstin || '—')}</div>
+              <div class="muted" style="font-size:10px">${esc([c.addressLine, c.city, c.state].filter(Boolean).join(', ') || '—')}</div>
+              <div class="muted" style="font-size:10px">Mobile: ${esc(c.phone || '—')}</div>
+              <div class="muted" style="font-size:10px">Email: ${esc(c.email || '—')}</div>
             </td>
           </tr></table>
         </td>
@@ -187,7 +187,7 @@ export function downloadInvoicePdf(inv, branding = {}) {
           </table>
           <table style="width:100%;border-collapse:collapse;margin-top:6px"><tr style="border:0">
             <td style="border:0;padding:6px 0 0;font-size:10px;word-break:break-all;color:#64748b;vertical-align:top">IRN:<br/>${esc(irn)}</td>
-            <td style="border:0;padding:0;text-align:right;width:120px"><img src="${qrInvoice}" alt="QR" style="width:110px;height:110px"/></td>
+            <td style="border:0;padding:0;text-align:right;width:120px"><img src="${qrInvoice}" alt="QR" style="width:84px;height:110px"/></td>
           </tr></table>
         </td>
       </tr>
@@ -281,7 +281,7 @@ export function downloadInvoicePdf(inv, branding = {}) {
         </td>
         <td style="width:28%;text-align:center">
           <div class="sec-h" style="text-align:left">Pay using UPI:</div>
-          <img src="${qrUpi}" alt="UPI QR" style="width:110px;height:110px"/>
+          <img src="${qrUpi}" alt="UPI QR" style="width:84px;height:110px"/>
         </td>
         <td style="width:34%">
           <div style="font-weight:600;color:#0B1E3D">For ${esc(supplier)}</div>

@@ -28,8 +28,8 @@ export function downloadLrPdf(trip, branding = {}) {
   const weight = trip.cargo_weight_kg != null ? trip.cargo_weight_kg : '—';
 
   const logo = branding.logoUrl
-    ? `<img src="${esc(branding.logoUrl)}" alt="logo" style="width:48px;height:48px;object-fit:contain;border:1px solid #cbd5e1;background:#fff;"/>`
-    : `<div style="width:48px;height:48px;background:#0B1E3D;color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;">${esc(initial)}</div>`;
+    ? `<img src="${esc(branding.logoUrl)}" alt="logo" style="width:40px;height:40px;object-fit:contain;border:1px solid #cbd5e1;background:#fff;"/>`
+    : `<div style="width:40px;height:40px;background:#0B1E3D;color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;">${esc(initial)}</div>`;
 
   const lrDate = dateOnly(trip.planned_departure || trip.created_at);
   const ewayExpiry = dateOnly(trip.eway_bill_expiry);
@@ -41,35 +41,35 @@ export function downloadLrPdf(trip, branding = {}) {
   win.document.write(`<!doctype html><html><head><meta charset="utf-8"/>
   <title>${esc(trip.lr_number)}</title>
   <style>
-    @page { size: A4 landscape; margin: 8mm; }
+    @page { size: A4 landscape; margin: 5mm; }
     *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif;}
-    body{color:#0f172a;font-size:11px;}
+    body{color:#0f172a;font-size:9.5px;}
     .doc{border:1px solid #94a3b8;}
     table{width:100%;border-collapse:collapse;}
-    .hdr td{padding:6px 8px;vertical-align:middle;border-bottom:1px solid #94a3b8;}
-    .cname{text-align:center;font-size:20px;font-weight:700;text-transform:uppercase;color:#0B1E3D;letter-spacing:.04em;}
-    .subline{text-align:center;color:#64748b;font-size:10.5px;margin-top:2px;}
-    .badge{border:1px solid #0B1E3D;color:#0B1E3D;font-weight:700;font-size:10px;padding:4px 8px;display:inline-block;}
+    .hdr td{padding:3px 6px;vertical-align:middle;border-bottom:1px solid #94a3b8;}
+    .cname{text-align:center;font-size:16px;font-weight:700;text-transform:uppercase;color:#0B1E3D;letter-spacing:.04em;}
+    .subline{text-align:center;color:#64748b;font-size:9px;margin-top:2px;}
+    .badge{border:1px solid #0B1E3D;color:#0B1E3D;font-weight:700;font-size:9px;padding:3px 6px;display:inline-block;}
     .hl{background:#FEF3C7;color:#92400E;padding:1px 5px;font-weight:600;}
-    .band td{border:1px solid #cbd5e1;padding:6px 8px;vertical-align:top;}
-    .sec{color:#15803d;font-weight:700;font-size:10.5px;margin-bottom:3px;}
+    .band td{border:1px solid #cbd5e1;padding:3px 6px;vertical-align:top;}
+    .sec{color:#15803d;font-weight:700;font-size:9px;margin-bottom:3px;}
     .muted{color:#64748b;}
-    .notice{font-size:9.5px;color:#475569;line-height:1.35;}
+    .notice{font-size:9.5px;color:#475569;line-height:1.2;}
     .risk{font-weight:700;color:#0B1E3D;font-size:12px;}
     .meta{width:100%;border-collapse:collapse;}
-    .meta td{border:1px solid #cbd5e1;padding:2px 6px;font-size:10px;}
+    .meta td{border:1px solid #cbd5e1;padding:1px 5px;font-size:9px;}
     .meta td.k{color:#64748b;width:46%;}
     .items{width:100%;border-collapse:collapse;}
-    .items th,.items td{border:1px solid #cbd5e1;padding:5px 6px;font-size:10px;}
+    .items th,.items td{border:1px solid #cbd5e1;padding:3px 5px;font-size:9px;}
     .items th{background:#0B1E3D;color:#fff;text-align:center;font-size:9.5px;}
     .items td.c{text-align:center;}
     .charges{width:100%;border-collapse:collapse;}
-    .charges td{border:1px solid #cbd5e1;padding:4px 8px;font-size:10px;}
+    .charges td{border:1px solid #cbd5e1;padding:3px 6px;font-size:9px;}
     .charges td.amt{text-align:right;font-variant-numeric:tabular-nums;width:38%;}
     .charges tr.b td{font-weight:700;color:#0B1E3D;background:#f1f5f9;}
-    .sign-space{height:34px;}
-    .bottom td{border:1px solid #cbd5e1;padding:6px 8px;vertical-align:top;font-size:10px;}
-    .ftr td{border:1px solid #cbd5e1;padding:6px 8px;font-size:10px;}
+    .sign-space{height:16px;}
+    .bottom td{border:1px solid #cbd5e1;padding:3px 6px;vertical-align:top;font-size:9px;}
+    .ftr td{border:1px solid #cbd5e1;padding:3px 6px;font-size:9px;}
   </style></head><body>
   <div class="doc">
     <!-- 1. Header band -->
@@ -173,7 +173,7 @@ export function downloadLrPdf(trip, branding = {}) {
                 <td colspan="4">Total weights: ${esc(weight)} KG</td>
               </tr>
               <tr>
-                <td colspan="8" style="height:34px;vertical-align:top">Other Remark:</td>
+                <td colspan="8" style="height:16px;vertical-align:top">Other Remark:</td>
               </tr>
             </tbody>
           </table>
