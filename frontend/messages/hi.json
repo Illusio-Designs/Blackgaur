@@ -225,7 +225,8 @@
       "paid": "भुगतान किया गया",
       "cancelled": "रद्द किया गया",
       "overdue": "अतिदेय"
-    }
+    },
+    "downloadPdf": "पीडीएफ डाउनलोड करें"
   },
   "clients": {
     "title": "ग्राहक प्रबंधक",
@@ -335,7 +336,11 @@
     "update": "अपडेट करें",
     "deletePerm": "हटाएं",
     "approve": "स्वीकृत करें",
-    "system": "सिस्टम"
+    "system": "सिस्टम",
+    "saveChanges": "परिवर्तन सहेजें",
+    "permissionsSaved": "अनुमतियाँ अपडेट हुईं",
+    "adminFullAccess": "एडमिन के पास पूर्ण सिस्टम एक्सेस है",
+    "usersCount": "उपयोगकर्ता"
   },
   "audit": {
     "title": "ऑडिट लॉग",

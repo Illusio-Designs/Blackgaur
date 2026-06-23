@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { ScrollText, Plus, MapPin } from 'lucide-react';
+import { ScrollText, Plus, MapPin, Download } from 'lucide-react';
 import PageHeader from '@/components/dashboard/PageHeader';
 import Button from '@/components/ui/Button';
 import DataTable from '@/components/ui/DataTable';
@@ -13,7 +13,10 @@ import FormInput from '@/components/ui/FormInput';
 import DatePicker from '@/components/ui/DatePicker';
 import Timeline from '@/components/ui/Timeline';
 import { useToast } from '@/components/ui/Toast';
+import Tooltip from '@/components/ui/Tooltip';
 import { useTrips } from '@/hooks/useTrips';
+import { useBranding } from '@/hooks/useBranding';
+import { downloadLrPdf } from '@/lib/lrPdf';
 import { formatINR } from '@/lib/utils';
 import { INDIAN_CITIES } from '@/lib/constants';
 import { mockClients, mockVehicles, mockDrivers } from '@/lib/mock';
@@ -30,7 +33,9 @@ export default function LrBoardPage() {
   const tt = useTranslations('trips');
   const tc = useTranslations('common');
   const tv = useTranslations('vehicles');
+  const ti = useTranslations('invoices');
   const toast = useToast();
+  const { branding } = useBranding();
   const { data, isLoading } = useTrips();
   const [track, setTrack] = useState(null);
   const [createOpen, setCreateOpen] = useState(false);
@@ -51,9 +56,17 @@ export default function LrBoardPage() {
       { id: 'client', header: tt('client'), accessorFn: (r) => r.client?.company_name, cell: ({ row }) => row.original.client?.company_name },
       { accessorKey: 'freight_charges', header: tt('freight'), cell: ({ row }) => <span className="font-mono">{formatINR(row.original.freight_charges)}</span> },
       { accessorKey: 'status', header: tc('status'), cell: ({ row }) => <StatusBadge status={row.original.status} label={tt(`status.${row.original.status}`)} /> },
-      { id: 'actions', header: tc('actions'), enableSorting: false, cell: ({ row }) => <Button size="sm" variant="outline" icon={MapPin} onClick={() => setTrack(row.original)}>{t('quickTrack')}</Button> },
+      { id: 'actions', header: tc('actions'), enableSorting: false, cell: ({ row }) => (
+        <div className="flex items-center justify-end gap-1.5">
+          <Button size="sm" variant="outline" icon={MapPin} onClick={() => setTrack(row.original)}>{t('quickTrack')}</Button>
+          <Tooltip content={ti('downloadPdf')}>
+            <Button size="sm" variant="ghost" icon={Download} aria-label={ti('downloadPdf')} onClick={() => downloadLrPdf(row.original, branding)} />
+          </Tooltip>
+        </div>
+      ) },
     ],
-    [t, tt, tc],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, tt, tc, ti, branding],
   );
 
   const trackSteps = useMemo(() => {
@@ -71,7 +84,18 @@ export default function LrBoardPage() {
       <PageHeader title={t('title')} subtitle={t('subtitle')} icon={ScrollText} actions={<Button variant="amber" icon={Plus} onClick={() => setCreateOpen(true)}>{t('createLr')}</Button>} />
       <DataTable columns={columns} data={rows} loading={isLoading} pagination={{ page: 1, totalPages: 1, hasNext: false, hasPrev: false }} />
 
-      <Modal open={!!track} onClose={() => setTrack(null)} title={`${t('quickTrack')} — ${track?.lr_number || ''}`} size="md">
+      <Modal
+        open={!!track}
+        onClose={() => setTrack(null)}
+        title={`${t('quickTrack')} — ${track?.lr_number || ''}`}
+        size="md"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setTrack(null)}>{tc('cancel')}</Button>
+            <Button variant="amber" icon={Download} onClick={() => downloadLrPdf(track, branding)}>{ti('downloadPdf')}</Button>
+          </>
+        }
+      >
         {track && (
           <div>
             <div className="mb-4 rounded-xl bg-brand-surface p-3 text-sm">

@@ -225,7 +225,8 @@
       "paid": "ચૂકવેલ",
       "cancelled": "રદ થયેલ",
       "overdue": "મુદત વીતી ગયેલ"
-    }
+    },
+    "downloadPdf": "પીડીએફ ડાઉનલોડ કરો"
   },
   "clients": {
     "title": "ગ્રાહક મેનેજર",
@@ -335,7 +336,11 @@
     "update": "અપડેટ કરો",
     "deletePerm": "કાઢી નાખો",
     "approve": "મંજૂર કરો",
-    "system": "સિસ્ટમ"
+    "system": "સિસ્ટમ",
+    "saveChanges": "ફેરફારો સાચવો",
+    "permissionsSaved": "પરવાનગીઓ અપડેટ થઈ",
+    "adminFullAccess": "એડમિન પાસે સંપૂર્ણ સિસ્ટમ ઍક્સેસ છે",
+    "usersCount": "વપરાશકર્તાઓ"
   },
   "audit": {
     "title": "ઑડિટ લૉગ",

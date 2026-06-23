@@ -225,7 +225,8 @@
       "paid": "Paid",
       "cancelled": "Cancelled",
       "overdue": "Overdue"
-    }
+    },
+    "downloadPdf": "Download PDF"
   },
   "clients": {
     "title": "Client Manager",
@@ -335,7 +336,11 @@
     "update": "Update",
     "deletePerm": "Delete",
     "approve": "Approve",
-    "system": "System"
+    "system": "System",
+    "saveChanges": "Save changes",
+    "permissionsSaved": "Permissions updated",
+    "adminFullAccess": "Admin has full system access",
+    "usersCount": "users"
   },
   "audit": {
     "title": "Audit Logs",

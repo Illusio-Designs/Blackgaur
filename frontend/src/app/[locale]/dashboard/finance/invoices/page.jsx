@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { FileText, Plus, Send, Check, Eye } from 'lucide-react';
+import { FileText, Plus, Send, Check, Eye, Download } from 'lucide-react';
 import PageHeader from '@/components/dashboard/PageHeader';
 import Button from '@/components/ui/Button';
 import DataTable from '@/components/ui/DataTable';
@@ -19,6 +19,7 @@ import { useBranding } from '@/hooks/useBranding';
 import { INVOICE_STATUSES } from '@/lib/constants';
 import { formatINR, formatDate } from '@/lib/utils';
 import { amountInWords } from '@/lib/gst';
+import { downloadInvoicePdf } from '@/lib/invoicePdf';
 
 export default function InvoicesPage() {
   const t = useTranslations('invoices');
@@ -169,7 +170,20 @@ export default function InvoicesPage() {
         <InvoiceForm mode="create" onSubmit={handleCreate} />
       </Drawer>
 
-      <Modal open={!!preview} onClose={() => setPreview(null)} title={`${t('previewPdf')} — ${preview?.invoice_number || ''}`} size="lg">
+      <Modal
+        open={!!preview}
+        onClose={() => setPreview(null)}
+        title={`${t('previewPdf')} — ${preview?.invoice_number || ''}`}
+        size="lg"
+        footer={
+          <>
+            <Button variant="ghost" onClick={() => setPreview(null)}>{tc('cancel')}</Button>
+            <Button variant="amber" icon={Download} onClick={() => downloadInvoicePdf(preview, branding)}>
+              {t('downloadPdf')}
+            </Button>
+          </>
+        }
+      >
         {preview && (
           <div className="space-y-4 font-body text-sm">
             <div className="flex items-start justify-between border-b border-brand-border pb-4">
