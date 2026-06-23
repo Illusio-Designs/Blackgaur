@@ -10,6 +10,7 @@ import { useAuth } from '@/hooks/useAuth';
 import { ROLES } from '@/lib/constants';
 import { initials } from '@/lib/utils';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
+import Tooltip from '@/components/ui/Tooltip';
 
 const MOCK_NOTIFS = [
   { id: 1, type: 'fastag', text: 'GJ-12-EF-9012 low FASTag balance (₹89)' },
@@ -55,13 +56,15 @@ export default function Topbar() {
       >
         <Menu className="h-5 w-5" />
       </button>
-      <button
-        onClick={toggleCollapsed}
-        className="btn-focus hidden rounded-lg p-2 text-brand-muted hover:bg-brand-surface lg:block"
-        aria-label="Collapse sidebar"
-      >
-        <PanelLeftClose className="h-5 w-5" />
-      </button>
+      <Tooltip content={t('collapseSidebar')} side="bottom" className="hidden lg:inline-flex">
+        <button
+          onClick={toggleCollapsed}
+          className="btn-focus rounded-lg p-2 text-brand-muted hover:bg-brand-surface"
+          aria-label={t('collapseSidebar')}
+        >
+          <PanelLeftClose className="h-5 w-5" />
+        </button>
+      </Tooltip>
 
       <button
         onClick={toggleCommandPalette}
@@ -78,6 +81,7 @@ export default function Topbar() {
         <LanguageSwitcher compact />
 
         <div ref={notifRef} className="relative">
+          <Tooltip content={t('notifications')} side="bottom">
           <button
             onClick={() => setNotifOpen((o) => !o)}
             className="btn-focus relative rounded-lg p-2 text-brand-muted hover:bg-brand-surface"
@@ -92,6 +96,7 @@ export default function Topbar() {
               {MOCK_NOTIFS.length}
             </motion.span>
           </button>
+          </Tooltip>
           <AnimatePresence>
             {notifOpen && (
               <motion.div

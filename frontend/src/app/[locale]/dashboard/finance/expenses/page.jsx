@@ -109,22 +109,28 @@ export default function ExpensesPage() {
           ))}
         </div>
       ) : (
-        <motion.div variants={stagger} initial="initial" animate="animate" className="space-y-3">
-          {filtered.map((exp) => (
-            <motion.div key={exp.id} variants={staggerItem}>
-              <ExpenseRow
-                expense={exp}
-                onApprove={() => handleApprove(exp)}
-                onReject={(reason) => handleReject(exp, reason)}
-              />
-            </motion.div>
-          ))}
-          {filtered.length === 0 && (
-            <div className="card">
-              <EmptyState icon={ReceiptText} title={tc('noData')} subtitle={t('subtitle')} />
-            </div>
-          )}
-        </motion.div>
+        filtered.length === 0 ? (
+          <div className="card">
+            <EmptyState icon={ReceiptText} title={tc('noData')} subtitle={t('subtitle')} />
+          </div>
+        ) : (
+          <motion.div
+            variants={stagger}
+            initial="initial"
+            animate="animate"
+            className="card divide-y divide-brand-border/70 px-4"
+          >
+            {filtered.map((exp) => (
+              <motion.div key={exp.id} variants={staggerItem}>
+                <ExpenseRow
+                  expense={exp}
+                  onApprove={() => handleApprove(exp)}
+                  onReject={(reason) => handleReject(exp, reason)}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        )
       )}
     </div>
   );

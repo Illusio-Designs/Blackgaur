@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { Container, Plus, Truck, CircleCheck, FileWarning, Radio, MapPin } from 'lucide-react';
+import { Container, Plus, Truck, CircleCheck, FileWarning, Radio, MapPin, Pencil } from 'lucide-react';
 import PageHeader from '@/components/dashboard/PageHeader';
 import Button from '@/components/ui/Button';
 import DataTable from '@/components/ui/DataTable';
@@ -12,6 +12,7 @@ import Tabs from '@/components/ui/Tabs';
 import Drawer from '@/components/ui/Drawer';
 import FormInput from '@/components/ui/FormInput';
 import Select from '@/components/ui/Select';
+import Switch from '@/components/ui/Switch';
 import DatePicker from '@/components/ui/DatePicker';
 import { useToast } from '@/components/ui/Toast';
 import { useVehicles, useCreateVehicle } from '@/hooks/useVehicles';
@@ -52,7 +53,7 @@ function DocChip({ label, date }) {
 const EMPTY = {
   registration_no: '', vehicle_type: 'Truck', capacity_tons: '', model: '', owner_type: 'own',
   driver_name: '', rc_expiry: '', insurance_expiry: '', fitness_expiry: '', permit_expiry: '',
-  fastag_tag_id: '', gps_device_id: '',
+  fastag_tag_id: '', gps_device_id: '', is_available: true,
 };
 
 export default function VehiclesPage() {
@@ -64,8 +65,12 @@ export default function VehiclesPage() {
 
   const [local, setLocal] = useState(null);
   const [owner, setOwner] = useState('all');
-  const [createOpen, setCreateOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [editingId, setEditingId] = useState(null);
   const [form, setForm] = useState(EMPTY);
+
+  const openCreate = () => { setEditingId(null); setForm(EMPTY); setDrawerOpen(true); };
+  const openEdit = (v) => { setEditingId(v.id); setForm({ ...EMPTY, ...v }); setDrawerOpen(true); };
 
   const rows = useMemo(() => local ?? data?.data ?? [], [local, data]);
   const filtered = useMemo(
@@ -93,18 +98,20 @@ export default function VehiclesPage() {
     ...OWNER_TYPES.map((o) => ({ value: o, label: `${t(o)} (${rows.filter((v) => v.owner_type === o).length})` })),
   ];
 
-  const submitCreate = () => {
-    const newVehicle = {
-      id: Date.now(),
-      ...form,
-      capacity_tons: Number(form.capacity_tons) || 0,
-      is_available: true,
-    };
-    setLocal([newVehicle, ...rows]);
-    createVehicle.mutate(newVehicle);
-    setCreateOpen(false);
+  const submitVehicle = () => {
+    const payload = { ...form, capacity_tons: Number(form.capacity_tons) || 0 };
+    if (editingId) {
+      setLocal(rows.map((v) => (v.id === editingId ? { ...v, ...payload } : v)));
+      toast.success(t('saveChanges'), payload.registration_no);
+    } else {
+      const newVehicle = { id: Date.now(), ...payload };
+      setLocal([newVehicle, ...rows]);
+      createVehicle.mutate(newVehicle);
+      toast.success(t('addVehicle'), newVehicle.registration_no);
+    }
+    setDrawerOpen(false);
     setForm(EMPTY);
-    toast.success(t('addVehicle'), newVehicle.registration_no);
+    setEditingId(null);
   };
 
   const columns = useMemo(
@@ -160,17 +167,21 @@ export default function VehiclesPage() {
       },
       {
         id: 'devices',
-        header: '',
+        header: tc('actions'),
         enableSorting: false,
         cell: ({ row }) => (
-          <div className="flex items-center gap-2 text-brand-muted">
+          <div className="flex items-center justify-end gap-2 text-brand-muted">
             {row.original.fastag_tag_id && <Radio className="h-4 w-4 text-brand-fastag" title="FASTag" />}
             {row.original.gps_device_id && <MapPin className="h-4 w-4 text-brand-blue" title={t('gps')} />}
+            <Button size="sm" variant="outline" icon={Pencil} onClick={() => openEdit(row.original)}>
+              {t('manage')}
+            </Button>
           </div>
         ),
       },
     ],
-    [t],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, tc],
   );
 
   return (
@@ -179,7 +190,7 @@ export default function VehiclesPage() {
         title={t('title')}
         subtitle={t('subtitle')}
         icon={Container}
-        actions={<Button variant="amber" icon={Plus} onClick={() => setCreateOpen(true)}>{t('addVehicle')}</Button>}
+        actions={<Button variant="amber" icon={Plus} onClick={openCreate}>{t('addVehicle')}</Button>}
       />
 
       <div className="mb-5 grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -201,17 +212,20 @@ export default function VehiclesPage() {
       />
 
       <Drawer
-        open={createOpen}
-        onClose={() => setCreateOpen(false)}
-        title={t('addVehicle')}
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        title={editingId ? `${t('manage')} — ${form.registration_no}` : t('addVehicle')}
         size="lg"
         footer={
           <>
-            <Button variant="ghost" onClick={() => setCreateOpen(false)}>{tc('cancel')}</Button>
-            <Button variant="amber" onClick={submitCreate} loading={createVehicle.isPending}>{tc('create')}</Button>
+            <Button variant="ghost" onClick={() => setDrawerOpen(false)}>{tc('cancel')}</Button>
+            <Button variant="amber" onClick={submitVehicle} loading={createVehicle.isPending}>
+              {editingId ? t('saveChanges') : tc('create')}
+            </Button>
           </>
         }
       >
+        <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-brand-muted">{t('details')}</p>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <FormInput label={t('registration')} placeholder="GJ-01-AB-1234" value={form.registration_no} onChange={(e) => setForm({ ...form, registration_no: e.target.value.toUpperCase() })} />
           <FormInput label={t('model')} placeholder="Tata Signa 4825" value={form.model} onChange={(e) => setForm({ ...form, model: e.target.value })} />
@@ -219,12 +233,24 @@ export default function VehiclesPage() {
           <FormInput label={t('capacity')} type="number" placeholder="16" value={form.capacity_tons} onChange={(e) => setForm({ ...form, capacity_tons: e.target.value })} />
           <Select label={t('owner')} value={form.owner_type} onChange={(v) => setForm({ ...form, owner_type: v })} options={OWNER_TYPES.map((o) => ({ value: o, label: t(o) }))} />
           <Select label={t('driver')} value={form.driver_name} onChange={(v) => setForm({ ...form, driver_name: v })} options={[{ value: '', label: t('unassigned') }, ...mockDrivers.map((d) => ({ value: d.name, label: d.name }))]} />
-          <DatePicker label={`${t('rc')} — ${t('expiringSoon')}`} value={form.rc_expiry} onChange={(v) => setForm({ ...form, rc_expiry: v })} />
+        </div>
+
+        <p className="mb-3 mt-6 text-xs font-semibold uppercase tracking-wide text-brand-muted">{t('renewals')}</p>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <DatePicker label={t('rc')} value={form.rc_expiry} onChange={(v) => setForm({ ...form, rc_expiry: v })} />
           <DatePicker label={t('insurance')} value={form.insurance_expiry} onChange={(v) => setForm({ ...form, insurance_expiry: v })} />
           <DatePicker label={t('fitness')} value={form.fitness_expiry} onChange={(v) => setForm({ ...form, fitness_expiry: v })} />
           <DatePicker label={t('permit')} value={form.permit_expiry} onChange={(v) => setForm({ ...form, permit_expiry: v })} />
           <FormInput label={`${t('gps')} ID`} placeholder="GPS-AX-1001" value={form.gps_device_id} onChange={(e) => setForm({ ...form, gps_device_id: e.target.value })} />
           <FormInput label="FASTag ID" placeholder="34161FA8…" value={form.fastag_tag_id} onChange={(e) => setForm({ ...form, fastag_tag_id: e.target.value })} />
+        </div>
+
+        <div className="mt-6 flex items-center justify-between rounded-xl border border-brand-border bg-brand-surface/50 p-3.5">
+          <div>
+            <p className="text-sm font-medium text-brand-navy">{t('availability')}</p>
+            <p className="text-xs text-brand-muted">{form.is_available ? t('available') : t('inUse')}</p>
+          </div>
+          <Switch checked={form.is_available} onChange={(v) => setForm({ ...form, is_available: v })} />
         </div>
       </Drawer>
     </div>

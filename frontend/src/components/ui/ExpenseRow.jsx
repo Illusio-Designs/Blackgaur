@@ -38,7 +38,7 @@ export default function ExpenseRow({ expense, onApprove, onReject }) {
   };
 
   return (
-    <div className="card flex flex-col gap-3 p-4 sm:flex-row sm:items-center">
+    <div className="flex flex-col gap-3 py-3.5 sm:flex-row sm:items-center">
       {/* Type + receipt */}
       <div className="flex min-w-0 items-center gap-3 sm:w-48">
         {expense.receipt_url ? (

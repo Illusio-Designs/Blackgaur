@@ -162,7 +162,7 @@ export default function CommandPalette() {
                 onChange={(e) => setQuery(e.target.value)}
                 onKeyDown={onKeyDown}
                 placeholder="Search trips, clients, vehicles, invoices…"
-                className="h-12 w-full bg-transparent text-sm text-brand-navy outline-none placeholder:text-brand-muted"
+                className="h-12 w-full border-0 bg-transparent text-sm text-brand-navy outline-none ring-0 placeholder:text-brand-muted focus:outline-none focus:ring-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
               />
               <kbd className="hidden rounded border border-brand-border bg-brand-surface px-1.5 py-0.5 text-[10px] font-medium text-brand-muted sm:block">
                 ESC
@@ -209,6 +209,24 @@ export default function CommandPalette() {
                   );
                 })
               )}
+            </div>
+
+            <div className="flex items-center justify-between gap-3 border-t border-brand-border bg-brand-surface/50 px-4 py-2.5 text-[11px] text-brand-muted">
+              <span className="flex items-center gap-3">
+                <span className="flex items-center gap-1">
+                  <kbd className="rounded border border-brand-border bg-white px-1.5 py-0.5 font-mono">↑</kbd>
+                  <kbd className="rounded border border-brand-border bg-white px-1.5 py-0.5 font-mono">↓</kbd>
+                  navigate
+                </span>
+                <span className="flex items-center gap-1">
+                  <kbd className="rounded border border-brand-border bg-white px-1.5 py-0.5 font-mono">↵</kbd>
+                  open
+                </span>
+              </span>
+              <span className="flex items-center gap-1">
+                <kbd className="rounded border border-brand-border bg-white px-1.5 py-0.5 font-mono">esc</kbd>
+                close
+              </span>
             </div>
           </motion.div>
         </div>

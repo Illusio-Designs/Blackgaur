@@ -16,10 +16,12 @@ import { useTrips, useUpdateTripStatus, useCreateTrip } from '@/hooks/useTrips';
 import { KANBAN_COLUMNS, INDIAN_CITIES, TRIP_STATUSES } from '@/lib/constants';
 import { mockClients, mockVehicles, mockDrivers } from '@/lib/mock';
 import { kanbanSpring } from '@/lib/animations';
+import { cn } from '@/lib/utils';
 
 export default function TripsPage() {
   const t = useTranslations('trips');
   const tc = useTranslations('common');
+  const tv = useTranslations('vehicles');
   const toast = useToast();
   const { data } = useTrips();
   const updateStatus = useUpdateTripStatus();
@@ -37,7 +39,7 @@ export default function TripsPage() {
   );
   const [form, setForm] = useState({
     origin_city: 'Ahmedabad', origin_address: '', destination_city: 'Mumbai', destination_address: '',
-    client_id: 1, vehicle_id: 1, driver_id: 11, cargo_type: '', cargo_weight_kg: '', cargo_value: '',
+    client_id: 1, vehicle_id: 2, driver_id: 11, cargo_type: '', cargo_weight_kg: '', cargo_value: '',
     planned_departure: '', freight_charges: '', eway_bill_no: '', eway_bill_expiry: '', notes: '',
   });
 
@@ -72,6 +74,18 @@ export default function TripsPage() {
     setTrips(updated);
     updateStatus.mutate({ id: trip.id, status: next });
     if (next === 'delivered') toast.success(t('status.delivered'), trip.lr_number);
+  };
+
+  // Drag & drop between Kanban columns
+  const [dragId, setDragId] = useState(null);
+  const [overCol, setOverCol] = useState(null);
+  const moveTo = (id, status) => {
+    const trip = (trips ?? board).find((tr) => tr.id === id);
+    if (!trip || trip.status === status) return;
+    const updated = (trips ?? board).map((tr) => (tr.id === id ? { ...tr, status } : tr));
+    setTrips(updated);
+    updateStatus.mutate({ id, status });
+    if (status === 'delivered') toast.success(t('status.delivered'), trip.lr_number);
   };
 
   const submitCreate = () => {
@@ -171,16 +185,34 @@ export default function TripsPage() {
                   {grouped[col.key]?.length || 0}
                 </motion.span>
               </div>
-              <div className="flex flex-1 flex-col gap-3 rounded-xl bg-brand-surface/40 p-2">
+              <div
+                onDragOver={(e) => { e.preventDefault(); setOverCol(col.key); }}
+                onDragLeave={() => setOverCol((c) => (c === col.key ? null : c))}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const id = Number(e.dataTransfer.getData('text/plain'));
+                  if (id) moveTo(id, col.key);
+                  setOverCol(null);
+                  setDragId(null);
+                }}
+                className={cn(
+                  'flex flex-1 flex-col gap-3 rounded-xl border-2 border-dashed p-2 transition-colors',
+                  overCol === col.key ? 'border-brand-blue bg-brand-blue/5' : 'border-transparent bg-brand-surface/40',
+                )}
+              >
                 <AnimatePresence mode="popLayout">
                   {(grouped[col.key] || []).map((trip) => (
                     <motion.div
                       key={trip.id}
                       layout
+                      draggable
+                      onDragStart={(e) => { e.dataTransfer.setData('text/plain', String(trip.id)); e.dataTransfer.effectAllowed = 'move'; setDragId(trip.id); }}
+                      onDragEnd={() => { setDragId(null); setOverCol(null); }}
                       initial={{ opacity: 0, y: -12, scale: 0.96 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      animate={{ opacity: dragId === trip.id ? 0.4 : 1, y: 0, scale: 1 }}
                       exit={{ opacity: 0, scale: 0.9 }}
                       transition={kanbanSpring}
+                      className="cursor-grab active:cursor-grabbing"
                     >
                       <TripCard trip={trip} draggable onStatusChange={() => moveNext(trip)} />
                     </motion.div>
@@ -220,7 +252,13 @@ export default function TripsPage() {
             {mockClients.map((c) => <option key={c.id} value={c.id}>{c.company_name}</option>)}
           </FormInput>
           <FormInput as="select" label={t('vehicle')} value={form.vehicle_id} onChange={(e) => setForm({ ...form, vehicle_id: e.target.value })}>
-            {mockVehicles.map((v) => <option key={v.id} value={v.id}>{v.registration_no}</option>)}
+            {[...mockVehicles]
+              .sort((a, b) => Number(b.is_available) - Number(a.is_available))
+              .map((v) => (
+                <option key={v.id} value={v.id}>
+                  {v.registration_no} — {v.is_available ? tv('available') : tv('inUse')}
+                </option>
+              ))}
           </FormInput>
           <FormInput as="select" label={t('driver')} value={form.driver_id} onChange={(e) => setForm({ ...form, driver_id: e.target.value })}>
             {mockDrivers.map((dr) => <option key={dr.id} value={dr.id}>{dr.name}</option>)}

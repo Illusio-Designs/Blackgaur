@@ -44,7 +44,8 @@
     "thisMonth": "This Month",
     "demoMode": "Demo data — backend not connected",
     "vehicle": "Vehicle",
-    "driver": "Driver"
+    "driver": "Driver",
+    "collapseSidebar": "Collapse sidebar"
   },
   "nav": {
     "home": "Home",
@@ -618,6 +619,10 @@
     "all": "All",
     "gps": "GPS",
     "noGps": "No GPS",
-    "unassigned": "Unassigned"
+    "unassigned": "Unassigned",
+    "manage": "Manage",
+    "renewals": "Documents & renewal",
+    "details": "Vehicle details",
+    "saveChanges": "Save changes"
   }
 }

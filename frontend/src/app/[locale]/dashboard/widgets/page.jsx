@@ -48,7 +48,7 @@ import {
   mockTrips, mockExpenses, mockInvoices, mockTollTransactions,
   mockFuelTransactions, mockFastagWallets, mockFuelCards, mockClients,
 } from '@/lib/mock';
-import { formatINR } from '@/lib/utils';
+import { formatINR, formatDate } from '@/lib/utils';
 
 // A labelled cell that frames each widget on the gallery.
 function Showcase({ title, hint, children, span = 1 }) {
@@ -238,7 +238,7 @@ export default function WidgetsPage() {
 
         {/* Expense row */}
         <Showcase title="Expense row" hint="<ExpenseRow />" span={2}>
-          <div className="divide-y divide-brand-border rounded-xl border border-brand-border">
+          <div className="divide-y divide-brand-border/70">
             <ExpenseRow
               expense={mockExpenses[1]}
               onApprove={() => toast.success('Expense approved')}
@@ -268,13 +268,9 @@ export default function WidgetsPage() {
 
         {/* Toll + Fuel transaction rows */}
         <Showcase title="Transaction rows" hint="<TollTransactionRow /> <FuelTransactionRow />">
-          <div className="space-y-2">
-            <div className="rounded-xl border border-brand-border">
-              <TollTransactionRow txn={mockTollTransactions[0]} trip={mockTrips[3]} />
-            </div>
-            <div className="rounded-xl border border-brand-border">
-              <FuelTransactionRow txn={mockFuelTransactions[0]} trip={mockTrips[4]} />
-            </div>
+          <div className="divide-y divide-brand-border/70">
+            <TollTransactionRow txn={mockTollTransactions[0]} trip={mockTrips[3]} />
+            <FuelTransactionRow txn={mockFuelTransactions[0]} trip={mockTrips[4]} />
           </div>
         </Showcase>
 
@@ -427,6 +423,79 @@ export default function WidgetsPage() {
               <SkeletonText lines={3} />
             </div>
           </div>
+        </Showcase>
+
+        {/* LR (Lorry Receipt) preview */}
+        <Showcase title="LR preview" hint="Lorry Receipt document">
+          {(() => {
+            const trip = mockTrips[3];
+            return (
+              <div className="rounded-xl border border-brand-border p-4 text-xs">
+                <div className="flex items-start justify-between border-b border-brand-border pb-2">
+                  <div>
+                    <p className="font-display text-sm font-bold text-brand-navy">Lorry Receipt</p>
+                    <p className="text-brand-muted">TransCo Logistics Pvt Ltd</p>
+                  </div>
+                  <p className="font-mono font-semibold text-brand-blue">{trip.lr_number}</p>
+                </div>
+                <div className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2">
+                  <div><p className="text-brand-muted">From</p><p className="font-medium text-brand-navy">{trip.origin_city}</p></div>
+                  <div><p className="text-brand-muted">To</p><p className="font-medium text-brand-navy">{trip.destination_city}</p></div>
+                  <div><p className="text-brand-muted">Vehicle</p><p className="font-mono text-brand-text">{trip.vehicle?.registration_no}</p></div>
+                  <div><p className="text-brand-muted">Driver</p><p className="text-brand-text">{trip.driver?.name}</p></div>
+                  <div><p className="text-brand-muted">Cargo</p><p className="text-brand-text">{trip.cargo_type}</p></div>
+                  <div><p className="text-brand-muted">Weight</p><p className="font-mono text-brand-text">{trip.cargo_weight_kg} kg</p></div>
+                  <div className="col-span-2"><p className="text-brand-muted">E-way bill</p><p className="font-mono text-brand-text">{trip.eway_bill_no}</p></div>
+                </div>
+                <div className="mt-3 flex items-center justify-between border-t border-brand-border pt-3">
+                  <span className="font-semibold text-brand-navy">Freight</span>
+                  <span className="font-mono text-base font-bold text-brand-navy">{formatINR(trip.freight_charges)}</span>
+                </div>
+              </div>
+            );
+          })()}
+        </Showcase>
+
+        {/* Invoice (GST/RCM) preview */}
+        <Showcase title="Invoice preview" hint="GST / RCM invoice" span={2}>
+          {(() => {
+            const inv = mockInvoices[0];
+            return (
+              <div className="rounded-xl border border-brand-border p-4 text-xs">
+                <div className="flex items-start justify-between border-b border-brand-border pb-3">
+                  <div>
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-brand-amber font-display text-base font-bold text-white">T</div>
+                    <p className="mt-1.5 font-display text-sm font-bold text-brand-navy">TransCo Logistics Pvt Ltd</p>
+                    <p className="text-brand-muted">GSTIN 24ABCDE1234F1Z5 · Ahmedabad, Gujarat</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-mono font-semibold text-brand-navy">{inv.invoice_number}</p>
+                    <p className="text-brand-muted">{formatDate(inv.due_date)}</p>
+                    <div className="mt-1 flex justify-end"><RCMBadge isRcm={inv.is_rcm} /></div>
+                  </div>
+                </div>
+                <div className="mt-3">
+                  <p className="text-brand-muted">Bill to</p>
+                  <p className="font-medium text-brand-navy">{inv.client?.company_name}</p>
+                </div>
+                <div className="mt-3 space-y-1.5">
+                  <div className="flex justify-between"><span className="text-brand-muted">Freight</span><span className="font-mono text-brand-text">{formatINR(inv.freight_amount)}</span></div>
+                  <div className="flex justify-between"><span className="text-brand-muted">Subtotal</span><span className="font-mono text-brand-text">{formatINR(inv.subtotal)}</span></div>
+                  <div className="flex justify-between"><span className="text-brand-muted">IGST / CGST / SGST</span><span className="font-mono text-brand-text">{inv.is_rcm ? 'RCM — NIL' : formatINR(inv.igst_amount + inv.cgst_amount + inv.sgst_amount)}</span></div>
+                  <div className="flex justify-between"><span className="text-brand-muted">TDS (194C)</span><span className="font-mono text-brand-danger">−{formatINR(inv.tds_amount)}</span></div>
+                </div>
+                <div className="mt-3 flex items-center justify-between border-t border-brand-border pt-3">
+                  <span className="font-semibold text-brand-navy">Total payable</span>
+                  <span className="font-mono text-base font-bold text-brand-navy">{formatINR(inv.total_amount, { decimals: 2 })}</span>
+                </div>
+                {inv.is_rcm && (
+                  <p className="mt-2 rounded-lg bg-amber-50 px-2 py-1.5 text-[11px] font-medium text-brand-amber">
+                    Tax payable under Reverse Charge (RCM)
+                  </p>
+                )}
+              </div>
+            );
+          })()}
         </Showcase>
 
         {/* Invoice form (multi-step) */}

@@ -10,7 +10,7 @@ export default function TollTransactionRow({ txn, trip }) {
   if (!txn) return null;
 
   return (
-    <div className="card p-3.5">
+    <div className="py-3">
       {/* Primary line: plaza + amount (amount never wraps / clips) */}
       <div className="flex items-center gap-2.5">
         <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-teal-50 text-brand-fastag">

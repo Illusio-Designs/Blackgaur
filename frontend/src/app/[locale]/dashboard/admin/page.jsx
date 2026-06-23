@@ -155,10 +155,10 @@ export default function AdminOverviewPage() {
 
         <motion.div {...fadeUp} className="card p-5">
           <h3 className="font-display text-base font-semibold text-brand-navy">{t('quickActions')}</h3>
-          <div className="mt-4 space-y-2.5">
-            <Link href="/dashboard/admin/users"><Button variant="outline" className="w-full justify-start" icon={Gauge}>{t('manageUsers')}</Button></Link>
-            <Link href="/dashboard/admin/audit-logs"><Button variant="outline" className="w-full justify-start" icon={LayoutDashboard}>{t('auditShortcut')}</Button></Link>
-            <Link href="/dashboard/finance/expenses"><Button variant="outline" className="w-full justify-start" icon={ReceiptText}>{tn('expenses')}</Button></Link>
+          <div className="mt-4 flex flex-col gap-2.5">
+            <Link href="/dashboard/admin/users" className="block"><Button variant="outline" className="w-full justify-start" icon={Gauge}>{t('manageUsers')}</Button></Link>
+            <Link href="/dashboard/admin/audit-logs" className="block"><Button variant="outline" className="w-full justify-start" icon={LayoutDashboard}>{t('auditShortcut')}</Button></Link>
+            <Link href="/dashboard/finance/expenses" className="block"><Button variant="outline" className="w-full justify-start" icon={ReceiptText}>{tn('expenses')}</Button></Link>
           </div>
           <div className="mt-5 rounded-xl bg-brand-navy p-4 text-white">
             <p className="text-sm text-white/70">{t('fleetUtilisation')}</p>

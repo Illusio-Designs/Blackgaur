@@ -11,6 +11,7 @@ import RCMBadge from '@/components/ui/RCMBadge';
 import Modal from '@/components/ui/Modal';
 import Drawer from '@/components/ui/Drawer';
 import MultiSelect from '@/components/ui/MultiSelect';
+import Tooltip from '@/components/ui/Tooltip';
 import InvoiceForm from '@/components/ui/InvoiceForm';
 import { useToast } from '@/components/ui/Toast';
 import { useInvoices, useApproveInvoice, useSendInvoice, useCreateInvoice } from '@/hooks/useInvoices';
@@ -120,7 +121,9 @@ export default function InvoicesPage() {
           const inv = row.original;
           return (
             <div className="flex items-center gap-1.5">
-              <Button size="sm" variant="ghost" icon={Eye} onClick={() => setPreview(inv)} aria-label={t('previewPdf')} />
+              <Tooltip content={t('previewPdf')}>
+                <Button size="sm" variant="ghost" icon={Eye} onClick={() => setPreview(inv)} aria-label={t('previewPdf')} />
+              </Tooltip>
               {inv.status === 'pending_approval' && (
                 <Button size="sm" variant="success" icon={Check} onClick={() => handleApprove(inv)}>{tc('approve')}</Button>
               )}

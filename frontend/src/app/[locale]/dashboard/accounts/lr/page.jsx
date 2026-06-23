@@ -29,6 +29,7 @@ export default function LrBoardPage() {
   const t = useTranslations('lr');
   const tt = useTranslations('trips');
   const tc = useTranslations('common');
+  const tv = useTranslations('vehicles');
   const toast = useToast();
   const { data, isLoading } = useTrips();
   const [track, setTrack] = useState(null);
@@ -107,7 +108,13 @@ export default function LrBoardPage() {
           </FormInput>
           <FormInput as="select" label={tt('vehicle')} value={form.vehicle_id} onChange={(e) => setForm({ ...form, vehicle_id: e.target.value })}>
             <option value="">—</option>
-            {mockVehicles.map((v) => <option key={v.id} value={v.id}>{v.registration_no}</option>)}
+            {[...mockVehicles]
+              .sort((a, b) => Number(b.is_available) - Number(a.is_available))
+              .map((v) => (
+                <option key={v.id} value={v.id}>
+                  {v.registration_no} — {v.is_available ? tv('available') : tv('inUse')}
+                </option>
+              ))}
           </FormInput>
           <FormInput as="select" label={`${tt('route')} — From`} value={form.origin_city} onChange={(e) => setForm({ ...form, origin_city: e.target.value })}>
             {INDIAN_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
