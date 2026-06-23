@@ -79,7 +79,8 @@
     "grp_finance": "ફાઇનાન્સ",
     "grp_accounts": "એકાઉન્ટ્સ",
     "grp_admin": "વહીવટ",
-    "grp_tools": "ટૂલ્સ"
+    "grp_tools": "ટૂલ્સ",
+    "tracking": "જીપીએસ ટ્રેકિંગ"
   },
   "auth": {
     "loginTitle": "પાછા આવવા બદલ સ્વાગત છે",
@@ -245,7 +246,9 @@
     "creditDays": "ક્રેડિટ દિવસો",
     "rcm": "RCM",
     "outstanding": "બાકી",
-    "accountManager": "એકાઉન્ટ મેનેજર"
+    "accountManager": "એકાઉન્ટ મેનેજર",
+    "statement": "સ્ટેટમેન્ટ",
+    "ledgerPdf": "લેજર પીડીએફ ડાઉનલોડ કરો"
   },
   "lr": {
     "title": "LR બોર્ડ",
@@ -661,5 +664,17 @@
     "tdsAmount": "TDS રકમ",
     "narration": "વર્ણન",
     "saved": "ચુકવણી નોંધાઈ"
+  },
+  "tracking": {
+    "title": "જીપીએસ ટ્રેકિંગ",
+    "subtitle": "ટ્રાન્ઝિટમાં વાહનોની લાઇવ સ્થિતિ",
+    "live": "લાઇવ",
+    "speed": "ઝડપ",
+    "lastPing": "છેલ્લું પિંગ",
+    "eta": "ETA",
+    "location": "વર્તમાન સ્થાન",
+    "progress": "ટ્રિપ પ્રગતિ",
+    "noActive": "કોઈ વાહન ટ્રાન્ઝિટમાં નથી",
+    "mapNote": "લાઇવ મેપ — જીપીએસ ડિવાઇસ સ્થિતિ"
   }
 }

@@ -111,6 +111,7 @@ export const NAV_GROUPS = [
     key: 'grp_operations',
     items: [
       { key: 'trips', href: '/dashboard/trips', icon: 'Truck', roles: ['admin', 'trip_manager', 'finance_manager', 'account_manager'] },
+      { key: 'tracking', href: '/dashboard/tracking', icon: 'MapPin', roles: ['admin', 'trip_manager', 'finance_manager'] },
       { key: 'vehicles', href: '/dashboard/vehicles', icon: 'Container', roles: ['admin', 'trip_manager', 'finance_manager'] },
       { key: 'lr', href: '/dashboard/accounts/lr', icon: 'ScrollText', roles: ['admin', 'account_manager', 'trip_manager'] },
       { key: 'fastag', href: '/dashboard/fastag', icon: 'Radio', roles: ['admin', 'finance_manager', 'trip_manager'] },

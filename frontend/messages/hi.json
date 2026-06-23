@@ -79,7 +79,8 @@
     "grp_finance": "वित्त",
     "grp_accounts": "खाते",
     "grp_admin": "प्रशासन",
-    "grp_tools": "टूल्स"
+    "grp_tools": "टूल्स",
+    "tracking": "जीपीएस ट्रैकिंग"
   },
   "auth": {
     "loginTitle": "वापसी पर स्वागत है",
@@ -245,7 +246,9 @@
     "creditDays": "क्रेडिट दिन",
     "rcm": "RCM",
     "outstanding": "बकाया",
-    "accountManager": "खाता प्रबंधक"
+    "accountManager": "खाता प्रबंधक",
+    "statement": "विवरण",
+    "ledgerPdf": "लेजर पीडीएफ डाउनलोड करें"
   },
   "lr": {
     "title": "LR बोर्ड",
@@ -661,5 +664,17 @@
     "tdsAmount": "टीडीएस राशि",
     "narration": "विवरण",
     "saved": "भुगतान दर्ज हुआ"
+  },
+  "tracking": {
+    "title": "जीपीएस ट्रैकिंग",
+    "subtitle": "परिवहन में वाहनों की लाइव स्थिति",
+    "live": "लाइव",
+    "speed": "गति",
+    "lastPing": "अंतिम पिंग",
+    "eta": "ईटीए",
+    "location": "वर्तमान स्थान",
+    "progress": "ट्रिप प्रगति",
+    "noActive": "कोई वाहन परिवहन में नहीं",
+    "mapNote": "लाइव मैप — जीपीएस डिवाइस स्थिति"
   }
 }

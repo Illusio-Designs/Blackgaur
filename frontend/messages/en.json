@@ -79,7 +79,8 @@
     "grp_finance": "Finance",
     "grp_accounts": "Accounts",
     "grp_admin": "Administration",
-    "grp_tools": "Tools"
+    "grp_tools": "Tools",
+    "tracking": "GPS Tracking"
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -245,7 +246,9 @@
     "creditDays": "Credit Days",
     "rcm": "RCM",
     "outstanding": "Outstanding",
-    "accountManager": "Account Manager"
+    "accountManager": "Account Manager",
+    "statement": "Statement",
+    "ledgerPdf": "Download ledger PDF"
   },
   "lr": {
     "title": "LR Board",
@@ -661,5 +664,17 @@
     "tdsAmount": "TDS amount",
     "narration": "Narration",
     "saved": "Payment recorded"
+  },
+  "tracking": {
+    "title": "GPS Tracking",
+    "subtitle": "Live position of vehicles in transit",
+    "live": "Live",
+    "speed": "Speed",
+    "lastPing": "Last ping",
+    "eta": "ETA",
+    "location": "Current location",
+    "progress": "Trip progress",
+    "noActive": "No vehicles in transit",
+    "mapNote": "Live map — GPS device positions (map embed)"
   }
 }

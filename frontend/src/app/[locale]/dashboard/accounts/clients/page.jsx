@@ -2,7 +2,7 @@
 
 import { useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
-import { Building2, Plus } from 'lucide-react';
+import { Building2, Plus, FileSpreadsheet } from 'lucide-react';
 import PageHeader from '@/components/dashboard/PageHeader';
 import Button from '@/components/ui/Button';
 import DataTable from '@/components/ui/DataTable';
@@ -10,8 +10,12 @@ import RCMBadge from '@/components/ui/RCMBadge';
 import Drawer from '@/components/ui/Drawer';
 import FormInput from '@/components/ui/FormInput';
 import PhoneInput from '@/components/ui/PhoneInput';
+import Tooltip from '@/components/ui/Tooltip';
 import { useToast } from '@/components/ui/Toast';
 import { useClients, useCreateClient } from '@/hooks/useClients';
+import { useBranding } from '@/hooks/useBranding';
+import { buildClientLedger, downloadLedgerPdf } from '@/lib/ledgerPdf';
+import { mockInvoices, mockPayments, mockTdsJournal } from '@/lib/mock';
 import { formatINR } from '@/lib/utils';
 
 export default function ClientsPage() {
@@ -19,7 +23,13 @@ export default function ClientsPage() {
   const tc = useTranslations('common');
   const toast = useToast();
   const { data, isLoading } = useClients();
+  const { branding } = useBranding();
   const create = useCreateClient();
+
+  const downloadLedger = (client) => {
+    const ledger = buildClientLedger(client, { invoices: mockInvoices, payments: mockPayments, tds: mockTdsJournal });
+    downloadLedgerPdf(client, ledger, branding);
+  };
 
   const [local, setLocal] = useState(null);
   const [open, setOpen] = useState(false);
@@ -44,8 +54,14 @@ export default function ClientsPage() {
       { accessorKey: 'credit_days', header: t('creditDays'), cell: ({ row }) => <span>{row.original.credit_days}d</span> },
       { accessorKey: 'rcm_applicable', header: t('rcm'), enableSorting: false, cell: ({ row }) => <RCMBadge isRcm={row.original.rcm_applicable} /> },
       { accessorKey: 'outstanding', header: t('outstanding'), cell: ({ row }) => <span className={`font-mono ${row.original.outstanding > 0 ? 'text-brand-danger' : 'text-brand-success'}`}>{formatINR(row.original.outstanding)}</span> },
+      { id: 'actions', header: tc('actions'), enableSorting: false, cell: ({ row }) => (
+        <Tooltip content={t('ledgerPdf')}>
+          <Button size="sm" variant="outline" icon={FileSpreadsheet} onClick={() => downloadLedger(row.original)}>{t('statement')}</Button>
+        </Tooltip>
+      ) },
     ],
-    [t],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [t, tc, branding],
   );
 
   return (
