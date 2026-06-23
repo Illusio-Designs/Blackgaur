@@ -6,6 +6,7 @@ import { Receipt, Info } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
 import FormInput from '@/components/ui/FormInput';
+import Switch from '@/components/ui/Switch';
 import TaskCompleteFX from '@/components/animations/TaskCompleteFX';
 import { useToast } from '@/components/ui/Toast';
 import { useConfig, useUpdateConfig } from '@/hooks/useConfig';
@@ -20,38 +21,6 @@ const GST_OPTIONS = [
   { value: 5, key: 'gst5' },
   { value: 12, key: 'gst12' },
 ];
-
-function Toggle({ checked, onChange, label, description }) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      onClick={() => onChange(!checked)}
-      className="flex w-full items-start justify-between gap-4 rounded-xl border border-brand-border bg-white p-4 text-left transition hover:border-brand-blue/40"
-    >
-      <span>
-        <span className="block text-sm font-semibold text-brand-navy">{label}</span>
-        {description ? (
-          <span className="mt-0.5 block text-xs text-brand-muted">{description}</span>
-        ) : null}
-      </span>
-      <span
-        className={cn(
-          'mt-0.5 inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition',
-          checked ? 'bg-brand-blue' : 'bg-brand-border',
-        )}
-      >
-        <span
-          className={cn(
-            'h-5 w-5 rounded-full bg-white shadow transition',
-            checked ? 'translate-x-5' : 'translate-x-0',
-          )}
-        />
-      </span>
-    </button>
-  );
-}
 
 export default function TaxSection() {
   const t = useTranslations('settingsPage.tax');
@@ -112,19 +81,19 @@ export default function TaxSection() {
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="space-y-5">
           <div className="card space-y-4 p-6">
-            <Toggle
+            <Switch
               checked={!!rcmDefault}
               onChange={(v) => setValue('rcmDefault', v, { shouldDirty: true })}
               label={t('rcmDefault')}
               description={t('rcmHelp')}
             />
-            <Toggle
+            <Switch
               checked={!!placeOfSupplyAuto}
               onChange={(v) => setValue('placeOfSupplyAuto', v, { shouldDirty: true })}
               label={t('placeOfSupplyAuto')}
               description={t('placeOfSupplyHelp')}
             />
-            <Toggle
+            <Switch
               checked={!!itcEnabled}
               onChange={(v) => setValue('itcEnabled', v, { shouldDirty: true })}
               label={t('itcEnabled')}

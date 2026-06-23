@@ -6,42 +6,10 @@ import { Bell } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import Button from '@/components/ui/Button';
 import FormInput from '@/components/ui/FormInput';
+import Switch from '@/components/ui/Switch';
 import TaskCompleteFX from '@/components/animations/TaskCompleteFX';
 import { useToast } from '@/components/ui/Toast';
 import { useConfig, useUpdateConfig } from '@/hooks/useConfig';
-import { cn } from '@/lib/utils';
-
-function Toggle({ checked, onChange, label, description }) {
-  return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      onClick={() => onChange(!checked)}
-      className="flex w-full items-start justify-between gap-4 rounded-xl border border-brand-border bg-white p-4 text-left transition hover:border-brand-blue/40"
-    >
-      <span>
-        <span className="block text-sm font-semibold text-brand-navy">{label}</span>
-        {description ? (
-          <span className="mt-0.5 block text-xs text-brand-muted">{description}</span>
-        ) : null}
-      </span>
-      <span
-        className={cn(
-          'mt-0.5 inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition',
-          checked ? 'bg-brand-blue' : 'bg-brand-border',
-        )}
-      >
-        <span
-          className={cn(
-            'h-5 w-5 rounded-full bg-white shadow transition',
-            checked ? 'translate-x-5' : 'translate-x-0',
-          )}
-        />
-      </span>
-    </button>
-  );
-}
 
 export default function AlertsSection() {
   const t = useTranslations('settingsPage.alerts');
@@ -113,13 +81,13 @@ export default function AlertsSection() {
 
       <div className="card space-y-4 p-6">
         <h3 className="font-display text-lg font-semibold text-brand-navy">{t('channelsTitle')}</h3>
-        <Toggle
+        <Switch
           checked={!!notifyEmail}
           onChange={(v) => setValue('notifyEmail', v, { shouldDirty: true })}
           label={t('notifyEmail')}
           description={t('notifyEmailHelp')}
         />
-        <Toggle
+        <Switch
           checked={!!notifySms}
           onChange={(v) => setValue('notifySms', v, { shouldDirty: true })}
           label={t('notifySms')}

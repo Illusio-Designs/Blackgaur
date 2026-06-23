@@ -9,6 +9,7 @@ import DataTable from '@/components/ui/DataTable';
 import RCMBadge from '@/components/ui/RCMBadge';
 import Drawer from '@/components/ui/Drawer';
 import FormInput from '@/components/ui/FormInput';
+import PhoneInput from '@/components/ui/PhoneInput';
 import { useToast } from '@/components/ui/Toast';
 import { useClients, useCreateClient } from '@/hooks/useClients';
 import { formatINR } from '@/lib/utils';
@@ -17,7 +18,7 @@ export default function ClientsPage() {
   const t = useTranslations('clients');
   const tc = useTranslations('common');
   const toast = useToast();
-  const { data } = useClients();
+  const { data, isLoading } = useClients();
   const create = useCreateClient();
 
   const [local, setLocal] = useState(null);
@@ -50,7 +51,7 @@ export default function ClientsPage() {
   return (
     <div>
       <PageHeader title={t('title')} subtitle={t('subtitle')} icon={Building2} actions={<Button variant="amber" icon={Plus} onClick={() => setOpen(true)}>{t('createClient')}</Button>} />
-      <DataTable columns={columns} data={rows} pagination={{ page: 1, totalPages: 1, hasNext: false, hasPrev: false }} />
+      <DataTable columns={columns} data={rows} loading={isLoading} pagination={{ page: 1, totalPages: 1, hasNext: false, hasPrev: false }} />
 
       <Drawer open={open} onClose={() => setOpen(false)} title={t('createClient')} size="lg"
         footer={<><Button variant="ghost" onClick={() => setOpen(false)}>{tc('cancel')}</Button><Button variant="amber" onClick={submit}>{tc('create')}</Button></>}>
@@ -59,7 +60,7 @@ export default function ClientsPage() {
           <FormInput label={t('gstin')} value={form.gstin} onChange={(e) => setForm({ ...form, gstin: e.target.value })} placeholder="24ABCDE1234F1Z5" />
           <FormInput label={t('creditDays')} type="number" value={form.credit_days} onChange={(e) => setForm({ ...form, credit_days: e.target.value })} />
           <FormInput label={t('contact')} value={form.contact_name} onChange={(e) => setForm({ ...form, contact_name: e.target.value })} />
-          <FormInput label="Mobile" value={form.contact_mobile} onChange={(e) => setForm({ ...form, contact_mobile: e.target.value })} />
+          <PhoneInput label="Mobile" name="contact_mobile" country="IN" value={form.contact_mobile} onChange={(digits) => setForm({ ...form, contact_mobile: digits })} />
           <label className="flex items-center gap-2 sm:col-span-2">
             <input type="checkbox" checked={form.rcm_applicable} onChange={(e) => setForm({ ...form, rcm_applicable: e.target.checked })} className="h-4 w-4 rounded border-brand-border text-brand-blue" />
             <span className="text-sm text-brand-text">{t('rcm')} applicable</span>

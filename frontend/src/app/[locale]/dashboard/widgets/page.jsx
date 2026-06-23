@@ -3,11 +3,24 @@
 import { useState, useMemo } from 'react';
 import {
   LayoutGrid, Truck, Receipt, FileText, Fuel, Radio, Plus, Search,
-  CheckCircle2, AlertTriangle, Wallet, Banknote,
+  CheckCircle2, AlertTriangle, Wallet, Banknote, Inbox, Info,
 } from 'lucide-react';
 import PageHeader from '@/components/dashboard/PageHeader';
 
 import Button from '@/components/ui/Button';
+import Pagination from '@/components/ui/Pagination';
+import Select from '@/components/ui/Select';
+import MultiSelect from '@/components/ui/MultiSelect';
+import DatePicker from '@/components/ui/DatePicker';
+import DateRangePicker from '@/components/ui/DateRangePicker';
+import PhoneInput from '@/components/ui/PhoneInput';
+import Switch from '@/components/ui/Switch';
+import Checkbox from '@/components/ui/Checkbox';
+import Tabs from '@/components/ui/Tabs';
+import Tooltip from '@/components/ui/Tooltip';
+import EmptyState from '@/components/ui/EmptyState';
+import Spinner from '@/components/ui/Spinner';
+import Skeleton, { SkeletonText, SkeletonCircle } from '@/components/ui/Skeleton';
 import StatusBadge from '@/components/ui/StatusBadge';
 import RCMBadge from '@/components/ui/RCMBadge';
 import KPICard from '@/components/ui/KPICard';
@@ -60,6 +73,29 @@ export default function WidgetsPage() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [fxTrigger, setFxTrigger] = useState(0);
   const [otp, setOtp] = useState('');
+  const [page, setPage] = useState(3);
+  const [selectVal, setSelectVal] = useState('');
+  const [multiVal, setMultiVal] = useState(['in_transit']);
+  const [dateVal, setDateVal] = useState('');
+  const [rangeVal, setRangeVal] = useState({ from: '', to: '' });
+  const [phoneVal, setPhoneVal] = useState('');
+  const [switchOn, setSwitchOn] = useState(true);
+  const [checkOn, setCheckOn] = useState(false);
+  const [tab, setTab] = useState('overview');
+
+  const statusOptions = [
+    { value: 'planned', label: 'Planned' },
+    { value: 'loading', label: 'Loading' },
+    { value: 'in_transit', label: 'In Transit' },
+    { value: 'delivered', label: 'Delivered' },
+    { value: 'cancelled', label: 'Cancelled' },
+  ];
+  const cityOptions = ['Mumbai', 'Delhi', 'Ahmedabad', 'Surat', 'Pune'].map((c) => ({ value: c, label: c }));
+  const demoTabs = [
+    { value: 'overview', label: 'Overview' },
+    { value: 'details', label: 'Details' },
+    { value: 'history', label: 'History' },
+  ];
 
   const tableColumns = useMemo(
     () => [
@@ -280,6 +316,116 @@ export default function WidgetsPage() {
             <Search className="h-4 w-4" />
             Press <kbd className="rounded border border-brand-border bg-white px-1.5 py-0.5 font-mono text-xs">⌘K</kbd>
             to search trips, clients, vehicles & invoices.
+          </div>
+        </Showcase>
+
+        {/* Pagination */}
+        <Showcase title="Pagination" hint="<Pagination /> — ellipsis + numbered" span={2}>
+          <Pagination
+            page={page}
+            totalPages={12}
+            hasPrev={page > 1}
+            hasNext={page < 12}
+            onPageChange={setPage}
+          />
+        </Showcase>
+
+        {/* Select */}
+        <Showcase title="Select" hint="<Select /> — custom dropdown">
+          <Select
+            label="Trip status"
+            value={selectVal}
+            onChange={setSelectVal}
+            options={statusOptions}
+            placeholder="Choose a status"
+            searchable
+          />
+        </Showcase>
+
+        {/* MultiSelect */}
+        <Showcase title="MultiSelect" hint="<MultiSelect /> — chips + checkboxes">
+          <MultiSelect
+            label="Filter by status"
+            value={multiVal}
+            onChange={setMultiVal}
+            options={statusOptions}
+            placeholder="Any status"
+            searchable
+          />
+        </Showcase>
+
+        {/* DatePicker */}
+        <Showcase title="Date picker" hint="<DatePicker /> — month grid">
+          <DatePicker label="Pickup date" value={dateVal} onChange={setDateVal} />
+        </Showcase>
+
+        {/* DateRangePicker */}
+        <Showcase title="Date range" hint="<DateRangePicker />" span={2}>
+          <DateRangePicker label="Reporting period" from={rangeVal.from} to={rangeVal.to} onChange={setRangeVal} />
+        </Showcase>
+
+        {/* PhoneInput */}
+        <Showcase title="Phone input" hint="<PhoneInput /> — flag + dial code">
+          <PhoneInput label="Mobile" value={phoneVal} onChange={setPhoneVal} />
+          <p className="mt-3 font-mono text-xs text-brand-muted">digits: {phoneVal || '——'}</p>
+        </Showcase>
+
+        {/* Switch + Checkbox */}
+        <Showcase title="Switch & Checkbox" hint="<Switch /> · <Checkbox />">
+          <div className="space-y-4">
+            <Switch checked={switchOn} onChange={setSwitchOn} label="Email alerts" description="Send notifications by email" />
+            <div className="flex flex-wrap items-center gap-4">
+              <Switch checked={switchOn} onChange={setSwitchOn} />
+              <Checkbox checked={checkOn} onChange={setCheckOn} label="RCM applicable" />
+              <Checkbox checked disabled label="Disabled" />
+            </div>
+          </div>
+        </Showcase>
+
+        {/* Tabs */}
+        <Showcase title="Tabs" hint="<Tabs /> — tab list + panel">
+          <Tabs tabs={demoTabs} value={tab} onChange={setTab}>
+            <p className="text-sm text-brand-muted">Active panel: <span className="font-medium text-brand-navy">{tab}</span></p>
+          </Tabs>
+        </Showcase>
+
+        {/* Tooltip */}
+        <Showcase title="Tooltip" hint="<Tooltip /> — hover / focus">
+          <div className="flex flex-wrap items-center gap-4">
+            <Tooltip content="Top tooltip"><Button variant="outline">Hover me</Button></Tooltip>
+            <Tooltip content="Saved to ledger" side="right">
+              <span className="inline-flex h-8 w-8 items-center justify-center rounded-lg bg-brand-surface text-brand-blue"><Info className="h-4 w-4" /></span>
+            </Tooltip>
+          </div>
+        </Showcase>
+
+        {/* Spinner */}
+        <Showcase title="Spinner" hint="<Spinner />">
+          <div className="flex items-center gap-5">
+            <Spinner size="sm" />
+            <Spinner size="md" />
+            <Spinner size="lg" />
+          </div>
+        </Showcase>
+
+        {/* EmptyState */}
+        <Showcase title="Empty state" hint="<EmptyState />" span={2}>
+          <EmptyState
+            icon={Inbox}
+            title="No invoices yet"
+            subtitle="Create your first invoice to see it listed here."
+            action={<Button variant="amber" icon={Plus}>Create invoice</Button>}
+          />
+        </Showcase>
+
+        {/* Skeleton */}
+        <Showcase title="Skeleton" hint="<Skeleton /> · SkeletonText · SkeletonCircle">
+          <div className="flex items-start gap-4">
+            <SkeletonCircle size={44} />
+            <div className="flex-1">
+              <Skeleton className="mb-3 h-5 w-32" />
+              <SkeletonText lines={3} />
+            </div>
           </div>
         </Showcase>
 

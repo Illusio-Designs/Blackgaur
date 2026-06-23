@@ -35,15 +35,24 @@
   }
 
   body {
-    @apply bg-brand-surface text-brand-text font-body;
+    @apply bg-brand-surface text-brand-text font-body antialiased;
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   }
 
   h1, h2, h3, h4, h5, h6 {
-    @apply font-display text-brand-navy;
+    @apply font-display text-brand-navy tracking-tight;
+    text-wrap: balance;
   }
 
+  /* Premium, consistent keyboard-focus ring on every interactive element */
   *:focus-visible {
-    @apply outline-none ring-2 ring-brand-blue/60 ring-offset-2 ring-offset-white;
+    @apply outline-none ring-2 ring-brand-blue/55 ring-offset-2 ring-offset-white;
+    transition: box-shadow 0.15s ease;
+  }
+
+  /* Crisp tabular figures for money / IDs */
+  .font-mono {
+    font-feature-settings: 'tnum', 'zero';
   }
 
   ::selection {
@@ -53,7 +62,12 @@
 
 @layer components {
   .card {
-    @apply rounded-2xl border border-brand-border bg-white shadow-card;
+    @apply rounded-2xl border border-brand-border/80 bg-white shadow-card;
+  }
+
+  /* Interactive cards (clickable tiles, kanban) — subtle premium lift */
+  .card-hover {
+    @apply transition-all duration-200 ease-out hover:-translate-y-0.5 hover:shadow-elevated;
   }
 
   .container-page {
@@ -79,7 +93,7 @@
     @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-blue/60 focus-visible:ring-offset-2;
   }
   .input-base {
-    @apply w-full rounded-xl border border-brand-border bg-white px-3.5 py-2.5 text-sm text-brand-text placeholder:text-brand-muted/70 transition focus:border-brand-blue focus:outline-none focus:ring-2 focus:ring-brand-blue/20;
+    @apply w-full rounded-xl border border-brand-border bg-white px-3.5 py-2.5 text-sm text-brand-text shadow-soft placeholder:text-brand-muted/70 transition-all duration-150 hover:border-brand-muted/45 focus:border-brand-blue focus:outline-none focus:ring-4 focus:ring-brand-blue/15;
   }
   .label-base {
     @apply mb-1.5 block text-sm font-medium text-brand-navy;

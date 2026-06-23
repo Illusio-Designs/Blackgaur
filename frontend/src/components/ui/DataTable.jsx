@@ -8,8 +8,10 @@ import {
 } from '@tanstack/react-table';
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpDown, ArrowUp, ArrowDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import Pagination from '@/components/ui/Pagination';
+import Skeleton from '@/components/ui/Skeleton';
 import { cn } from '@/lib/utils';
 
 // TanStack Table v8 wrapper (section 15). Staggered row fade-up (section 11.2).
@@ -19,6 +21,7 @@ export default function DataTable({
   pagination,
   onPageChange,
   emptyMessage,
+  loading = false,
   className,
 }) {
   const t = useTranslations('common');
@@ -78,7 +81,17 @@ export default function DataTable({
             ))}
           </thead>
           <tbody>
-            {rows.length === 0 ? (
+            {loading ? (
+              Array.from({ length: 6 }).map((_, r) => (
+                <tr key={`sk-${r}`} className="border-b border-brand-border/70">
+                  {columns.map((col, c) => (
+                    <td key={c} className="px-4 py-3.5">
+                      <Skeleton className={cn('h-4', c === 0 ? 'w-24' : 'w-full max-w-[140px]')} />
+                    </td>
+                  ))}
+                </tr>
+              ))
+            ) : rows.length === 0 ? (
               <tr>
                 <td
                   colSpan={columns.length}
@@ -108,29 +121,15 @@ export default function DataTable({
         </table>
       </div>
 
-      {pagination && (
-        <div className="flex items-center justify-between border-t border-brand-border px-4 py-3 text-sm text-brand-muted">
-          <span>
-            {t('page')} {pagination.page} {t('of')} {pagination.totalPages || 1}
-          </span>
-          <div className="flex gap-1.5">
-            <button
-              disabled={!pagination.hasPrev}
-              onClick={() => onPageChange?.(pagination.page - 1)}
-              className="btn-focus rounded-lg border border-brand-border bg-white p-1.5 disabled:opacity-40"
-              aria-label={t('previous')}
-            >
-              <ChevronLeft className="h-4 w-4" />
-            </button>
-            <button
-              disabled={!pagination.hasNext}
-              onClick={() => onPageChange?.(pagination.page + 1)}
-              className="btn-focus rounded-lg border border-brand-border bg-white p-1.5 disabled:opacity-40"
-              aria-label={t('next')}
-            >
-              <ChevronRight className="h-4 w-4" />
-            </button>
-          </div>
+      {pagination && !loading && (
+        <div className="border-t border-brand-border px-4 py-3">
+          <Pagination
+            page={pagination.page}
+            totalPages={pagination.totalPages || 1}
+            hasNext={pagination.hasNext}
+            hasPrev={pagination.hasPrev}
+            onPageChange={onPageChange}
+          />
         </div>
       )}
     </div>

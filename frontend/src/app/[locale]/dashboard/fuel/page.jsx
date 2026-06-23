@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import PageHeader from '@/components/dashboard/PageHeader';
 import FuelCardItem from '@/components/fuel/FuelCardItem';
 import FuelTransactionRow from '@/components/ui/FuelTransactionRow';
+import Skeleton from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
 import { useFuelCards, useFuelTransactions, useBlockFuelCard, useAssignFuelCard } from '@/hooks/useFuelCards';
 import { mockFuelByVehicle, mockTrips, mockVehicles, mockDrivers } from '@/lib/mock';
@@ -17,7 +18,7 @@ import { stagger, staggerItem, fadeUp } from '@/lib/animations';
 export default function FuelPage() {
   const t = useTranslations('fuel');
   const toast = useToast();
-  const { data: cardsData } = useFuelCards();
+  const { data: cardsData, isLoading } = useFuelCards();
   const { data: txnData } = useFuelTransactions();
   const block = useBlockFuelCard();
   const assign = useAssignFuelCard();
@@ -66,6 +67,9 @@ export default function FuelPage() {
         <motion.div {...fadeUp} className="card p-5">
           <h3 className="mb-3 font-display text-base font-semibold text-brand-navy">{t('mileageChart')}</h3>
           <div className="h-64">
+            {isLoading ? (
+              <Skeleton className="h-full w-full rounded-xl" />
+            ) : (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={mockFuelByVehicle}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
@@ -78,6 +82,7 @@ export default function FuelPage() {
                 <Bar yAxisId="right" dataKey="litres" name={t('litres')} fill="#D97706" radius={[6, 6, 0, 0]} isAnimationActive={false} />
               </BarChart>
             </ResponsiveContainer>
+            )}
           </div>
         </motion.div>
       </div>

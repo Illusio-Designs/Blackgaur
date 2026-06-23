@@ -42,7 +42,7 @@ const Button = forwardRef(function Button(
       type={type}
       disabled={disabled || loading}
       className={cn(
-        'btn-focus inline-flex items-center justify-center rounded-xl font-medium transition-all disabled:cursor-not-allowed disabled:opacity-60',
+        'btn-focus inline-flex items-center justify-center rounded-xl font-medium transition-all duration-150 active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-60 disabled:active:scale-100',
         VARIANTS[variant],
         SIZES[size],
         className,

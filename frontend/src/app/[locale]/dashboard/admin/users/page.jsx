@@ -9,6 +9,7 @@ import DataTable from '@/components/ui/DataTable';
 import StatusBadge from '@/components/ui/StatusBadge';
 import Drawer from '@/components/ui/Drawer';
 import FormInput from '@/components/ui/FormInput';
+import PhoneInput from '@/components/ui/PhoneInput';
 import { useToast } from '@/components/ui/Toast';
 import { mockUsers } from '@/lib/mock';
 import { ROLES } from '@/lib/constants';
@@ -70,7 +71,7 @@ export default function UsersPage() {
         footer={<><Button variant="ghost" onClick={() => setOpen(false)}>{tc('cancel')}</Button><Button variant="amber" onClick={submit}>{tc('create')}</Button></>}>
         <div className="space-y-4">
           <FormInput label={t('name')} value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} />
-          <FormInput label={t('mobile')} value={form.mobile} onChange={(e) => setForm({ ...form, mobile: e.target.value })} placeholder="10-digit mobile" />
+          <PhoneInput label={t('mobile')} name="mobile" country="IN" value={form.mobile} onChange={(digits) => setForm({ ...form, mobile: digits })} />
           <FormInput label={t('email')} type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} />
           <FormInput as="select" label={t('role')} value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
             {ROLES.map((r) => <option key={r.value} value={r.value}>{tr(r.value)}</option>)}

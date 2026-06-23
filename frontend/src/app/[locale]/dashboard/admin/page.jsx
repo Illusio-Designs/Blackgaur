@@ -14,6 +14,7 @@ import PageHeader from '@/components/dashboard/PageHeader';
 import KPICard from '@/components/ui/KPICard';
 import Button from '@/components/ui/Button';
 import StatusBadge from '@/components/ui/StatusBadge';
+import Skeleton from '@/components/ui/Skeleton';
 import { Link } from '@/i18n/routing';
 import { useDashboardReport } from '@/hooks/useReports';
 import { formatINRCompact, timeAgo } from '@/lib/utils';
@@ -69,6 +70,9 @@ export default function AdminOverviewPage() {
         <motion.div {...fadeUp} className="card p-5 lg:col-span-2">
           <h3 className="font-display text-base font-semibold text-brand-navy">{t('revenueVsCost')}</h3>
           <div className="mt-4 h-72">
+            {isLoading ? (
+              <Skeleton className="h-full w-full rounded-xl" />
+            ) : (
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={d.revenueSeries || []}>
                 <defs>
@@ -89,12 +93,16 @@ export default function AdminOverviewPage() {
                 <Area type="monotone" dataKey="cost" stroke="#D97706" strokeWidth={2} fill="url(#cost)" isAnimationActive={false} />
               </AreaChart>
             </ResponsiveContainer>
+            )}
           </div>
         </motion.div>
 
         <motion.div {...fadeUp} className="card p-5">
           <h3 className="font-display text-base font-semibold text-brand-navy">{t('tripStatus')}</h3>
           <div className="mt-2 h-72">
+            {isLoading ? (
+              <Skeleton className="h-full w-full rounded-xl" />
+            ) : (
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
@@ -114,6 +122,7 @@ export default function AdminOverviewPage() {
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>
+            )}
           </div>
         </motion.div>
       </div>

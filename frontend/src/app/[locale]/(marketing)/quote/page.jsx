@@ -5,9 +5,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { AnimatePresence, motion } from 'framer-motion';
-import { CheckCircle2, User, Building2, Phone, MapPin, Package, Weight, MessageSquare } from 'lucide-react';
+import { CheckCircle2, User, Building2, MapPin, Package, Weight, MessageSquare } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import FormInput from '@/components/ui/FormInput';
+import PhoneInput from '@/components/ui/PhoneInput';
 import Button from '@/components/ui/Button';
 import { useBranding } from '@/hooks/useBranding';
 import { useToast } from '@/components/ui/Toast';
@@ -28,7 +29,7 @@ const schema = z.object({
   company: z.string().optional(),
   phone: z
     .string()
-    .regex(/^[0-9+\-\s]{8,15}$/, 'Enter a valid phone number'),
+    .regex(/^[0-9]{7,12}$/, 'Enter a valid phone number'),
   origin: z.string().min(2, 'Pickup location is required'),
   destination: z.string().min(2, 'Delivery location is required'),
   cargoType: z.string().min(1, 'Select a cargo type'),
@@ -45,6 +46,8 @@ export default function QuotePage() {
   const {
     register,
     handleSubmit,
+    watch,
+    setValue,
     formState: { errors, isSubmitting },
     reset,
   } = useForm({
@@ -144,12 +147,15 @@ export default function QuotePage() {
                     />
                   </div>
 
-                  <FormInput
+                  <PhoneInput
                     label={t('quoteForm.phone')}
-                    icon={Phone}
-                    type="tel"
+                    name="phone"
+                    country="IN"
+                    value={watch('phone') || ''}
+                    onChange={(digits) =>
+                      setValue('phone', digits, { shouldValidate: true })
+                    }
                     error={errors.phone?.message}
-                    {...register('phone')}
                   />
 
                   <div className="grid gap-5 sm:grid-cols-2">

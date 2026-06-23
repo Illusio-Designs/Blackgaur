@@ -7,6 +7,8 @@ import { motion } from 'framer-motion';
 import PageHeader from '@/components/dashboard/PageHeader';
 import Button from '@/components/ui/Button';
 import ExpenseRow from '@/components/ui/ExpenseRow';
+import EmptyState from '@/components/ui/EmptyState';
+import Skeleton from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
 import { useExpenses, useApproveExpense, useRejectExpense } from '@/hooks/useExpenses';
 import { EXPENSE_STATUSES } from '@/lib/constants';
@@ -17,7 +19,7 @@ export default function ExpensesPage() {
   const t = useTranslations('expenses');
   const tc = useTranslations('common');
   const toast = useToast();
-  const { data } = useExpenses();
+  const { data, isLoading } = useExpenses();
   const approve = useApproveExpense();
   const reject = useRejectExpense();
 
@@ -93,20 +95,37 @@ export default function ExpensesPage() {
         </div>
       </div>
 
-      <motion.div variants={stagger} initial="initial" animate="animate" className="space-y-3">
-        {filtered.map((exp) => (
-          <motion.div key={exp.id} variants={staggerItem}>
-            <ExpenseRow
-              expense={exp}
-              onApprove={() => handleApprove(exp)}
-              onReject={(reason) => handleReject(exp, reason)}
-            />
-          </motion.div>
-        ))}
-        {filtered.length === 0 && (
-          <div className="card py-16 text-center text-brand-muted">{tc('noData')}</div>
-        )}
-      </motion.div>
+      {isLoading ? (
+        <div className="space-y-3">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="card flex items-center gap-4 p-4">
+              <Skeleton className="h-10 w-10 rounded-xl" rounded />
+              <div className="flex-1 space-y-2">
+                <Skeleton className="h-3.5 w-40" />
+                <Skeleton className="h-3 w-24" />
+              </div>
+              <Skeleton className="h-4 w-20" />
+            </div>
+          ))}
+        </div>
+      ) : (
+        <motion.div variants={stagger} initial="initial" animate="animate" className="space-y-3">
+          {filtered.map((exp) => (
+            <motion.div key={exp.id} variants={staggerItem}>
+              <ExpenseRow
+                expense={exp}
+                onApprove={() => handleApprove(exp)}
+                onReject={(reason) => handleReject(exp, reason)}
+              />
+            </motion.div>
+          ))}
+          {filtered.length === 0 && (
+            <div className="card">
+              <EmptyState icon={ReceiptText} title={tc('noData')} subtitle={t('subtitle')} />
+            </div>
+          )}
+        </motion.div>
+      )}
     </div>
   );
 }

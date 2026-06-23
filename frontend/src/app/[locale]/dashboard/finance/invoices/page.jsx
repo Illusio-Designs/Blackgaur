@@ -10,10 +10,12 @@ import StatusBadge from '@/components/ui/StatusBadge';
 import RCMBadge from '@/components/ui/RCMBadge';
 import Modal from '@/components/ui/Modal';
 import Drawer from '@/components/ui/Drawer';
+import MultiSelect from '@/components/ui/MultiSelect';
 import InvoiceForm from '@/components/ui/InvoiceForm';
 import { useToast } from '@/components/ui/Toast';
 import { useInvoices, useApproveInvoice, useSendInvoice, useCreateInvoice } from '@/hooks/useInvoices';
 import { useBranding } from '@/hooks/useBranding';
+import { INVOICE_STATUSES } from '@/lib/constants';
 import { formatINR, formatDate } from '@/lib/utils';
 import { amountInWords } from '@/lib/gst';
 
@@ -21,7 +23,7 @@ export default function InvoicesPage() {
   const t = useTranslations('invoices');
   const tc = useTranslations('common');
   const toast = useToast();
-  const { data } = useInvoices();
+  const { data, isLoading } = useInvoices();
   const { branding } = useBranding();
   const approve = useApproveInvoice();
   const send = useSendInvoice();
@@ -30,8 +32,17 @@ export default function InvoicesPage() {
   const [local, setLocal] = useState(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [preview, setPreview] = useState(null);
+  const [statusFilter, setStatusFilter] = useState([]);
 
-  const rows = local ?? data?.data ?? [];
+  const rows = useMemo(() => local ?? data?.data ?? [], [local, data]);
+  const statusOptions = useMemo(
+    () => INVOICE_STATUSES.map((s) => ({ value: s, label: t(`status.${s}`) })),
+    [t],
+  );
+  const filteredRows = useMemo(
+    () => rows.filter((r) => statusFilter.length === 0 || statusFilter.includes(r.status)),
+    [rows, statusFilter],
+  );
   const updateRow = (id, patch) => setLocal(rows.map((r) => (r.id === id ? { ...r, ...patch } : r)));
 
   const handleApprove = (inv) => {
@@ -134,9 +145,20 @@ export default function InvoicesPage() {
         actions={<Button variant="amber" icon={Plus} onClick={() => setCreateOpen(true)}>{t('createInvoice')}</Button>}
       />
 
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <MultiSelect
+          options={statusOptions}
+          value={statusFilter}
+          onChange={setStatusFilter}
+          placeholder={tc('status')}
+          className="max-w-xs"
+        />
+      </div>
+
       <DataTable
         columns={columns}
-        data={rows}
+        data={filteredRows}
+        loading={isLoading}
         pagination={{ page: 1, totalPages: 1, hasNext: false, hasPrev: false }}
       />
 

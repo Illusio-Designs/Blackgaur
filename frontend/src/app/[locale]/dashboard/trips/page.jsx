@@ -9,6 +9,7 @@ import Button from '@/components/ui/Button';
 import TripCard from '@/components/ui/TripCard';
 import Drawer from '@/components/ui/Drawer';
 import FormInput from '@/components/ui/FormInput';
+import MultiSelect from '@/components/ui/MultiSelect';
 import { useToast } from '@/components/ui/Toast';
 import { useTrips, useUpdateTripStatus, useCreateTrip } from '@/hooks/useTrips';
 import { KANBAN_COLUMNS, INDIAN_CITIES, TRIP_STATUSES } from '@/lib/constants';
@@ -26,7 +27,13 @@ export default function TripsPage() {
   const [trips, setTrips] = useState(null);
   const [view, setView] = useState('board');
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState([]);
   const [createOpen, setCreateOpen] = useState(false);
+
+  const statusOptions = useMemo(
+    () => TRIP_STATUSES.map((s) => ({ value: s, label: t(`columns.${s}`) })),
+    [t],
+  );
   const [form, setForm] = useState({
     origin_city: 'Ahmedabad', destination_city: 'Mumbai', client_id: 1,
     vehicle_id: 1, driver_id: 11, cargo_type: '', freight_charges: '',
@@ -38,12 +45,13 @@ export default function TripsPage() {
     () =>
       board.filter(
         (tr) =>
-          !search ||
-          tr.lr_number?.toLowerCase().includes(search.toLowerCase()) ||
-          tr.client?.company_name?.toLowerCase().includes(search.toLowerCase()) ||
-          tr.destination_city?.toLowerCase().includes(search.toLowerCase()),
+          (statusFilter.length === 0 || statusFilter.includes(tr.status)) &&
+          (!search ||
+            tr.lr_number?.toLowerCase().includes(search.toLowerCase()) ||
+            tr.client?.company_name?.toLowerCase().includes(search.toLowerCase()) ||
+            tr.destination_city?.toLowerCase().includes(search.toLowerCase())),
       ),
-    [board, search],
+    [board, search, statusFilter],
   );
 
   const grouped = useMemo(() => {
@@ -105,12 +113,19 @@ export default function TripsPage() {
         }
       />
 
-      <div className="mb-4 flex items-center gap-3">
+      <div className="mb-4 flex flex-wrap items-center gap-3">
         <FormInput
           icon={Search}
           placeholder={`${tc('search')} LR / client / city…`}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          className="max-w-xs"
+        />
+        <MultiSelect
+          options={statusOptions}
+          value={statusFilter}
+          onChange={setStatusFilter}
+          placeholder={tc('status')}
           className="max-w-xs"
         />
       </div>

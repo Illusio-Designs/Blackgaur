@@ -9,20 +9,24 @@ import {
 import { motion } from 'framer-motion';
 import PageHeader from '@/components/dashboard/PageHeader';
 import Button from '@/components/ui/Button';
-import FormInput from '@/components/ui/FormInput';
+import Tabs from '@/components/ui/Tabs';
+import DateRangePicker from '@/components/ui/DateRangePicker';
+import Skeleton from '@/components/ui/Skeleton';
 import { useDashboardReport } from '@/hooks/useReports';
 import { mockRevenueSeries, mockTollByVehicle, mockFuelByVehicle, mockClients } from '@/lib/mock';
 import { formatINR, formatINRCompact } from '@/lib/utils';
 import { fadeUp } from '@/lib/animations';
 
-const TABS = ['trip', 'finance', 'fastag', 'fuel', 'client'];
+const TAB_KEYS = ['trip', 'finance', 'fastag', 'fuel', 'client'];
 
 export default function ReportsPage() {
   const t = useTranslations('reports');
   const tc = useTranslations('common');
-  const { data } = useDashboardReport();
+  const { data, isLoading } = useDashboardReport();
   const [tab, setTab] = useState('finance');
   const [range, setRange] = useState({ from: '2026-01-01', to: '2026-06-30' });
+
+  const tabs = TAB_KEYS.map((key) => ({ value: key, label: t(key) }));
 
   const tripPnl = mockRevenueSeries.map((m) => ({ month: m.month, pnl: m.revenue - m.cost }));
   const clientRevenue = mockClients.map((c) => ({ name: c.company_name.split(' ')[0], revenue: c.outstanding + 200000 }));
@@ -34,21 +38,23 @@ export default function ReportsPage() {
         actions={<Button variant="outline" icon={Download}>{tc('exportCsv')}</Button>}
       />
 
-      <div className="mb-5 flex flex-wrap items-center gap-3">
-        <div className="flex flex-wrap gap-1.5 rounded-xl border border-brand-border bg-white p-1">
-          {TABS.map((tab2) => (
-            <button key={tab2} onClick={() => setTab(tab2)}
-              className={`rounded-lg px-3 py-1.5 text-sm font-medium capitalize transition ${tab === tab2 ? 'bg-brand-navy text-white' : 'text-brand-muted hover:bg-brand-surface'}`}>
-              {t(tab2)}
-            </button>
-          ))}
-        </div>
-        <div className="flex items-center gap-2">
-          <FormInput type="date" label={t('fromDate')} value={range.from} onChange={(e) => setRange({ ...range, from: e.target.value })} />
-          <FormInput type="date" label={t('toDate')} value={range.to} onChange={(e) => setRange({ ...range, to: e.target.value })} />
-        </div>
+      <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+        <Tabs tabs={tabs} value={tab} onChange={setTab} />
+        <DateRangePicker
+          from={range.from}
+          to={range.to}
+          fromLabel={t('fromDate')}
+          toLabel={t('toDate')}
+          onChange={setRange}
+        />
       </div>
 
+      {isLoading ? (
+        <div className="card p-5">
+          <Skeleton className="mb-4 h-5 w-64" />
+          <Skeleton className="h-80 w-full rounded-xl" />
+        </div>
+      ) : (
       <motion.div key={tab} {...fadeUp} className="card p-5">
         {tab === 'finance' && (
           <>
@@ -134,6 +140,7 @@ export default function ReportsPage() {
         )}
         {data?._mock !== false && <p className="mt-4 text-xs text-brand-muted">{tc('demoMode')}</p>}
       </motion.div>
+      )}
     </div>
   );
 }

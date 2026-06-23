@@ -29,11 +29,11 @@ export default function KPICard({
   }
 
   return (
-    <motion.div {...fadeUp} className={cn('card p-5', className)}>
+    <motion.div {...fadeUp} className={cn('card card-hover p-5', className)}>
       <div className="flex items-start justify-between">
         <p className="text-sm font-medium text-brand-muted">{label}</p>
         {Icon && (
-          <span className={cn('rounded-lg bg-brand-surface p-2', accent)}>
+          <span className={cn('rounded-xl bg-brand-surface p-2 ring-1 ring-brand-border/60', accent)}>
             <Icon className="h-4 w-4" />
           </span>
         )}

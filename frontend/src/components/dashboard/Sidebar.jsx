@@ -40,7 +40,7 @@ export default function Sidebar({ role = 'admin' }) {
       )}
       <aside
         className={cn(
-          'fixed inset-y-0 left-0 z-40 flex flex-col bg-brand-navy text-white transition-all duration-200 lg:static lg:translate-x-0',
+          'fixed inset-y-0 left-0 z-40 flex flex-col bg-brand-navy text-white transition-all duration-200 lg:sticky lg:top-0 lg:h-screen lg:translate-x-0',
           collapsed ? 'w-[72px]' : 'w-64',
           sidebarOpen ? 'translate-x-0' : '-translate-x-full',
         )}

@@ -25,7 +25,7 @@ export default function LrBoardPage() {
   const tt = useTranslations('trips');
   const tc = useTranslations('common');
   const toast = useToast();
-  const { data } = useTrips();
+  const { data, isLoading } = useTrips();
   const [track, setTrack] = useState(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [form, setForm] = useState(EMPTY_LR);
@@ -63,7 +63,7 @@ export default function LrBoardPage() {
   return (
     <div>
       <PageHeader title={t('title')} subtitle={t('subtitle')} icon={ScrollText} actions={<Button variant="amber" icon={Plus} onClick={() => setCreateOpen(true)}>{t('createLr')}</Button>} />
-      <DataTable columns={columns} data={rows} pagination={{ page: 1, totalPages: 1, hasNext: false, hasPrev: false }} />
+      <DataTable columns={columns} data={rows} loading={isLoading} pagination={{ page: 1, totalPages: 1, hasNext: false, hasPrev: false }} />
 
       <Modal open={!!track} onClose={() => setTrack(null)} title={`${t('quickTrack')} — ${track?.lr_number || ''}`} size="md">
         {track && (

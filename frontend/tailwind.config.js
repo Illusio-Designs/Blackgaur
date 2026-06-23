@@ -34,13 +34,17 @@ const config = {
         sans: ['var(--font-body)', 'Inter', 'sans-serif'],
       },
       boxShadow: {
-        card: '0 1px 3px rgba(15,23,42,0.08), 0 1px 2px rgba(15,23,42,0.04)',
-        elevated: '0 10px 30px -12px rgba(11,30,61,0.25)',
+        // Premium, soft, layered shadows (SaaS-grade depth).
+        soft: '0 1px 2px rgba(16,24,40,0.04)',
+        card: '0 1px 2px rgba(16,24,40,0.04), 0 4px 16px -6px rgba(16,24,40,0.10)',
+        elevated:
+          '0 1px 3px rgba(16,24,40,0.06), 0 14px 44px -12px rgba(11,30,61,0.30), 0 6px 16px -10px rgba(11,30,61,0.16)',
         glow: '0 0 0 4px rgba(26,86,219,0.12)',
       },
       borderRadius: {
         xl: '0.875rem',
         '2xl': '1.25rem',
+        '3xl': '1.75rem',
       },
       keyframes: {
         'fade-up': {

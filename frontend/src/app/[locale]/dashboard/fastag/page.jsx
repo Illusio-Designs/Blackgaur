@@ -9,6 +9,7 @@ import PageHeader from '@/components/dashboard/PageHeader';
 import Button from '@/components/ui/Button';
 import FasTagWalletCard from '@/components/fastag/FasTagWalletCard';
 import TollTransactionRow from '@/components/ui/TollTransactionRow';
+import Skeleton from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
 import { useFastagWallets, useTollTransactions, useSyncFastag, useRechargeFastag } from '@/hooks/useFastag';
 import { mockTollByVehicle, mockTrips } from '@/lib/mock';
@@ -19,7 +20,7 @@ export default function FastagPage() {
   const t = useTranslations('fastag');
   const tc = useTranslations('common');
   const toast = useToast();
-  const { data: walletsData } = useFastagWallets();
+  const { data: walletsData, isLoading } = useFastagWallets();
   const { data: txnData } = useTollTransactions();
   const sync = useSyncFastag();
   const recharge = useRechargeFastag();
@@ -82,6 +83,9 @@ export default function FastagPage() {
         <motion.div {...fadeUp} className="card p-5">
           <h3 className="mb-3 font-display text-base font-semibold text-brand-navy">{t('monthlyChart')}</h3>
           <div className="h-64">
+            {isLoading ? (
+              <Skeleton className="h-full w-full rounded-xl" />
+            ) : (
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={mockTollByVehicle}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
@@ -91,6 +95,7 @@ export default function FastagPage() {
                 <Bar dataKey="toll" fill="#0F766E" radius={[6, 6, 0, 0]} isAnimationActive={false} />
               </BarChart>
             </ResponsiveContainer>
+            )}
           </div>
         </motion.div>
       </div>

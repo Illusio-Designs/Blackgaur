@@ -2,10 +2,11 @@
 
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Phone, ArrowRight, Info } from 'lucide-react';
+import { ArrowRight, Info } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { useRouter } from '@/i18n/routing';
 import FormInput from '@/components/ui/FormInput';
+import PhoneInput from '@/components/ui/PhoneInput';
 import Button from '@/components/ui/Button';
 import { useRequestOtp } from '@/hooks/useAuth';
 import { ROLES } from '@/lib/constants';
@@ -48,17 +49,13 @@ export default function LoginPage() {
       <p className="mt-2 text-sm text-brand-muted">{t('loginSubtitle')}</p>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-5">
-        <FormInput
+        <PhoneInput
           name="mobile"
           label={t('mobileLabel')}
-          icon={Phone}
-          type="tel"
-          inputMode="numeric"
-          maxLength={10}
-          placeholder={t('mobilePlaceholder')}
+          country="IN"
           value={mobile}
-          onChange={(e) => {
-            setMobile(e.target.value.replace(/\D/g, '').slice(0, 10));
+          onChange={(digits) => {
+            setMobile(digits);
             if (error) setError('');
           }}
           error={error}
