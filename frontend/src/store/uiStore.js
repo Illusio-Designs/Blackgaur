@@ -2,7 +2,9 @@ import { create } from 'zustand';
 
 // UI-only state (section 12.3) — sidebar, modals, command palette.
 export const useUiStore = create((set) => ({
-  sidebarOpen: true,
+  // Closed by default so the off-canvas sidebar never covers content on
+  // mobile/tablet on first load. On lg+ the sidebar is lg:static (always shown).
+  sidebarOpen: false,
   sidebarCollapsed: false,
   commandPaletteOpen: false,
   activeModal: null, // { type, props }
