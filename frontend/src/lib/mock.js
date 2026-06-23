@@ -9,10 +9,12 @@ export const mockClients = [
 ];
 
 export const mockVehicles = [
-  { id: 1, registration_no: 'GJ-01-AB-1234', vehicle_type: 'Truck', capacity_tons: 16, model: 'Tata Signa 4825', owner_type: 'own', is_available: false, fastag_tag_id: '34161FA8203B1C29D7' },
-  { id: 2, registration_no: 'GJ-05-CD-5678', vehicle_type: 'Trailer', capacity_tons: 25, model: 'Ashok Leyland 3520', owner_type: 'own', is_available: true, fastag_tag_id: '34161FA8203B1C30E2' },
-  { id: 3, registration_no: 'MH-12-EF-9012', vehicle_type: 'Truck', capacity_tons: 18, model: 'BharatBenz 2823', owner_type: 'attached', is_available: false, fastag_tag_id: '34161FA8203B1C31F8' },
-  { id: 4, registration_no: 'GJ-18-GH-3456', vehicle_type: 'Mini-truck', capacity_tons: 7, model: 'Eicher Pro 2049', owner_type: 'own', is_available: true, fastag_tag_id: '34161FA8203B1C320A' },
+  { id: 1, registration_no: 'GJ-01-AB-1234', vehicle_type: 'Truck', capacity_tons: 16, model: 'Tata Signa 4825', owner_type: 'own', is_available: false, fastag_tag_id: '34161FA8203B1C29D7', driver_name: 'Ramesh Yadav', gps_device_id: 'GPS-AX-1001', rc_expiry: '2027-03-31', insurance_expiry: '2026-07-12', fitness_expiry: '2026-11-20', permit_expiry: '2026-07-04' },
+  { id: 2, registration_no: 'GJ-05-CD-5678', vehicle_type: 'Trailer', capacity_tons: 25, model: 'Ashok Leyland 3520', owner_type: 'own', is_available: true, fastag_tag_id: '34161FA8203B1C30E2', driver_name: 'Suresh Patil', gps_device_id: 'GPS-AX-1002', rc_expiry: '2028-01-15', insurance_expiry: '2027-02-28', fitness_expiry: '2026-12-10', permit_expiry: '2027-05-30' },
+  { id: 3, registration_no: 'MH-12-EF-9012', vehicle_type: 'Truck', capacity_tons: 18, model: 'BharatBenz 2823', owner_type: 'attached', is_available: false, fastag_tag_id: '34161FA8203B1C31F8', driver_name: 'Dinesh Solanki', gps_device_id: null, rc_expiry: '2026-09-18', insurance_expiry: '2026-06-29', fitness_expiry: '2026-10-05', permit_expiry: '2027-01-22' },
+  { id: 4, registration_no: 'GJ-18-GH-3456', vehicle_type: 'Mini-truck', capacity_tons: 7, model: 'Eicher Pro 2049', owner_type: 'own', is_available: true, fastag_tag_id: '34161FA8203B1C320A', driver_name: 'Mahesh Kumar', gps_device_id: 'GPS-AX-1004', rc_expiry: '2027-08-09', insurance_expiry: '2026-08-15', fitness_expiry: '2027-03-01', permit_expiry: '2026-12-12' },
+  { id: 5, registration_no: 'RJ-14-KL-7788', vehicle_type: 'Truck', capacity_tons: 20, model: 'Tata Prima 3530', owner_type: 'market', is_available: true, fastag_tag_id: null, driver_name: null, gps_device_id: null, rc_expiry: '2027-06-30', insurance_expiry: '2026-07-19', fitness_expiry: '2026-09-25', permit_expiry: '2027-04-10' },
+  { id: 6, registration_no: 'MP-09-MN-2244', vehicle_type: 'Tempo', capacity_tons: 4, model: 'Mahindra Bolero Pik-Up', owner_type: 'attached', is_available: false, fastag_tag_id: '34161FA8203B1C4501', driver_name: 'Ramesh Yadav', gps_device_id: 'GPS-AX-1006', rc_expiry: '2026-10-30', insurance_expiry: '2027-01-05', fitness_expiry: '2026-07-08', permit_expiry: '2026-11-15' },
 ];
 
 export const mockDrivers = [

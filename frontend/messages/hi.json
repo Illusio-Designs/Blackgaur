@@ -70,7 +70,8 @@
     "translations": "अनुवाद",
     "getQuote": "क्वोट लें",
     "settings": "सेटिंग्स",
-    "widgets": "विजेट्स"
+    "widgets": "विजेट्स",
+    "vehicles": "फ्लीट"
   },
   "auth": {
     "loginTitle": "वापसी पर स्वागत है",
@@ -588,5 +589,35 @@
       "notifySms": "SMS सूचनाएँ",
       "notifySmsHelp": "SMS द्वारा अलर्ट भेजें।"
     }
+  },
+  "vehicles": {
+    "title": "फ्लीट प्रबंधन",
+    "subtitle": "ट्रक, दस्तावेज़ और उपलब्धता",
+    "addVehicle": "वाहन जोड़ें",
+    "registration": "पंजीकरण",
+    "type": "प्रकार",
+    "capacity": "क्षमता (टन)",
+    "model": "मॉडल",
+    "owner": "स्वामित्व",
+    "driver": "ड्राइवर",
+    "availability": "उपलब्धता",
+    "available": "उपलब्ध",
+    "inUse": "उपयोग में",
+    "documents": "दस्तावेज़",
+    "rc": "आरसी",
+    "insurance": "बीमा",
+    "fitness": "फिटनेस",
+    "permit": "परमिट",
+    "expiringSoon": "जल्द समाप्त",
+    "expired": "समाप्त",
+    "totalFleet": "कुल फ्लीट",
+    "own": "स्वयं",
+    "attached": "संलग्न",
+    "market": "मार्केट",
+    "docsExpiring": "दस्तावेज़ समाप्ति (30द)",
+    "all": "सभी",
+    "gps": "जीपीएस",
+    "noGps": "कोई जीपीएस नहीं",
+    "unassigned": "अनिर्धारित"
   }
 }

@@ -82,6 +82,7 @@ export const NAV_ITEMS = [
   { key: 'users', href: '/dashboard/admin/users', icon: 'Users', roles: ['admin'] },
   { key: 'roles', href: '/dashboard/admin/roles', icon: 'ShieldCheck', roles: ['admin'] },
   { key: 'trips', href: '/dashboard/trips', icon: 'Truck', roles: ['admin', 'trip_manager', 'finance_manager', 'account_manager'] },
+  { key: 'vehicles', href: '/dashboard/vehicles', icon: 'Container', roles: ['admin', 'trip_manager', 'finance_manager'] },
   { key: 'expenses', href: '/dashboard/finance/expenses', icon: 'ReceiptText', roles: ['admin', 'finance_manager'] },
   { key: 'invoices', href: '/dashboard/finance/invoices', icon: 'FileText', roles: ['admin', 'finance_manager', 'account_manager'] },
   { key: 'clients', href: '/dashboard/accounts/clients', icon: 'Building2', roles: ['admin', 'account_manager', 'finance_manager'] },

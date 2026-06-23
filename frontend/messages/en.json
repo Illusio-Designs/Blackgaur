@@ -70,7 +70,8 @@
     "driver": "My Trip",
     "audit": "Audit Logs",
     "translations": "Translations",
-    "widgets": "Widgets"
+    "widgets": "Widgets",
+    "vehicles": "Fleet"
   },
   "auth": {
     "loginTitle": "Welcome back",
@@ -588,5 +589,35 @@
       "notifySms": "SMS notifications",
       "notifySmsHelp": "Send alerts by SMS."
     }
+  },
+  "vehicles": {
+    "title": "Fleet Management",
+    "subtitle": "Trucks, documents and availability",
+    "addVehicle": "Add vehicle",
+    "registration": "Registration",
+    "type": "Type",
+    "capacity": "Capacity (t)",
+    "model": "Model",
+    "owner": "Ownership",
+    "driver": "Driver",
+    "availability": "Availability",
+    "available": "Available",
+    "inUse": "In use",
+    "documents": "Documents",
+    "rc": "RC",
+    "insurance": "Insurance",
+    "fitness": "Fitness",
+    "permit": "Permit",
+    "expiringSoon": "Expiring soon",
+    "expired": "Expired",
+    "totalFleet": "Total fleet",
+    "own": "Own",
+    "attached": "Attached",
+    "market": "Market",
+    "docsExpiring": "Docs expiring (30d)",
+    "all": "All",
+    "gps": "GPS",
+    "noGps": "No GPS",
+    "unassigned": "Unassigned"
   }
 }

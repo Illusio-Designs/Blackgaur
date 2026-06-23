@@ -70,7 +70,8 @@
     "translations": "અનુવાદ",
     "getQuote": "ક્વોટ મેળવો",
     "settings": "સેટિંગ્સ",
-    "widgets": "વિજેટ્સ"
+    "widgets": "વિજેટ્સ",
+    "vehicles": "ફ્લીટ"
   },
   "auth": {
     "loginTitle": "પાછા આવવા બદલ સ્વાગત છે",
@@ -588,5 +589,35 @@
       "notifySms": "SMS સૂચનાઓ",
       "notifySmsHelp": "SMS દ્વારા એલર્ટ મોકલો."
     }
+  },
+  "vehicles": {
+    "title": "ફ્લીટ મેનેજમેન્ટ",
+    "subtitle": "ટ્રક, દસ્તાવેજો અને ઉપલબ્ધતા",
+    "addVehicle": "વાહન ઉમેરો",
+    "registration": "નોંધણી",
+    "type": "પ્રકાર",
+    "capacity": "ક્ષમતા (ટન)",
+    "model": "મોડેલ",
+    "owner": "માલિકી",
+    "driver": "ડ્રાઇવર",
+    "availability": "ઉપલબ્ધતા",
+    "available": "ઉપલબ્ધ",
+    "inUse": "વપરાશમાં",
+    "documents": "દસ્તાવેજો",
+    "rc": "આરસી",
+    "insurance": "વીમો",
+    "fitness": "ફિટનેસ",
+    "permit": "પરમિટ",
+    "expiringSoon": "જલ્દી સમાપ્ત",
+    "expired": "સમાપ્ત",
+    "totalFleet": "કુલ ફ્લીટ",
+    "own": "પોતાનું",
+    "attached": "જોડાયેલ",
+    "market": "માર્કેટ",
+    "docsExpiring": "દસ્તાવેજ સમાપ્તિ (30દિ)",
+    "all": "બધા",
+    "gps": "જીપીએસ",
+    "noGps": "કોઈ જીપીએસ નથી",
+    "unassigned": "અસોંપાયેલ"
   }
 }
