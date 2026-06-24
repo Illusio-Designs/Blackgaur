@@ -33,7 +33,6 @@ export async function downloadLrPdf(trip, branding = {}) {
     : `<div style="width:40px;height:40px;background:#0B1E3D;color:#fff;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;">${esc(initial)}</div>`;
 
   const lrDate = dateOnly(trip.planned_departure || trip.created_at);
-  const ewayExpiry = dateOnly(trip.eway_bill_expiry);
   const genOn = dateOnly(trip.created_at || trip.planned_departure);
 
   const html = `<!doctype html><html><head><meta charset="utf-8"/>
@@ -119,7 +118,6 @@ export async function downloadLrPdf(trip, branding = {}) {
           <div>GST No.: ${esc(trip.client?.gstin || '—')}</div>
           <div>Mobile: ${esc(trip.client?.contact_mobile || '—')}</div>
           <div class="muted">Address: ${esc(trip.client?.billing_address || '—')}</div>
-          <div>E-Way Bill: ${esc(trip.eway_bill_no || '—')} (Expiry: ${esc(ewayExpiry)})</div>
           <div class="muted">Generated on: ${esc(genOn)}</div>
           <div class="muted">Invoice: ${esc(trip.lr_number || '—')} (${esc(lrDate)})</div>
         </td>

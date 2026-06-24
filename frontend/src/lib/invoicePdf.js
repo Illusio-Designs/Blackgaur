@@ -50,15 +50,6 @@ export async function downloadInvoicePdf(inv, branding = {}) {
 
   const placeOfSupply = inv.client?.state_code || inv.client?.billing_state || c.state || '—';
 
-  // Faux IRN derived deterministically from invoice number.
-  const inum = String(inv.invoice_number || '');
-  let h = 0;
-  for (let i = 0; i < inum.length; i++) h = (h * 31 + inum.charCodeAt(i)) >>> 0;
-  const irn = (h.toString(16) + inum.replace(/[^a-z0-9]/gi, '').toLowerCase() + '0000000000000000').slice(0, 64);
-
-  const qrInvoice = `https://api.qrserver.com/v1/create-qr-code/?size=92x92&data=${encodeURIComponent(inum)}`;
-  const qrUpi = `https://api.qrserver.com/v1/create-qr-code/?size=92x92&data=${encodeURIComponent('upi://pay?pa=demo@bank&am=' + total.toFixed(2))}`;
-
   // Build line items: the freight line plus any extra charges present.
   const items = [
     {
@@ -158,8 +149,8 @@ export async function downloadInvoicePdf(inv, branding = {}) {
   <div class="doc">
     <div class="strip">
       <div style="width:160px"></div>
-      <div class="ttl">TAX INVOICE</div>
-      <div style="width:160px;text-align:right"><span class="orig">ORIGINAL FOR RECIPIENT</span></div>
+      <div class="ttl">REFERENCE NOTE</div>
+      <div style="width:160px;text-align:right"><span class="orig">FOR REFERENCE ONLY</span></div>
     </div>
 
     <table class="bx head">
@@ -178,15 +169,11 @@ export async function downloadInvoicePdf(inv, branding = {}) {
         </td>
         <td style="width:42%">
           <table class="metagrid">
-            <tr><td class="k">Invoice #:</td><td>${esc(inv.invoice_number || '—')}</td></tr>
-            <tr><td class="k">Invoice Date:</td><td>${esc(inv.due_date || '—')}</td></tr>
+            <tr><td class="k">Reference #:</td><td>${esc(inv.invoice_number || '—')}</td></tr>
+            <tr><td class="k">Date:</td><td>${esc(inv.due_date || '—')}</td></tr>
             <tr><td class="k">Place of Supply:</td><td>${esc(placeOfSupply)}</td></tr>
             <tr><td class="k">Due Date:</td><td>Immediate on Receipt</td></tr>
           </table>
-          <table style="width:100%;border-collapse:collapse;margin-top:6px"><tr style="border:0">
-            <td style="border:0;padding:6px 0 0;font-size:10px;word-break:break-all;color:#64748b;vertical-align:top">IRN:<br/>${esc(irn)}</td>
-            <td style="border:0;padding:0;text-align:right;width:120px"><img src="${qrInvoice}" alt="QR" style="width:84px;height:110px"/></td>
-          </tr></table>
         </td>
       </tr>
     </table>
@@ -270,18 +257,14 @@ export async function downloadInvoicePdf(inv, branding = {}) {
 
     <table class="bx bottom" style="margin-top:14px">
       <tr>
-        <td style="width:38%">
+        <td style="width:50%">
           <div class="sec-h">Bank Details:</div>
           <div>Bank: ${esc(c.bankName || 'State Bank of India')}</div>
           <div>Account #: ${esc(c.bankAccount || '—')}</div>
           <div>IFSC: ${esc(c.ifsc || '—')}</div>
           <div>Branch: ${esc(c.branch || '—')}</div>
         </td>
-        <td style="width:28%;text-align:center">
-          <div class="sec-h" style="text-align:left">Pay using UPI:</div>
-          <img src="${qrUpi}" alt="UPI QR" style="width:84px;height:110px"/>
-        </td>
-        <td style="width:34%">
+        <td style="width:50%">
           <div style="font-weight:600;color:#0B1E3D">For ${esc(supplier)}</div>
           <div class="sign-space"></div>
           <div style="border-top:1px solid #94a3b8;padding-top:6px;text-align:center">Authorised Signatory</div>
@@ -296,7 +279,7 @@ export async function downloadInvoicePdf(inv, branding = {}) {
       </tr>
     </table>
 
-    <div class="ftr">${esc(branding.tagline || 'Goods Transport Agency')} &nbsp;·&nbsp; Page 1/1 &nbsp;·&nbsp; This is a digitally signed document.</div>
+    <div class="ftr">${esc(branding.tagline || 'Goods Transport Agency')} &nbsp;·&nbsp; Page 1/1 &nbsp;·&nbsp; This is a computer-generated reference note, not a tax invoice.</div>
   </div>
   </body></html>`;
 

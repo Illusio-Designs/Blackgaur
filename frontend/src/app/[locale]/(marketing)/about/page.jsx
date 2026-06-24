@@ -10,7 +10,7 @@ const MILESTONES = [
   { year: '2015', title: 'First fleet on the road', desc: 'Started with a handful of trucks moving freight across Gujarat.' },
   { year: '2018', title: 'Pan-India corridors', desc: 'Expanded into the western and northern industrial corridors.' },
   { year: '2021', title: 'Tech-driven operations', desc: 'GPS tracking and FASTag-enabled fleet for full trip visibility.' },
-  { year: '2023', title: 'GST & RCM billing', desc: 'Compliant invoicing with e-way bill and reverse-charge handling.' },
+  { year: '2023', title: 'GST & RCM billing', desc: 'Compliant invoicing with reverse-charge (RCM) handling.' },
   { year: '2026', title: 'A trusted network', desc: 'A growing network of owned and attached vehicles nationwide.' },
 ];
 

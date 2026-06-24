@@ -55,7 +55,7 @@ export const DEFAULT_BRANDING = {
     why: [
       { title: 'Live GPS tracking', description: 'Track every shipment by LR number in real time.' },
       { title: 'FASTag-enabled fleet', description: 'Seamless toll movement and transparent trip costs.' },
-      { title: 'GST & RCM compliant', description: 'Correct invoicing with e-way bill and reverse-charge handling.' },
+      { title: 'GST & RCM compliant', description: 'Correct invoicing with reverse-charge (RCM) handling.' },
       { title: 'Pan-India network', description: 'Branches and partners across major industrial corridors.' },
     ],
     about: {

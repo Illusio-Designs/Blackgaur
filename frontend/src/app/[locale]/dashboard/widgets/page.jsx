@@ -459,7 +459,6 @@ export default function WidgetsPage() {
                   <div><p className="text-brand-muted">Driver</p><p className="text-brand-text">{trip.driver?.name}</p></div>
                   <div><p className="text-brand-muted">Cargo</p><p className="text-brand-text">{trip.cargo_type}</p></div>
                   <div><p className="text-brand-muted">Weight</p><p className="font-mono text-brand-text">{trip.cargo_weight_kg} kg</p></div>
-                  <div className="col-span-2"><p className="text-brand-muted">E-way bill</p><p className="font-mono text-brand-text">{trip.eway_bill_no}</p></div>
                 </div>
                 <div className="mt-3 flex items-center justify-between border-t border-brand-border pt-3">
                   <span className="font-semibold text-brand-navy">Freight</span>

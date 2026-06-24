@@ -25,7 +25,7 @@ const STEP_ORDER = ['planned', 'loading', 'in_transit', 'delivered'];
 const EMPTY_LR = {
   client_id: '', origin_city: 'Ahmedabad', origin_address: '', destination_city: 'Mumbai', destination_address: '',
   vehicle_id: '', driver_id: '', cargo_type: '', cargo_weight_kg: '', cargo_value: '',
-  planned_departure: '', freight_charges: '', eway_bill_no: '', eway_bill_expiry: '', notes: '',
+  planned_departure: '', freight_charges: '', notes: '',
 };
 
 export default function LrBoardPage() {
@@ -105,7 +105,6 @@ export default function LrBoardPage() {
                 <span>{tt('cargo')}: <span className="text-brand-text">{track.cargo_type}</span></span>
                 <span>{tt('cargoWeight')}: <span className="font-mono text-brand-text">{track.cargo_weight_kg} kg</span></span>
                 <span>{tt('freight')}: <span className="font-mono text-brand-text">{formatINR(track.freight_charges)}</span></span>
-                <span>{tt('ewayBill')}: <span className="font-mono text-brand-text">{track.eway_bill_no || '—'}</span></span>
               </div>
             </div>
             <Timeline steps={trackSteps} />
@@ -157,8 +156,6 @@ export default function LrBoardPage() {
           <FormInput label={tt('cargoValue')} type="number" placeholder="2400000" value={form.cargo_value} onChange={(e) => setForm({ ...form, cargo_value: e.target.value })} />
           <FormInput label={tt('freight')} type="number" placeholder="48000" value={form.freight_charges} onChange={(e) => setForm({ ...form, freight_charges: e.target.value })} />
           <DatePicker label={tt('plannedDeparture')} value={form.planned_departure} onChange={(v) => setForm({ ...form, planned_departure: v })} />
-          <FormInput label={tt('ewayBill')} placeholder="EWB-310024889" value={form.eway_bill_no} onChange={(e) => setForm({ ...form, eway_bill_no: e.target.value })} />
-          <DatePicker label={tt('ewayBillExpiry')} value={form.eway_bill_expiry} onChange={(v) => setForm({ ...form, eway_bill_expiry: v })} />
           <FormInput as="textarea" label={tt('notes')} className="sm:col-span-2" placeholder={tt('notesPlaceholder')} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
         </div>
       </Drawer>
