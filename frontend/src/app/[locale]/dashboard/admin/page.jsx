@@ -20,7 +20,7 @@ import { useDashboardReport } from '@/hooks/useReports';
 import { formatINRCompact, timeAgo } from '@/lib/utils';
 import { statusColor } from '@/lib/constants';
 import { fadeUp, stagger, staggerItem } from '@/lib/animations';
-import { mockActivityFeed } from '@/lib/mock';
+import { useAuditLogs } from '@/hooks/useAudit';
 
 const PIE_COLORS = ['#64748B', '#D97706', '#1A56DB', '#065F46', '#991B1B'];
 
@@ -31,14 +31,16 @@ export default function AdminOverviewPage() {
   const tt = useTranslations('trips');
   const { data, isLoading } = useDashboardReport();
   const d = data || {};
+  const { data: auditData } = useAuditLogs({ limit: 6 });
+  const activity = auditData?.data ?? [];
 
   const kpis = [
-    { label: t('activeTrips'), value: d.activeTrips ?? 2, icon: Truck, delta: `+2 ${t('today')}`, accent: 'text-brand-blue', format: (v) => Math.round(v) },
-    { label: t('deliveredThisMonth'), value: d.deliveredThisMonth ?? 142, icon: PackageCheck, delta: '+12%', accent: 'text-brand-success', format: (v) => Math.round(v) },
-    { label: t('pendingExpenses'), value: d.pendingExpenses ?? 4, icon: ReceiptText, delta: t('needsReview'), trend: 'down', accent: 'text-brand-amber', format: (v) => Math.round(v) },
-    { label: t('revenue'), value: d.revenueThisMonth ?? 2840000, icon: IndianRupee, delta: '+8.4%', accent: 'text-brand-success', format: (v) => formatINRCompact(v) },
-    { label: t('fastagSpend'), value: d.fastagSpend ?? 184200, icon: Wallet, delta: '+3.1%', accent: 'text-brand-fastag', format: (v) => formatINRCompact(v) },
-    { label: t('fuelSpend'), value: d.fuelSpend ?? 642000, icon: Fuel, delta: '+5.7%', accent: 'text-brand-fuel', format: (v) => formatINRCompact(v) },
+    { label: t('activeTrips'), value: d.active_trips ?? 0, icon: Truck, delta: `+2 ${t('today')}`, accent: 'text-brand-blue', format: (v) => Math.round(v) },
+    { label: t('deliveredThisMonth'), value: d.delivered_this_month ?? 0, icon: PackageCheck, delta: '+12%', accent: 'text-brand-success', format: (v) => Math.round(v) },
+    { label: t('pendingExpenses'), value: d.pending_expenses ?? 0, icon: ReceiptText, delta: t('needsReview'), trend: 'down', accent: 'text-brand-amber', format: (v) => Math.round(v) },
+    { label: t('revenue'), value: d.revenue_this_month ?? 0, icon: IndianRupee, delta: '+8.4%', accent: 'text-brand-success', format: (v) => formatINRCompact(v) },
+    { label: t('fastagSpend'), value: d.fastag_spend ?? 0, icon: Wallet, delta: '+3.1%', accent: 'text-brand-fastag', format: (v) => formatINRCompact(v) },
+    { label: t('fuelSpend'), value: d.fuel_spend ?? 0, icon: Fuel, delta: '+5.7%', accent: 'text-brand-fuel', format: (v) => formatINRCompact(v) },
   ];
 
   return (
@@ -75,7 +77,7 @@ export default function AdminOverviewPage() {
               <Skeleton className="h-full w-full rounded-xl" />
             ) : (
             <ResponsiveContainer width="100%" height="100%">
-              <AreaChart data={d.revenueSeries || []}>
+              <AreaChart data={d.revenue_series || []}>
                 <defs>
                   <linearGradient id="rev" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="0%" stopColor="#1A56DB" stopOpacity={0.3} />
@@ -107,7 +109,7 @@ export default function AdminOverviewPage() {
             <ResponsiveContainer width="100%" height="100%">
               <PieChart>
                 <Pie
-                  data={d.tripStatus || []}
+                  data={d.trip_status || []}
                   dataKey="value"
                   nameKey="name"
                   innerRadius={55}
@@ -115,7 +117,7 @@ export default function AdminOverviewPage() {
                   paddingAngle={3}
                   isAnimationActive={false}
                 >
-                  {(d.tripStatus || []).map((entry, i) => (
+                  {(d.trip_status || []).map((entry, i) => (
                     <Cell key={entry.name} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                   ))}
                 </Pie>
@@ -137,7 +139,7 @@ export default function AdminOverviewPage() {
             </Link>
           </div>
           <ul className="mt-4 divide-y divide-brand-border/70">
-            {mockActivityFeed.map((a) => (
+            {activity.map((a) => (
               <li key={a.id} className="flex items-center gap-3 py-3">
                 <span className={`h-2 w-2 shrink-0 rounded-full ${statusColor('active').dot}`} />
                 <div className="min-w-0 flex-1">
@@ -163,9 +165,9 @@ export default function AdminOverviewPage() {
           </div>
           <div className="mt-5 rounded-xl bg-brand-navy p-4 text-white">
             <p className="text-sm text-white/70">{t('fleetUtilisation')}</p>
-            <p className="mt-1 font-display text-3xl font-bold">{d.fleetUtilisation ?? 78}%</p>
+            <p className="mt-1 font-display text-3xl font-bold">{d.fleet_utilisation ?? 0}%</p>
             <div className="mt-2 h-2 w-full overflow-hidden rounded-full bg-white/20">
-              <div className="h-full rounded-full bg-brand-amber" style={{ width: `${d.fleetUtilisation ?? 78}%` }} />
+              <div className="h-full rounded-full bg-brand-amber" style={{ width: `${d.fleet_utilisation ?? 0}%` }} />
             </div>
           </div>
         </motion.div>

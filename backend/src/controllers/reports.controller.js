@@ -1,7 +1,4 @@
-'use strict';
-
-const prisma = require('../lib/prisma');
-const { ok } = require('../lib/response');
+const dayjs = require('dayjs');
 
 function dateRange(raw, field = 'createdAt') {
   const where = {};
@@ -12,30 +9,86 @@ function dateRange(raw, field = 'createdAt') {
   return where;
 }
 
-/** GET /reports/dashboard */
-async function dashboard(req, res) {
-  const raw = req.validatedQuery || req.query;
-  const tripWhere = { deletedAt: null, ...dateRange(raw) };
-  if (raw.branch_id) tripWhere.branchId = Number(raw.branch_id);
+const MONTH_LABELS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
-  const [tripCount, byStatus, freight, expenseSum, invoiceAgg, openInvoices] = await Promise.all([
-    prisma.trip.count({ where: tripWhere }),
-    prisma.trip.groupBy({ by: ['status'], where: tripWhere, _count: true }),
-    prisma.trip.aggregate({ where: tripWhere, _sum: { freightCharges: true } }),
-    prisma.tripExpense.aggregate({ where: dateRange(raw, 'expenseDate'), _sum: { amount: true } }),
-    prisma.invoice.aggregate({ where: { deletedAt: null, ...dateRange(raw) }, _sum: { totalAmount: true, paidAmount: true } }),
-    prisma.invoice.count({ where: { deletedAt: null, status: { notIn: ['paid', 'cancelled'] } } }),
+/**
+ * GET /reports/dashboard — landing-page KPIs, a 6-month revenue/cost series,
+ * the trip-status distribution and per-vehicle toll/fuel spend. Shape matches
+ * the admin overview UI (keys are snake-cased by the frontend API helper).
+ */
+async function dashboard(req, res) {
+  const now = dayjs();
+  const monthStart = now.startOf('month').toDate();
+  const seriesStart = now.startOf('month').subtract(5, 'month').toDate();
+
+  const [
+    activeTrips,
+    deliveredThisMonth,
+    pendingExpenses,
+    revenueAgg,
+    fastagAgg,
+    fuelAgg,
+    vehiclesTotal,
+    byStatus,
+    invoicesForSeries,
+    expensesForSeries,
+    tollByVehicleRaw,
+    fuelByVehicleRaw,
+  ] = await Promise.all([
+    prisma.trip.count({ where: { deletedAt: null, status: { in: ['loading', 'in_transit'] } } }),
+    prisma.trip.count({ where: { deletedAt: null, status: 'delivered', actualArrival: { gte: monthStart } } }),
+    prisma.tripExpense.count({ where: { status: 'pending' } }),
+    prisma.invoice.aggregate({ where: { deletedAt: null, createdAt: { gte: monthStart } }, _sum: { totalAmount: true } }),
+    prisma.fastagTransaction.aggregate({ where: { transactionAt: { gte: monthStart } }, _sum: { amount: true } }),
+    prisma.fuelTransaction.aggregate({ where: { transactionAt: { gte: monthStart } }, _sum: { amount: true } }),
+    prisma.vehicle.count({ where: { deletedAt: null } }),
+    prisma.trip.groupBy({ by: ['status'], where: { deletedAt: null }, _count: true }),
+    prisma.invoice.findMany({ where: { deletedAt: null, createdAt: { gte: seriesStart } }, select: { createdAt: true, totalAmount: true } }),
+    prisma.tripExpense.findMany({ where: { expenseDate: { gte: seriesStart } }, select: { expenseDate: true, amount: true } }),
+    prisma.fastagTransaction.groupBy({ by: ['vehicleId'], where: { transactionAt: { gte: monthStart } }, _sum: { amount: true } }),
+    prisma.fuelTransaction.groupBy({ by: ['vehicleId'], where: { transactionAt: { gte: monthStart } }, _sum: { amount: true, quantityLtr: true } }),
   ]);
 
+  // 6-month revenue (invoices) vs cost (expenses) series.
+  const buckets = [];
+  for (let i = 5; i >= 0; i -= 1) {
+    const m = now.startOf('month').subtract(i, 'month');
+    buckets.push({ key: m.format('YYYY-MM'), month: MONTH_LABELS[m.month()], revenue: 0, cost: 0 });
+  }
+  const bucketOf = (d) => buckets.find((b) => b.key === dayjs(d).format('YYYY-MM'));
+  invoicesForSeries.forEach((inv) => { const b = bucketOf(inv.createdAt); if (b) b.revenue += Number(inv.totalAmount || 0); });
+  expensesForSeries.forEach((e) => { if (!e.expenseDate) return; const b = bucketOf(e.expenseDate); if (b) b.cost += Number(e.amount || 0); });
+  const revenueSeries = buckets.map(({ month, revenue, cost }) => ({ month, revenue, cost }));
+
+  const tripStatus = byStatus.map((s) => ({ name: s.status, value: s._count }));
+
+  // Resolve vehicle registrations for the per-vehicle spend charts.
+  const vehicleIds = [...new Set([...tollByVehicleRaw, ...fuelByVehicleRaw].map((r) => r.vehicleId).filter(Boolean))];
+  const vehicles = vehicleIds.length
+    ? await prisma.vehicle.findMany({ where: { id: { in: vehicleIds } }, select: { id: true, registrationNo: true } })
+    : [];
+  const regOf = (id) => vehicles.find((v) => v.id === id)?.registrationNo || '—';
+  const tollByVehicle = tollByVehicleRaw
+    .filter((r) => r.vehicleId)
+    .map((r) => ({ vehicle: regOf(r.vehicleId), toll: Number(r._sum.amount || 0) }));
+  const fuelByVehicle = fuelByVehicleRaw
+    .filter((r) => r.vehicleId)
+    .map((r) => ({ vehicle: regOf(r.vehicleId), spend: Number(r._sum.amount || 0), litres: Number(r._sum.quantityLtr || 0) }));
+
+  const fleetUtilisation = vehiclesTotal > 0 ? Math.min(100, Math.round((activeTrips / vehiclesTotal) * 100)) : 0;
+
   return ok(res, {
-    trips: { total: tripCount, byStatus: byStatus.map((s) => ({ status: s.status, count: s._count })) },
-    revenue: {
-      freight: freight._sum.freightCharges || 0,
-      invoiced: invoiceAgg._sum.totalAmount || 0,
-      collected: invoiceAgg._sum.paidAmount || 0,
-      outstandingInvoices: openInvoices,
-    },
-    expenses: { total: expenseSum._sum.amount || 0 },
+    activeTrips,
+    deliveredThisMonth,
+    pendingExpenses,
+    revenueThisMonth: Number(revenueAgg._sum.totalAmount || 0),
+    fastagSpend: Number(fastagAgg._sum.amount || 0),
+    fuelSpend: Number(fuelAgg._sum.amount || 0),
+    fleetUtilisation,
+    revenueSeries,
+    tripStatus,
+    tollByVehicle,
+    fuelByVehicle,
   });
 }
 

@@ -68,38 +68,35 @@ api.interceptors.response.use(
   },
 );
 
-// Helper that unwraps the standard envelope (section 5.1) and supports a mock fallback.
-export async function fetchList(endpoint, params = {}, mock) {
-  try {
-    const { data } = await api.get(endpoint, { params });
-    return data;
-  } catch (err) {
-    if (mock !== undefined) {
-      const items = typeof mock === 'function' ? mock(params) : mock;
-      return {
-        success: true,
-        data: items,
-        meta: {
-          total: Array.isArray(items) ? items.length : 0,
-          page: 1,
-          limit: params.limit || 25,
-          totalPages: 1,
-          hasNext: false,
-          hasPrev: false,
-        },
-        _mock: true,
-      };
-    }
-    throw err;
+// The API serializes Prisma models in camelCase (invoiceNumber, companyName),
+// while the UI is written against snake_case (invoice_number, company_name).
+// Deep-convert response payloads so the existing components work unchanged.
+const SNAKE_CACHE = new Map();
+function toSnakeKey(key) {
+  if (SNAKE_CACHE.has(key)) return SNAKE_CACHE.get(key);
+  const snake = key.replace(/([a-z0-9])([A-Z])/g, '$1_$2').replace(/([A-Z]+)([A-Z][a-z])/g, '$1_$2').toLowerCase();
+  SNAKE_CACHE.set(key, snake);
+  return snake;
+}
+export function keysToSnake(value) {
+  if (Array.isArray(value)) return value.map(keysToSnake);
+  if (value && typeof value === 'object' && !(value instanceof Date)) {
+    const out = {};
+    for (const [k, v] of Object.entries(value)) out[toSnakeKey(k)] = keysToSnake(v);
+    return out;
   }
+  return value;
 }
 
-export async function fetchOne(endpoint, mock) {
-  try {
-    const { data } = await api.get(endpoint);
-    return data?.data ?? data;
-  } catch (err) {
-    if (mock !== undefined) return typeof mock === 'function' ? mock() : mock;
-    throw err;
-  }
+// Unwrap the standard envelope (section 5.1). Hard-wired to the API — no mock
+// fallback. `data` is snake-cased for the UI; `meta`/`filters_applied` are kept
+// as-is (the UI reads meta.totalPages / hasNext in camelCase).
+export async function fetchList(endpoint, params = {}) {
+  const { data } = await api.get(endpoint, { params });
+  return { ...data, data: keysToSnake(data?.data) };
+}
+
+export async function fetchOne(endpoint) {
+  const { data } = await api.get(endpoint);
+  return keysToSnake(data?.data ?? data);
 }

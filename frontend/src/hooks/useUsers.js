@@ -3,21 +3,21 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api, fetchList } from '@/lib/api';
 
-export function useClients(params = {}) {
+export function useUsers(params = {}) {
   return useQuery({
-    queryKey: ['clients', params],
-    queryFn: () => fetchList('/clients', params),
+    queryKey: ['users', params],
+    queryFn: () => fetchList('/users', params),
     staleTime: 60_000,
   });
 }
 
-export function useCreateClient() {
+export function useCreateUser() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (payload) => {
-      const { data } = await api.post('/clients', payload);
+      const { data } = await api.post('/users', payload);
       return data;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ['clients'] }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['users'] }),
   });
 }
