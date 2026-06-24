@@ -16,6 +16,7 @@ const clientRoutes = require('./client.routes');
 const vehicleRoutes = require('./vehicle.routes');
 const driverRoutes = require('./driver.routes');
 const paymentRoutes = require('./payment.routes');
+const trackingRoutes = require('./tracking.routes');
 const reportsRoutes = require('./reports.routes');
 const auditRoutes = require('./audit.routes');
 const brandingRoutes = require('./branding.routes');
@@ -49,6 +50,7 @@ function registerRoutes(app) {
   v1.use('/vehicles', vehicleRoutes);
   v1.use('/drivers', driverRoutes);
   v1.use('/payments', paymentRoutes);
+  v1.use('/tracking', trackingRoutes);
   v1.use('/reports', reportsRoutes);
   v1.use('/audit-logs', auditRoutes);
 

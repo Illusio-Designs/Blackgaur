@@ -15,7 +15,7 @@ import Select from '@/components/ui/Select';
 import Switch from '@/components/ui/Switch';
 import DatePicker from '@/components/ui/DatePicker';
 import { useToast } from '@/components/ui/Toast';
-import { useVehicles, useCreateVehicle } from '@/hooks/useVehicles';
+import { useVehicles, useCreateVehicle, useUpdateVehicle } from '@/hooks/useVehicles';
 import { useDrivers } from '@/hooks/useDrivers';
 import { VEHICLE_TYPES, OWNER_TYPES } from '@/lib/constants';
 import { formatDate, cn } from '@/lib/utils';
@@ -63,6 +63,7 @@ export default function VehiclesPage() {
   const { data, isLoading } = useVehicles();
   const mockDrivers = useDrivers().data?.data ?? [];
   const createVehicle = useCreateVehicle();
+  const updateVehicle = useUpdateVehicle();
 
   const [local, setLocal] = useState(null);
   const [owner, setOwner] = useState('all');
@@ -103,6 +104,7 @@ export default function VehiclesPage() {
     const payload = { ...form, capacity_tons: Number(form.capacity_tons) || 0 };
     if (editingId) {
       setLocal(rows.map((v) => (v.id === editingId ? { ...v, ...payload } : v)));
+      updateVehicle.mutate({ id: editingId, ...payload });
       toast.success(t('saveChanges'), payload.registration_no);
     } else {
       const newVehicle = { id: Date.now(), ...payload };
@@ -165,6 +167,14 @@ export default function VehiclesPage() {
             label={row.original.is_available ? t('available') : t('inUse')}
           />
         ),
+      },
+      {
+        id: 'gps',
+        header: t('gps'),
+        enableSorting: false,
+        cell: ({ row }) => (row.original.gps_device_id
+          ? <span className="inline-flex items-center gap-1.5 font-mono text-xs text-brand-blue"><MapPin className="h-3.5 w-3.5" />{row.original.gps_device_id}</span>
+          : <span className="text-xs text-brand-muted/70">{t('noGps')}</span>),
       },
       {
         id: 'devices',

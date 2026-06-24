@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
-import { useLocale } from 'next-intl';
+import { useLocale, useTranslations } from 'next-intl';
 import { useParams } from 'next/navigation';
 import { Globe, Check, ChevronDown } from 'lucide-react';
 import { usePathname, useRouter } from '@/i18n/routing';
@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils';
 
 export default function LanguageSwitcher({ compact = false }) {
   const locale = useLocale();
+  const tc = useTranslations('common');
   const router = useRouter();
   const pathname = usePathname();
   const params = useParams();
@@ -35,7 +36,7 @@ export default function LanguageSwitcher({ compact = false }) {
       <button
         onClick={() => setOpen((o) => !o)}
         className="btn-focus inline-flex items-center gap-1.5 rounded-lg border border-brand-border bg-white px-2.5 py-1.5 text-sm font-medium text-brand-navy transition hover:bg-brand-surface"
-        aria-label="Change language"
+        aria-label={tc('changeLanguage')}
       >
         <Globe className="h-4 w-4 text-brand-muted" />
         {compact ? localeShort[locale] : localeNames[locale]}

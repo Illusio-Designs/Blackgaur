@@ -82,7 +82,8 @@
     "nextMonth": "Next month",
     "fileTooLarge": "File too large",
     "fileMaxSize": "Maximum size is {size}",
-    "error": "Something went wrong"
+    "error": "Something went wrong",
+    "changeLanguage": "Change language"
   },
   "nav": {
     "home": "Home",
@@ -784,6 +785,7 @@
     "progress": "Trip progress",
     "noActive": "No vehicles in transit",
     "mapNote": "Live map — GPS device positions (map embed)",
-    "kmh": "km/h"
+    "kmh": "km/h",
+    "noDevices": "No GPS devices reporting yet"
   }
 }

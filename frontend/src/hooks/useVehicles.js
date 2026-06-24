@@ -21,3 +21,14 @@ export function useCreateVehicle() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['vehicles'] }),
   });
 }
+
+export function useUpdateVehicle() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ id, ...payload }) => {
+      const { data } = await api.put(`/vehicles/${id}`, payload);
+      return data;
+    },
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['vehicles'] }),
+  });
+}
