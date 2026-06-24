@@ -77,7 +77,11 @@
       "Oct": "ઑક્ટો",
       "Nov": "નવે",
       "Dec": "ડિસે"
-    }
+    },
+    "prevMonth": "પાછલો મહિનો",
+    "nextMonth": "આગલો મહિનો",
+    "fileTooLarge": "ફાઇલ ખૂબ મોટી",
+    "fileMaxSize": "મહત્તમ કદ {size} છે"
   },
   "nav": {
     "home": "હોમ",
@@ -371,7 +375,9 @@
     "revenue": "આવક",
     "cost": "ખર્ચ",
     "netPnl": "ચોખ્ખો નફો-નુકસાન",
-    "revenueVsCost": "આવક વિરુદ્ધ ખર્ચ"
+    "revenueVsCost": "આવક વિરુદ્ધ ખર્ચ",
+    "tollByVehicle": "વાહન મુજબ ટોલ",
+    "spendLitres": "ખર્ચ અને લિટર"
   },
   "users": {
     "title": "વપરાશકર્તા વ્યવસ્થાપન",

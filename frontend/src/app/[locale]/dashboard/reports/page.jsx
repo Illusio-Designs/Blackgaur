@@ -92,7 +92,7 @@ export default function ReportsPage() {
         )}
         {tab === 'fastag' && (
           <>
-            <h3 className="mb-4 font-display text-base font-semibold text-brand-navy">{t('fastag')} — Toll by vehicle</h3>
+            <h3 className="mb-4 font-display text-base font-semibold text-brand-navy">{t('tollByVehicle')}</h3>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={mockTollByVehicle}>
@@ -108,7 +108,7 @@ export default function ReportsPage() {
         )}
         {tab === 'fuel' && (
           <>
-            <h3 className="mb-4 font-display text-base font-semibold text-brand-navy">{t('fuel')} — Spend & Litres</h3>
+            <h3 className="mb-4 font-display text-base font-semibold text-brand-navy">{t('spendLitres')}</h3>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={mockFuelByVehicle}>

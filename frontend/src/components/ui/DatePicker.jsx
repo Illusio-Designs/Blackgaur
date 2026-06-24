@@ -1,17 +1,28 @@
 'use client';
 
-import { useEffect, useRef, useState } from 'react';
-import { useTranslations } from 'next-intl';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import { useTranslations, useLocale } from 'next-intl';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Calendar, ChevronLeft, ChevronRight } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { cn } from '@/lib/utils';
 
-const WEEKDAYS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
+// Locale-aware month + weekday names via Intl (falls back to English).
+function buildCalendarLabels(locale) {
+  try {
+    const months = Array.from({ length: 12 }, (_, m) =>
+      new Intl.DateTimeFormat(locale, { month: 'long' }).format(new Date(2021, m, 1)));
+    // Week starts Sunday — 2021-08-01 was a Sunday.
+    const weekdays = Array.from({ length: 7 }, (_, d) =>
+      new Intl.DateTimeFormat(locale, { weekday: 'short' }).format(new Date(2021, 7, 1 + d)));
+    return { months, weekdays };
+  } catch {
+    return {
+      months: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+      weekdays: ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'],
+    };
+  }
+}
 
 // Local yyyy-mm-dd (avoids UTC offset bugs from toISOString).
 function toISO(d) {
@@ -55,6 +66,8 @@ export default function DatePicker({
   className,
 }) {
   const tc = useTranslations('common');
+  const locale = useLocale();
+  const { months: MONTHS, weekdays: WEEKDAYS } = useMemo(() => buildCalendarLabels(locale), [locale]);
   const [open, setOpen] = useState(false);
   const selected = parseValue(value);
   const today = new Date();
@@ -138,7 +151,7 @@ export default function DatePicker({
                   type="button"
                   onClick={() => setViewDate(new Date(year, month - 1, 1))}
                   className="btn-focus rounded-lg p-1.5 text-brand-muted transition hover:bg-brand-surface hover:text-brand-navy"
-                  aria-label="Previous month"
+                  aria-label={tc('prevMonth')}
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
@@ -149,7 +162,7 @@ export default function DatePicker({
                   type="button"
                   onClick={() => setViewDate(new Date(year, month + 1, 1))}
                   className="btn-focus rounded-lg p-1.5 text-brand-muted transition hover:bg-brand-surface hover:text-brand-navy"
-                  aria-label="Next month"
+                  aria-label={tc('nextMonth')}
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>

@@ -77,7 +77,11 @@
       "Oct": "अक्तू",
       "Nov": "नव",
       "Dec": "दिस"
-    }
+    },
+    "prevMonth": "पिछला महीना",
+    "nextMonth": "अगला महीना",
+    "fileTooLarge": "फ़ाइल बहुत बड़ी",
+    "fileMaxSize": "अधिकतम आकार {size} है"
   },
   "nav": {
     "home": "होम",
@@ -371,7 +375,9 @@
     "revenue": "राजस्व",
     "cost": "लागत",
     "netPnl": "शुद्ध लाभ-हानि",
-    "revenueVsCost": "राजस्व बनाम लागत"
+    "revenueVsCost": "राजस्व बनाम लागत",
+    "tollByVehicle": "वाहन अनुसार टोल",
+    "spendLitres": "खर्च और लीटर"
   },
   "users": {
     "title": "उपयोगकर्ता प्रबंधन",

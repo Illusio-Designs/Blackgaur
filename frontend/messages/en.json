@@ -77,7 +77,11 @@
       "Oct": "Oct",
       "Nov": "Nov",
       "Dec": "Dec"
-    }
+    },
+    "prevMonth": "Previous month",
+    "nextMonth": "Next month",
+    "fileTooLarge": "File too large",
+    "fileMaxSize": "Maximum size is {size}"
   },
   "nav": {
     "home": "Home",
@@ -371,7 +375,9 @@
     "revenue": "Revenue",
     "cost": "Cost",
     "netPnl": "Net P&L",
-    "revenueVsCost": "Revenue vs Cost"
+    "revenueVsCost": "Revenue vs Cost",
+    "tollByVehicle": "Toll by vehicle",
+    "spendLitres": "Spend & Litres"
   },
   "users": {
     "title": "User Management",

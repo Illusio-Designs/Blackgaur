@@ -31,7 +31,7 @@ export default function FileUpload({
     const f = fileList?.[0];
     if (!f) return;
     if (f.size > maxSize) {
-      toast.error('File too large', `Maximum size is ${formatBytes(maxSize)}`);
+      toast.error(tc('fileTooLarge'), tc('fileMaxSize', { size: formatBytes(maxSize) }));
       return;
     }
     setFile(f);

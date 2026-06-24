@@ -242,10 +242,10 @@ export default function TripsPage() {
         }
       >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <FormInput as="select" label={t('route') + ' — From'} value={form.origin_city} onChange={(e) => setForm({ ...form, origin_city: e.target.value })}>
+          <FormInput as="select" label={`${t('route')} — ${tc('from')}`} value={form.origin_city} onChange={(e) => setForm({ ...form, origin_city: e.target.value })}>
             {INDIAN_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </FormInput>
-          <FormInput as="select" label={t('route') + ' — To'} value={form.destination_city} onChange={(e) => setForm({ ...form, destination_city: e.target.value })}>
+          <FormInput as="select" label={`${t('route')} — ${tc('to')}`} value={form.destination_city} onChange={(e) => setForm({ ...form, destination_city: e.target.value })}>
             {INDIAN_CITIES.map((c) => <option key={c} value={c}>{c}</option>)}
           </FormInput>
           <FormInput as="select" label={t('client')} value={form.client_id} onChange={(e) => setForm({ ...form, client_id: e.target.value })}>
@@ -263,16 +263,16 @@ export default function TripsPage() {
           <FormInput as="select" label={t('driver')} value={form.driver_id} onChange={(e) => setForm({ ...form, driver_id: e.target.value })}>
             {mockDrivers.map((dr) => <option key={dr.id} value={dr.id}>{dr.name}</option>)}
           </FormInput>
-          <FormInput as="textarea" label={t('originAddress')} className="sm:col-span-2" placeholder="Full pickup address" value={form.origin_address} onChange={(e) => setForm({ ...form, origin_address: e.target.value })} />
-          <FormInput as="textarea" label={t('destinationAddress')} className="sm:col-span-2" placeholder="Full delivery address" value={form.destination_address} onChange={(e) => setForm({ ...form, destination_address: e.target.value })} />
-          <FormInput label={t('cargo')} placeholder="Industrial goods" value={form.cargo_type} onChange={(e) => setForm({ ...form, cargo_type: e.target.value })} />
+          <FormInput as="textarea" label={t('originAddress')} className="sm:col-span-2" placeholder={t('pickupAddressPlaceholder')} value={form.origin_address} onChange={(e) => setForm({ ...form, origin_address: e.target.value })} />
+          <FormInput as="textarea" label={t('destinationAddress')} className="sm:col-span-2" placeholder={t('deliveryAddressPlaceholder')} value={form.destination_address} onChange={(e) => setForm({ ...form, destination_address: e.target.value })} />
+          <FormInput label={t('cargo')} placeholder={t('cargoPlaceholder')} value={form.cargo_type} onChange={(e) => setForm({ ...form, cargo_type: e.target.value })} />
           <FormInput label={t('cargoWeight')} type="number" placeholder="14500" value={form.cargo_weight_kg} onChange={(e) => setForm({ ...form, cargo_weight_kg: e.target.value })} />
           <FormInput label={t('cargoValue')} type="number" placeholder="2400000" value={form.cargo_value} onChange={(e) => setForm({ ...form, cargo_value: e.target.value })} />
           <FormInput label={t('freight')} type="number" placeholder="48000" value={form.freight_charges} onChange={(e) => setForm({ ...form, freight_charges: e.target.value })} />
           <DatePicker label={t('plannedDeparture')} value={form.planned_departure} onChange={(v) => setForm({ ...form, planned_departure: v })} />
           <FormInput label={t('ewayBill')} placeholder="EWB-310024889" value={form.eway_bill_no} onChange={(e) => setForm({ ...form, eway_bill_no: e.target.value })} />
           <DatePicker label={t('ewayBillExpiry')} value={form.eway_bill_expiry} onChange={(v) => setForm({ ...form, eway_bill_expiry: v })} />
-          <FormInput as="textarea" label={t('notes')} className="sm:col-span-2" placeholder="Internal notes" value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
+          <FormInput as="textarea" label={t('notes')} className="sm:col-span-2" placeholder={t('notesPlaceholder')} value={form.notes} onChange={(e) => setForm({ ...form, notes: e.target.value })} />
         </div>
       </Drawer>
     </div>
