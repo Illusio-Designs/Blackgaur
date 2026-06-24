@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { Truck, MapPin, Camera, IndianRupee, CheckCircle2, PlayCircle } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -14,7 +14,7 @@ import FileUpload from '@/components/ui/FileUpload';
 import Timeline from '@/components/ui/Timeline';
 import TaskCompleteFX from '@/components/animations/TaskCompleteFX';
 import { useToast } from '@/components/ui/Toast';
-import { mockTrips } from '@/lib/mock';
+import { useTrips } from '@/hooks/useTrips';
 import { EXPENSE_TYPES } from '@/lib/constants';
 import { formatINR } from '@/lib/utils';
 
@@ -27,7 +27,14 @@ export default function DriverPage() {
   const tc = useTranslations('common');
   const toast = useToast();
 
-  const [trip, setTrip] = useState(mockTrips.find((tr) => tr.status === 'in_transit') || mockTrips[3]);
+  const { data: tripsData } = useTrips();
+  const activeTrip = useMemo(() => {
+    const trips = tripsData?.data ?? [];
+    return trips.find((tr) => tr.status === 'in_transit') || trips[0] || null;
+  }, [tripsData]);
+  const [override, setOverride] = useState(null);
+  const trip = override ?? activeTrip ?? {};
+  const setTrip = setOverride;
   const [expenseOpen, setExpenseOpen] = useState(false);
   const [podOpen, setPodOpen] = useState(false);
   const [fxTrigger, setFxTrigger] = useState(0);

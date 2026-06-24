@@ -12,7 +12,8 @@ import Select from '@/components/ui/Select';
 import FormInput from '@/components/ui/FormInput';
 import DatePicker from '@/components/ui/DatePicker';
 import { useToast } from '@/components/ui/Toast';
-import { mockPayments, mockTdsJournal, mockInvoices } from '@/lib/mock';
+import { useInvoices } from '@/hooks/useInvoices';
+import { usePayments, useTdsJournal, useRecordPayment } from '@/hooks/usePayments';
 import { formatINR, formatDate } from '@/lib/utils';
 
 const MODES = ['NEFT', 'RTGS', 'UPI', 'Cheque', 'Cash'].map((m) => ({ value: m, label: m }));
@@ -25,44 +26,49 @@ export default function PaymentsPage() {
   const toast = useToast();
 
   const [tab, setTab] = useState('payments');
-  const [payments, setPayments] = useState(mockPayments);
-  const [journal, setJournal] = useState(mockTdsJournal);
   const [open, setOpen] = useState(false);
+
+  const { data: paymentsData } = usePayments();
+  const { data: journalData } = useTdsJournal();
+  const { data: invoicesData } = useInvoices();
+  const recordPayment = useRecordPayment();
+  const payments = paymentsData?.data ?? [];
+  const journal = journalData?.data ?? [];
+  const invoices = useMemo(() => invoicesData?.data ?? [], [invoicesData]);
 
   const EMPTY = { invoice_id: '', date: '', mode: 'NEFT', reference: '', tds_deducted: '' };
   const [form, setForm] = useState(EMPTY);
 
   const selectedInv = useMemo(
-    () => mockInvoices.find((i) => String(i.id) === String(form.invoice_id)),
-    [form.invoice_id],
+    () => invoices.find((i) => String(i.id) === String(form.invoice_id)),
+    [invoices, form.invoice_id],
   );
   const gross = Number(selectedInv?.total_amount || 0);
   const tds = form.tds_deducted === '' ? Math.round((Number(selectedInv?.freight_amount || selectedInv?.subtotal || 0) * TDS_RATE) / 100) : Number(form.tds_deducted);
   const received = Math.max(0, gross - tds);
 
   const onPickInvoice = (id) => {
-    const inv = mockInvoices.find((i) => String(i.id) === String(id));
+    const inv = invoices.find((i) => String(i.id) === String(id));
     const defTds = Math.round((Number(inv?.freight_amount || inv?.subtotal || 0) * TDS_RATE) / 100);
     setForm((f) => ({ ...f, invoice_id: id, tds_deducted: String(defTds) }));
   };
 
-  const submit = () => {
+  const submit = async () => {
     if (!selectedInv) return;
-    const date = form.date || new Date().toISOString().slice(0, 10);
-    const pid = Date.now();
-    setPayments((list) => [
-      { id: pid, invoice_number: selectedInv.invoice_number, client: selectedInv.client, gross, tds_deducted: tds, amount_received: received, mode: form.mode, reference: form.reference, date },
-      ...list,
-    ]);
-    if (tds > 0) {
-      setJournal((list) => [
-        { id: pid + 1, date, invoice_number: selectedInv.invoice_number, client: selectedInv.client, section: '194C', tds_amount: tds, narration: `TDS receivable on ${selectedInv.invoice_number} (${selectedInv.client?.company_name || ''})` },
-        ...list,
-      ]);
+    try {
+      await recordPayment.mutateAsync({
+        invoice_id: selectedInv.id,
+        date: form.date || undefined,
+        mode: form.mode,
+        reference: form.reference,
+        tds_deducted: tds,
+      });
+      setOpen(false);
+      setForm(EMPTY);
+      toast.success(t('saved'), `${selectedInv.invoice_number} · ${formatINR(received)}`);
+    } catch (err) {
+      toast.error(tc('error') , err?.response?.data?.error?.message || String(err));
     }
-    setOpen(false);
-    setForm(EMPTY);
-    toast.success(t('saved'), `${selectedInv.invoice_number} · ${formatINR(received)}`);
   };
 
   const payCols = useMemo(() => [
@@ -126,7 +132,7 @@ export default function PaymentsPage() {
             value={form.invoice_id}
             onChange={onPickInvoice}
             placeholder={t('invoice')}
-            options={mockInvoices.map((i) => ({ value: String(i.id), label: `${i.invoice_number} · ${i.client?.company_name} · ${formatINR(i.total_amount)}` }))}
+            options={invoices.map((i) => ({ value: String(i.id), label: `${i.invoice_number} · ${i.client?.company_name} · ${formatINR(i.total_amount)}` }))}
           />
           <div className="grid grid-cols-2 gap-4">
             <DatePicker label={t('date')} value={form.date} onChange={(v) => setForm({ ...form, date: v })} />

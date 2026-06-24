@@ -16,8 +16,8 @@ import Switch from '@/components/ui/Switch';
 import DatePicker from '@/components/ui/DatePicker';
 import { useToast } from '@/components/ui/Toast';
 import { useVehicles, useCreateVehicle } from '@/hooks/useVehicles';
+import { useDrivers } from '@/hooks/useDrivers';
 import { VEHICLE_TYPES, OWNER_TYPES } from '@/lib/constants';
-import { mockDrivers } from '@/lib/mock';
 import { formatDate, cn } from '@/lib/utils';
 
 // Days until a date (negative = already expired).
@@ -61,6 +61,7 @@ export default function VehiclesPage() {
   const tc = useTranslations('common');
   const toast = useToast();
   const { data, isLoading } = useVehicles();
+  const mockDrivers = useDrivers().data?.data ?? [];
   const createVehicle = useCreateVehicle();
 
   const [local, setLocal] = useState(null);

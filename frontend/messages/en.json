@@ -81,7 +81,8 @@
     "prevMonth": "Previous month",
     "nextMonth": "Next month",
     "fileTooLarge": "File too large",
-    "fileMaxSize": "Maximum size is {size}"
+    "fileMaxSize": "Maximum size is {size}",
+    "error": "Something went wrong"
   },
   "nav": {
     "home": "Home",

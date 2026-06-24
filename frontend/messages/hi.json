@@ -81,7 +81,8 @@
     "prevMonth": "पिछला महीना",
     "nextMonth": "अगला महीना",
     "fileTooLarge": "फ़ाइल बहुत बड़ी",
-    "fileMaxSize": "अधिकतम आकार {size} है"
+    "fileMaxSize": "अधिकतम आकार {size} है",
+    "error": "कुछ गलत हुआ"
   },
   "nav": {
     "home": "होम",

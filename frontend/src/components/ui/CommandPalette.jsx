@@ -8,7 +8,10 @@ import { Search, Truck, Building2, FileText, Box, CornerDownLeft } from 'lucide-
 import { useRouter } from '@/i18n/routing';
 import { useUiStore } from '@/store/uiStore';
 import { overlayFade, modalScaleIn } from '@/lib/animations';
-import { mockTrips, mockClients, mockVehicles, mockInvoices } from '@/lib/mock';
+import { useTrips } from '@/hooks/useTrips';
+import { useClients } from '@/hooks/useClients';
+import { useVehicles } from '@/hooks/useVehicles';
+import { useInvoices } from '@/hooks/useInvoices';
 import { cn } from '@/lib/utils';
 
 const GROUP_ICONS = {
@@ -18,30 +21,30 @@ const GROUP_ICONS = {
   Invoices: FileText,
 };
 
-function buildItems() {
+function buildItems({ trips, clients, vehicles, invoices }) {
   return [
-    ...mockTrips.map((t) => ({
+    ...trips.map((t) => ({
       id: `trip-${t.id}`,
       label: t.lr_number,
       sub: `${t.origin_city} → ${t.destination_city}`,
       group: 'Trips',
       href: `/dashboard/trips?trip=${t.id}`,
     })),
-    ...mockClients.map((c) => ({
+    ...clients.map((c) => ({
       id: `client-${c.id}`,
       label: c.company_name,
       sub: c.gstin,
       group: 'Clients',
       href: `/dashboard/accounts/clients?client=${c.id}`,
     })),
-    ...mockVehicles.map((v) => ({
+    ...vehicles.map((v) => ({
       id: `vehicle-${v.id}`,
       label: v.registration_no,
       sub: v.model,
       group: 'Vehicles',
       href: `/dashboard/trips?vehicle=${v.id}`,
     })),
-    ...mockInvoices.map((iv) => ({
+    ...invoices.map((iv) => ({
       id: `invoice-${iv.id}`,
       label: iv.invoice_number,
       sub: iv.client?.company_name,
@@ -58,11 +61,23 @@ export default function CommandPalette() {
   const closePalette = useUiStore((s) => s.closeCommandPalette);
   const toggle = useUiStore((s) => s.toggleCommandPalette);
 
+  const tripsData = useTrips().data;
+  const clientsData = useClients().data;
+  const vehiclesData = useVehicles().data;
+  const invoicesData = useInvoices().data;
+  const trips = useMemo(() => tripsData?.data ?? [], [tripsData]);
+  const clients = useMemo(() => clientsData?.data ?? [], [clientsData]);
+  const vehicles = useMemo(() => vehiclesData?.data ?? [], [vehiclesData]);
+  const invoices = useMemo(() => invoicesData?.data ?? [], [invoicesData]);
+
   const [query, setQuery] = useState('');
   const [active, setActive] = useState(0);
   const listRef = useRef(null);
 
-  const allItems = useMemo(() => buildItems(), []);
+  const allItems = useMemo(
+    () => buildItems({ trips, clients, vehicles, invoices }),
+    [trips, clients, vehicles, invoices],
+  );
 
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();

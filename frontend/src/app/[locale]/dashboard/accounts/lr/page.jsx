@@ -17,9 +17,11 @@ import Tooltip from '@/components/ui/Tooltip';
 import { useTrips } from '@/hooks/useTrips';
 import { useBranding } from '@/hooks/useBranding';
 import { downloadLrPdf } from '@/lib/lrPdf';
+import { useClients } from '@/hooks/useClients';
+import { useVehicles } from '@/hooks/useVehicles';
+import { useDrivers } from '@/hooks/useDrivers';
 import { formatINR } from '@/lib/utils';
 import { INDIAN_CITIES } from '@/lib/constants';
-import { mockClients, mockVehicles, mockDrivers } from '@/lib/mock';
 
 const STEP_ORDER = ['planned', 'loading', 'in_transit', 'delivered'];
 const EMPTY_LR = {
@@ -37,6 +39,9 @@ export default function LrBoardPage() {
   const toast = useToast();
   const { branding } = useBranding();
   const { data, isLoading } = useTrips();
+  const mockClients = useClients().data?.data ?? [];
+  const mockVehicles = useVehicles().data?.data ?? [];
+  const mockDrivers = useDrivers().data?.data ?? [];
   const [track, setTrack] = useState(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [form, setForm] = useState(EMPTY_LR);

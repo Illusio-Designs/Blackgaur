@@ -11,7 +11,8 @@ import Drawer from '@/components/ui/Drawer';
 import FormInput from '@/components/ui/FormInput';
 import PhoneInput from '@/components/ui/PhoneInput';
 import { useToast } from '@/components/ui/Toast';
-import { mockUsers } from '@/lib/mock';
+import { useUsers, useCreateUser } from '@/hooks/useUsers';
+import { useRoles } from '@/hooks/useRoles';
 import { ROLES } from '@/lib/constants';
 import { initials, timeAgo } from '@/lib/utils';
 
@@ -21,17 +22,31 @@ export default function UsersPage() {
   const tc = useTranslations('common');
   const toast = useToast();
 
-  const [users, setUsers] = useState(mockUsers);
+  const { data: usersData } = useUsers();
+  const rolesList = useRoles().data?.data ?? [];
+  const createUser = useCreateUser();
+  const [localUsers, setLocalUsers] = useState(null);
+  const users = localUsers ?? usersData?.data ?? [];
   const [open, setOpen] = useState(false);
   const [form, setForm] = useState({ name: '', mobile: '', email: '', role: 'trip_manager', language_pref: 'en' });
 
-  const toggleActive = (id) => setUsers(users.map((u) => (u.id === id ? { ...u, is_active: !u.is_active } : u)));
-  const submit = () => {
-    const u = { ...form, id: Date.now(), is_active: true, last_login_at: null };
-    setUsers([u, ...users]);
-    setOpen(false);
-    setForm({ name: '', mobile: '', email: '', role: 'trip_manager', language_pref: 'en' });
-    toast.success(tc('create'), u.name);
+  const toggleActive = (id) => setLocalUsers(users.map((u) => (u.id === id ? { ...u, is_active: !u.is_active } : u)));
+  const submit = async () => {
+    const roleId = rolesList.find((r) => r.name === form.role)?.id;
+    try {
+      await createUser.mutateAsync({
+        name: form.name,
+        mobile: form.mobile,
+        email: form.email || null,
+        role_id: roleId,
+        language_pref: form.language_pref,
+      });
+      setOpen(false);
+      setForm({ name: '', mobile: '', email: '', role: 'trip_manager', language_pref: 'en' });
+      toast.success(tc('create'), form.name);
+    } catch (err) {
+      toast.error(tc('error'), err?.response?.data?.error?.message || String(err));
+    }
   };
 
   const columns = useMemo(
@@ -46,7 +61,7 @@ export default function UsersPage() {
         ),
       },
       { accessorKey: 'mobile', header: t('mobile'), cell: ({ row }) => <span className="font-mono text-xs">{row.original.mobile}</span> },
-      { accessorKey: 'role', header: t('role'), cell: ({ row }) => <span className="text-brand-text">{tr(row.original.role)}</span> },
+      { accessorKey: 'role', header: t('role'), cell: ({ row }) => { const rn = row.original.role?.name || row.original.role; return <span className="text-brand-text">{rn && tr.has(rn) ? tr(rn) : (row.original.role?.label || rn || '—')}</span>; } },
       { accessorKey: 'language_pref', header: tc('language'), cell: ({ row }) => <span className="uppercase">{row.original.language_pref}</span> },
       { accessorKey: 'last_login_at', header: t('lastLogin'), cell: ({ row }) => <span className="text-brand-muted">{row.original.last_login_at ? timeAgo(row.original.last_login_at) : '—'}</span> },
       {

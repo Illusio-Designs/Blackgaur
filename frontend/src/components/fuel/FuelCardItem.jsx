@@ -8,7 +8,8 @@ import Modal from '@/components/ui/Modal';
 import Drawer from '@/components/ui/Drawer';
 import FormInput from '@/components/ui/FormInput';
 import { FUEL_CARD_TYPES } from '@/lib/constants';
-import { mockVehicles, mockDrivers } from '@/lib/mock';
+import { useVehicles } from '@/hooks/useVehicles';
+import { useDrivers } from '@/hooks/useDrivers';
 import { formatINR, pct, cn } from '@/lib/utils';
 
 function cardTypeLabel(value) {
@@ -22,6 +23,8 @@ function groupedNumber(num = '') {
 }
 
 export default function FuelCardItem({ card, onAssign, onBlock }) {
+  const mockVehicles = useVehicles().data?.data ?? [];
+  const mockDrivers = useDrivers().data?.data ?? [];
   const t = useTranslations('fuel');
   const tc = useTranslations('common');
   const [assignOpen, setAssignOpen] = useState(false);

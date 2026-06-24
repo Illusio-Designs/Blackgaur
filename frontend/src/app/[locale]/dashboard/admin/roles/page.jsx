@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useTranslations } from 'next-intl';
 import { ShieldCheck, Check, Lock, Save } from 'lucide-react';
 import { motion } from 'framer-motion';
@@ -8,7 +8,7 @@ import PageHeader from '@/components/dashboard/PageHeader';
 import StatusBadge from '@/components/ui/StatusBadge';
 import Button from '@/components/ui/Button';
 import { useToast } from '@/components/ui/Toast';
-import { mockRoles } from '@/lib/mock';
+import { useRoles } from '@/hooks/useRoles';
 import { cn } from '@/lib/utils';
 import { fadeUp } from '@/lib/animations';
 
@@ -25,9 +25,9 @@ const MATRIX = {
 };
 
 // Expand the matrix into a { roleName: Set('resource:action') } structure.
-function buildPerms() {
+function buildPerms(roles) {
   const out = {};
-  mockRoles.forEach((r) => {
+  roles.forEach((r) => {
     const set = new Set();
     const m = MATRIX[r.name];
     if (m?._all) {
@@ -44,9 +44,15 @@ export default function RolesPage() {
   const t = useTranslations('rolesPage');
   const tr = useTranslations('roles');
   const toast = useToast();
+  const rolesData = useRoles().data;
+  const rolesList = useMemo(() => rolesData?.data ?? [], [rolesData]);
   const [selected, setSelected] = useState('finance_manager');
-  const [permsByRole, setPermsByRole] = useState(buildPerms);
+  const [permsByRole, setPermsByRole] = useState({});
   const [dirty, setDirty] = useState(false);
+
+  useEffect(() => {
+    if (rolesList.length) setPermsByRole(buildPerms(rolesList));
+  }, [rolesList]);
 
   const isSystemFull = selected === 'admin'; // Admin = full access, locked
   const can = (res, a) => permsByRole[selected]?.has(`${res}:${a}`);
@@ -79,18 +85,18 @@ export default function RolesPage() {
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-4">
         <div className="space-y-2 lg:col-span-1">
-          {mockRoles.map((r) => (
+          {rolesList.map((r) => (
             <button
               key={r.id}
               onClick={() => selectRole(r.name)}
               className={cn('w-full rounded-xl border p-4 text-left transition', selected === r.name ? 'border-brand-blue bg-brand-blue/5' : 'border-brand-border bg-white hover:bg-brand-surface')}
             >
               <div className="flex items-center justify-between">
-                <span className="font-semibold text-brand-navy">{tr(r.name)}</span>
+                <span className="font-semibold text-brand-navy">{tr.has(r.name) ? tr(r.name) : (r.label || r.name)}</span>
                 {r.is_system && <StatusBadge status="active" label={t('system')} size="sm" />}
               </div>
-              <p className="mt-1 text-xs text-brand-muted">{tr(`${r.name}_desc`)}</p>
-              <p className="mt-2 text-xs font-medium text-brand-blue">{r.users} {t('usersCount')}</p>
+              <p className="mt-1 text-xs text-brand-muted">{tr.has(`${r.name}_desc`) ? tr(`${r.name}_desc`) : ''}</p>
+              <p className="mt-2 text-xs font-medium text-brand-blue">{r.users ?? 0} {t('usersCount')}</p>
             </button>
           ))}
         </div>

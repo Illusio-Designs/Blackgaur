@@ -7,7 +7,7 @@ import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
 import Button from '@/components/ui/Button';
 import FormInput from '@/components/ui/FormInput';
 import RCMBadge from '@/components/ui/RCMBadge';
-import { mockClients } from '@/lib/mock';
+import { useClients } from '@/hooks/useClients';
 import { computeInvoice, amountInWords, COMPANY_STATE_CODE } from '@/lib/gst';
 import { useConfig } from '@/hooks/useConfig';
 import { formatINR, cn } from '@/lib/utils';
@@ -29,6 +29,7 @@ const DEFAULTS = {
 export default function InvoiceForm({ mode = 'create', initialData, onSubmit }) {
   const t = useTranslations('invoices');
   const tc = useTranslations('common');
+  const mockClients = useClients().data?.data ?? [];
   const { config } = useConfig();
   // RCM is driven by the company's own registration/opt-in (Settings → Tax & RCM).
   // Registered under RCM → reverse charge (no GST on invoice); else forward charge.

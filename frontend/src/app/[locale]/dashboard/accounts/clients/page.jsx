@@ -13,9 +13,10 @@ import PhoneInput from '@/components/ui/PhoneInput';
 import Tooltip from '@/components/ui/Tooltip';
 import { useToast } from '@/components/ui/Toast';
 import { useClients, useCreateClient } from '@/hooks/useClients';
+import { useInvoices } from '@/hooks/useInvoices';
+import { usePayments, useTdsJournal } from '@/hooks/usePayments';
 import { useBranding } from '@/hooks/useBranding';
 import { buildClientLedger, downloadLedgerPdf } from '@/lib/ledgerPdf';
-import { mockInvoices, mockPayments, mockTdsJournal } from '@/lib/mock';
 import { formatINR } from '@/lib/utils';
 
 export default function ClientsPage() {
@@ -23,11 +24,18 @@ export default function ClientsPage() {
   const tc = useTranslations('common');
   const toast = useToast();
   const { data, isLoading } = useClients();
+  const { data: invoicesData } = useInvoices();
+  const { data: paymentsData } = usePayments();
+  const { data: tdsData } = useTdsJournal();
   const { branding } = useBranding();
   const create = useCreateClient();
 
   const downloadLedger = (client) => {
-    const ledger = buildClientLedger(client, { invoices: mockInvoices, payments: mockPayments, tds: mockTdsJournal });
+    const ledger = buildClientLedger(client, {
+      invoices: invoicesData?.data ?? [],
+      payments: paymentsData?.data ?? [],
+      tds: tdsData?.data ?? [],
+    });
     downloadLedgerPdf(client, ledger, branding);
   };
 

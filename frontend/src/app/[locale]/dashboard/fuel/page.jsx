@@ -11,7 +11,9 @@ import FuelTransactionRow from '@/components/ui/FuelTransactionRow';
 import Skeleton from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
 import { useFuelCards, useFuelTransactions, useBlockFuelCard, useAssignFuelCard } from '@/hooks/useFuelCards';
-import { mockFuelByVehicle, mockTrips, mockVehicles, mockDrivers } from '@/lib/mock';
+import { useVehicles } from '@/hooks/useVehicles';
+import { useDrivers } from '@/hooks/useDrivers';
+import { useDashboardReport } from '@/hooks/useReports';
 import { formatINR } from '@/lib/utils';
 import { stagger, staggerItem, fadeUp } from '@/lib/animations';
 
@@ -22,6 +24,9 @@ export default function FuelPage() {
   const { data: txnData } = useFuelTransactions();
   const block = useBlockFuelCard();
   const assign = useAssignFuelCard();
+  const mockVehicles = useVehicles().data?.data ?? [];
+  const mockDrivers = useDrivers().data?.data ?? [];
+  const mockFuelByVehicle = useDashboardReport().data?.fuel_by_vehicle ?? [];
 
   const [cards, setCards] = useState(null);
   const list = cards ?? cardsData?.data ?? [];
@@ -59,7 +64,7 @@ export default function FuelPage() {
           <h3 className="mb-3 font-display text-base font-semibold text-brand-navy">{t('txnFeed')}</h3>
           <div className="space-y-2.5">
             {txns.map((txn) => (
-              <FuelTransactionRow key={txn.id} txn={txn} trip={mockTrips.find((tr) => tr.id === txn.trip_id)} />
+              <FuelTransactionRow key={txn.id} txn={txn} trip={txn.trip} />
             ))}
           </div>
         </motion.div>

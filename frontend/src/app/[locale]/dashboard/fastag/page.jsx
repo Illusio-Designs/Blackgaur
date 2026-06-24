@@ -12,7 +12,7 @@ import TollTransactionRow from '@/components/ui/TollTransactionRow';
 import Skeleton from '@/components/ui/Skeleton';
 import { useToast } from '@/components/ui/Toast';
 import { useFastagWallets, useTollTransactions, useSyncFastag, useRechargeFastag } from '@/hooks/useFastag';
-import { mockTollByVehicle, mockTrips } from '@/lib/mock';
+import { useDashboardReport } from '@/hooks/useReports';
 import { formatINR } from '@/lib/utils';
 import { stagger, staggerItem, fadeUp } from '@/lib/animations';
 
@@ -22,6 +22,7 @@ export default function FastagPage() {
   const toast = useToast();
   const { data: walletsData, isLoading } = useFastagWallets();
   const { data: txnData } = useTollTransactions();
+  const mockTollByVehicle = useDashboardReport().data?.toll_by_vehicle ?? [];
   const sync = useSyncFastag();
   const recharge = useRechargeFastag();
 
@@ -75,7 +76,7 @@ export default function FastagPage() {
           <h3 className="mb-3 font-display text-base font-semibold text-brand-navy">{t('tollFeed')}</h3>
           <div className="space-y-2.5">
             {txns.map((txn) => (
-              <TollTransactionRow key={txn.id} txn={txn} trip={mockTrips.find((tr) => tr.id === txn.trip_id)} />
+              <TollTransactionRow key={txn.id} txn={txn} trip={txn.trip} />
             ))}
           </div>
         </motion.div>

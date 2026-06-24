@@ -13,8 +13,10 @@ import DatePicker from '@/components/ui/DatePicker';
 import MultiSelect from '@/components/ui/MultiSelect';
 import { useToast } from '@/components/ui/Toast';
 import { useTrips, useUpdateTripStatus, useCreateTrip } from '@/hooks/useTrips';
+import { useClients } from '@/hooks/useClients';
+import { useVehicles } from '@/hooks/useVehicles';
+import { useDrivers } from '@/hooks/useDrivers';
 import { KANBAN_COLUMNS, INDIAN_CITIES, TRIP_STATUSES } from '@/lib/constants';
-import { mockClients, mockVehicles, mockDrivers } from '@/lib/mock';
 import { kanbanSpring } from '@/lib/animations';
 import { cn } from '@/lib/utils';
 
@@ -26,6 +28,9 @@ export default function TripsPage() {
   const { data } = useTrips();
   const updateStatus = useUpdateTripStatus();
   const createTrip = useCreateTrip();
+  const mockClients = useClients().data?.data ?? [];
+  const mockVehicles = useVehicles().data?.data ?? [];
+  const mockDrivers = useDrivers().data?.data ?? [];
 
   const [trips, setTrips] = useState(null);
   const [view, setView] = useState('board');

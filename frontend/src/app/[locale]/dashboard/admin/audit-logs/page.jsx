@@ -9,7 +9,7 @@ import DataTable from '@/components/ui/DataTable';
 import Modal from '@/components/ui/Modal';
 import FormInput from '@/components/ui/FormInput';
 import AuditDiff from '@/components/ui/AuditDiff';
-import { mockAuditLogs } from '@/lib/mock';
+import { useAuditLogs } from '@/hooks/useAudit';
 import { formatDate } from '@/lib/utils';
 
 export default function AuditLogsPage() {
@@ -18,17 +18,18 @@ export default function AuditLogsPage() {
   const tr = useTranslations('roles');
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null);
+  const { data: auditData } = useAuditLogs({ limit: 100 });
 
   const rows = useMemo(
     () =>
-      mockAuditLogs.filter(
+      (auditData?.data ?? []).filter(
         (l) =>
           !search ||
-          l.action.toLowerCase().includes(search.toLowerCase()) ||
-          l.user_name.toLowerCase().includes(search.toLowerCase()) ||
+          l.action?.toLowerCase().includes(search.toLowerCase()) ||
+          l.user_name?.toLowerCase().includes(search.toLowerCase()) ||
           l.resource_label?.toLowerCase().includes(search.toLowerCase()),
       ),
-    [search],
+    [auditData, search],
   );
 
   const columns = useMemo(

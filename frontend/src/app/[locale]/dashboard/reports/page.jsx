@@ -13,7 +13,7 @@ import Tabs from '@/components/ui/Tabs';
 import DateRangePicker from '@/components/ui/DateRangePicker';
 import Skeleton from '@/components/ui/Skeleton';
 import { useDashboardReport } from '@/hooks/useReports';
-import { mockRevenueSeries, mockTollByVehicle, mockFuelByVehicle, mockClients } from '@/lib/mock';
+import { useClients } from '@/hooks/useClients';
 import { formatINR, formatINRCompact } from '@/lib/utils';
 import { fadeUp } from '@/lib/animations';
 
@@ -28,8 +28,13 @@ export default function ReportsPage() {
 
   const tabs = TAB_KEYS.map((key) => ({ value: key, label: t(key) }));
 
+  const mockRevenueSeries = data?.revenue_series ?? [];
+  const mockTollByVehicle = data?.toll_by_vehicle ?? [];
+  const mockFuelByVehicle = data?.fuel_by_vehicle ?? [];
+  const clientsList = useClients().data?.data ?? [];
+
   const tripPnl = mockRevenueSeries.map((m) => ({ month: m.month, pnl: m.revenue - m.cost }));
-  const clientRevenue = mockClients.map((c) => ({ name: c.company_name.split(' ')[0], revenue: c.outstanding + 200000 }));
+  const clientRevenue = clientsList.map((c) => ({ name: (c.company_name || '').split(' ')[0], revenue: (c.outstanding || 0) + 200000 }));
 
   return (
     <div>

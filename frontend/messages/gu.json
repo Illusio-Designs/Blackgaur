@@ -81,7 +81,8 @@
     "prevMonth": "પાછલો મહિનો",
     "nextMonth": "આગલો મહિનો",
     "fileTooLarge": "ફાઇલ ખૂબ મોટી",
-    "fileMaxSize": "મહત્તમ કદ {size} છે"
+    "fileMaxSize": "મહત્તમ કદ {size} છે",
+    "error": "કંઈક ખોટું થયું"
   },
   "nav": {
     "home": "હોમ",
