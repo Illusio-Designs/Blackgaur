@@ -15,6 +15,7 @@ import { formatDate } from '@/lib/utils';
 export default function AuditLogsPage() {
   const t = useTranslations('audit');
   const tc = useTranslations('common');
+  const tr = useTranslations('roles');
   const [search, setSearch] = useState('');
   const [selected, setSelected] = useState(null);
 
@@ -33,12 +34,12 @@ export default function AuditLogsPage() {
   const columns = useMemo(
     () => [
       { accessorKey: 'created_at', header: t('timestamp'), cell: ({ row }) => <span className="whitespace-nowrap text-brand-muted">{formatDate(row.original.created_at, { withTime: true })}</span> },
-      { accessorKey: 'user_name', header: t('user'), cell: ({ row }) => (<div><p className="font-medium text-brand-navy">{row.original.user_name}</p><p className="text-xs capitalize text-brand-muted">{row.original.user_role.replace(/_/g, ' ')}</p></div>) },
+      { accessorKey: 'user_name', header: t('user'), cell: ({ row }) => (<div><p className="font-medium text-brand-navy">{row.original.user_name}</p><p className="text-xs text-brand-muted">{tr(row.original.user_role)}</p></div>) },
       { accessorKey: 'action', header: t('action'), cell: ({ row }) => (<span className="inline-flex items-center gap-2"><span className="font-mono text-xs text-brand-blue">{row.original.action}</span>{row.original.api && <span className="rounded bg-brand-fastag/10 px-1.5 py-0.5 text-[10px] font-semibold text-brand-fastag">{t('apiEvent')}</span>}</span>) },
       { accessorKey: 'resource_type', header: t('resource'), cell: ({ row }) => <span className="text-brand-text">{row.original.resource_type}</span> },
       { accessorKey: 'resource_label', header: t('label'), cell: ({ row }) => <span className="font-mono text-xs">{row.original.resource_label}</span> },
     ],
-    [t],
+    [t, tr],
   );
 
   return (

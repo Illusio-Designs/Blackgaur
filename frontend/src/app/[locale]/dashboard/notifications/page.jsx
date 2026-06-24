@@ -9,12 +9,14 @@ import Button from '@/components/ui/Button';
 import EmptyState from '@/components/ui/EmptyState';
 import { useRouter } from '@/i18n/routing';
 import { useNotifStore } from '@/store/notifStore';
+import { useNotifText } from '@/hooks/useNotifText';
 import { NOTIF_TYPES, NOTIF_SEVERITY } from '@/lib/notifications';
 import { cn } from '@/lib/utils';
 
 export default function NotificationsPage() {
   const t = useTranslations('notificationsPage');
   const tc = useTranslations('common');
+  const notifText = useNotifText();
   const router = useRouter();
   const notifs = useNotifStore((s) => s.notifications);
   const markRead = useNotifStore((s) => s.markRead);
@@ -79,6 +81,7 @@ export default function NotificationsPage() {
             const meta = NOTIF_TYPES[n.type] || { icon: 'Bell', severity: 'info' };
             const sev = NOTIF_SEVERITY[meta.severity] || NOTIF_SEVERITY.info;
             const NIcon = Icons[meta.icon] || Icons.Bell;
+            const text = notifText(n);
             return (
               <button
                 key={n.id}
@@ -93,13 +96,13 @@ export default function NotificationsPage() {
                 </span>
                 <span className="min-w-0 flex-1">
                   <span className="flex items-center gap-2">
-                    <span className="text-sm font-semibold text-brand-navy">{n.title}</span>
+                    <span className="text-sm font-semibold text-brand-navy">{text.title}</span>
                     {meta.api && (
                       <span className="rounded bg-brand-fastag/10 px-1 text-[9px] font-semibold text-brand-fastag">API</span>
                     )}
                   </span>
-                  <span className="mt-0.5 block text-sm leading-snug text-brand-muted">{n.message}</span>
-                  <span className="mt-1 block text-xs text-brand-muted/80">{n.time}</span>
+                  <span className="mt-0.5 block text-sm leading-snug text-brand-muted">{text.message}</span>
+                  <span className="mt-1 block text-xs text-brand-muted/80">{text.time}</span>
                 </span>
                 {!n.read && <span className={cn('mt-1.5 h-2.5 w-2.5 shrink-0 rounded-full', sev.dot)} />}
               </button>

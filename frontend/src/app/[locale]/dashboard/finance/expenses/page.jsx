@@ -76,7 +76,7 @@ export default function ExpensesPage() {
           <p className="mt-1 font-display text-2xl font-bold text-brand-amber">{pendingCount}</p>
         </div>
         <div className="card p-4">
-          <p className="text-xs text-brand-muted">Pending {tc('amount')}</p>
+          <p className="text-xs text-brand-muted">{t('status.pending')} {tc('amount')}</p>
           <p className="mt-1 font-mono text-2xl font-bold text-brand-navy">{formatINR(pendingTotal)}</p>
         </div>
         <div className="card col-span-2 flex items-center gap-2 p-4">
@@ -86,9 +86,9 @@ export default function ExpensesPage() {
               <button
                 key={s}
                 onClick={() => setStatusFilter(s)}
-                className={`rounded-full px-2.5 py-1 text-xs font-medium capitalize transition ${statusFilter === s ? 'bg-brand-navy text-white' : 'bg-brand-surface text-brand-muted hover:bg-brand-border'}`}
+                className={`rounded-full px-2.5 py-1 text-xs font-medium transition ${statusFilter === s ? 'bg-brand-navy text-white' : 'bg-brand-surface text-brand-muted hover:bg-brand-border'}`}
               >
-                {s === 'all' ? tc('all') : s.replace(/_/g, ' ')}
+                {s === 'all' ? tc('all') : t(`status.${s}`)}
               </button>
             ))}
           </div>

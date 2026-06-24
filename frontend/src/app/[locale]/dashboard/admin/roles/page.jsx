@@ -115,14 +115,14 @@ export default function RolesPage() {
                 <tr className="border-b border-brand-border bg-brand-surface/60">
                   <th className="px-4 py-3 text-left font-semibold text-brand-muted">{t('resource')}</th>
                   {ACTIONS.map((a) => (
-                    <th key={a} className="px-3 py-3 text-center font-semibold capitalize text-brand-muted">{a}</th>
+                    <th key={a} className="px-3 py-3 text-center font-semibold text-brand-muted">{t(a === 'delete' ? 'deletePerm' : a)}</th>
                   ))}
                 </tr>
               </thead>
               <tbody>
                 {RESOURCES.map((res) => (
                   <tr key={res} className="border-b border-brand-border/60 hover:bg-brand-surface/40">
-                    <td className="px-4 py-2.5 font-medium text-brand-text">{res.replace(/_/g, ' ')}</td>
+                    <td className="px-4 py-2.5 font-medium text-brand-text">{t(`resources.${res}`)}</td>
                     {ACTIONS.map((a) => {
                       const allowed = can(res, a);
                       return (

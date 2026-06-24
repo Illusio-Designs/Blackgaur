@@ -8,7 +8,7 @@ import PageHeader from '@/components/dashboard/PageHeader';
 import EmptyState from '@/components/ui/EmptyState';
 import { useTrips } from '@/hooks/useTrips';
 import { stagger, staggerItem } from '@/lib/animations';
-import { cn } from '@/lib/utils';
+import { cn, timeAgo } from '@/lib/utils';
 
 // Deterministic mock GPS telemetry per trip (demo — replace with device feed).
 function telemetry(trip, i) {
@@ -19,7 +19,7 @@ function telemetry(trip, i) {
     speed: 48 + (seed % 30),
     progress: 30 + (seed % 55),
     eta: ['4h 20m', '7h 05m', '2h 40m', '11h 15m'][i % 4],
-    ping: (1 + (seed % 4)) + 'm ago',
+    pingMin: 1 + (seed % 4),
     // map marker position (% within the map placeholder)
     top: 18 + ((trip.id * 13) % 60),
     left: 12 + ((trip.id * 23) % 72),
@@ -78,7 +78,7 @@ export default function TrackingPage() {
                 <div className="flex items-center justify-between">
                   <span className="font-mono text-sm font-semibold text-brand-navy">{trip.vehicle?.registration_no}</span>
                   <span className="inline-flex items-center gap-1 text-[11px] font-medium text-brand-success">
-                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-success" /> {gps.ping}
+                    <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-brand-success" /> {timeAgo(Date.now() - gps.pingMin * 60000)}
                   </span>
                 </div>
                 <p className="mt-0.5 text-xs text-brand-muted">{trip.lr_number} · {trip.driver?.name}</p>

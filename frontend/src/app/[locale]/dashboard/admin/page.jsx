@@ -28,13 +28,14 @@ export default function AdminOverviewPage() {
   const t = useTranslations('dashboard');
   const tc = useTranslations('common');
   const tn = useTranslations('nav');
+  const tt = useTranslations('trips');
   const { data, isLoading } = useDashboardReport();
   const d = data || {};
 
   const kpis = [
-    { label: t('activeTrips'), value: d.activeTrips ?? 2, icon: Truck, delta: '+2 today', accent: 'text-brand-blue', format: (v) => Math.round(v) },
+    { label: t('activeTrips'), value: d.activeTrips ?? 2, icon: Truck, delta: `+2 ${t('today')}`, accent: 'text-brand-blue', format: (v) => Math.round(v) },
     { label: t('deliveredThisMonth'), value: d.deliveredThisMonth ?? 142, icon: PackageCheck, delta: '+12%', accent: 'text-brand-success', format: (v) => Math.round(v) },
-    { label: t('pendingExpenses'), value: d.pendingExpenses ?? 4, icon: ReceiptText, delta: 'needs review', trend: 'down', accent: 'text-brand-amber', format: (v) => Math.round(v) },
+    { label: t('pendingExpenses'), value: d.pendingExpenses ?? 4, icon: ReceiptText, delta: t('needsReview'), trend: 'down', accent: 'text-brand-amber', format: (v) => Math.round(v) },
     { label: t('revenue'), value: d.revenueThisMonth ?? 2840000, icon: IndianRupee, delta: '+8.4%', accent: 'text-brand-success', format: (v) => formatINRCompact(v) },
     { label: t('fastagSpend'), value: d.fastagSpend ?? 184200, icon: Wallet, delta: '+3.1%', accent: 'text-brand-fastag', format: (v) => formatINRCompact(v) },
     { label: t('fuelSpend'), value: d.fuelSpend ?? 642000, icon: Fuel, delta: '+5.7%', accent: 'text-brand-fuel', format: (v) => formatINRCompact(v) },
@@ -86,7 +87,7 @@ export default function AdminOverviewPage() {
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-                <XAxis dataKey="month" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
+                <XAxis dataKey="month" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(m) => (tc.has(`monthsShort.${m}`) ? tc(`monthsShort.${m}`) : m)} />
                 <YAxis stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => formatINRCompact(v)} />
                 <Tooltip formatter={(v) => formatINRCompact(v)} contentStyle={{ borderRadius: 12, border: '1px solid #E2E8F0' }} />
                 <Area type="monotone" dataKey="revenue" stroke="#1A56DB" strokeWidth={2} fill="url(#rev)" isAnimationActive={false} />
@@ -118,7 +119,7 @@ export default function AdminOverviewPage() {
                     <Cell key={entry.name} fill={PIE_COLORS[i % PIE_COLORS.length]} />
                   ))}
                 </Pie>
-                <Legend iconType="circle" formatter={(value) => <span className="text-xs capitalize text-brand-muted">{value.replace(/_/g, ' ')}</span>} />
+                <Legend iconType="circle" formatter={(value) => <span className="text-xs text-brand-muted">{tt(`status.${value}`)}</span>} />
                 <Tooltip />
               </PieChart>
             </ResponsiveContainer>

@@ -47,16 +47,37 @@ export function formatDate(value, opts = {}) {
   return `${day} ${month} ${year}`;
 }
 
-export function timeAgo(value) {
+// Locale-aware "time ago". Reads <html lang> on the client so it follows the
+// active next-intl locale without each caller having to pass it. Falls back to
+// English on the server / when Intl.RelativeTimeFormat is unavailable.
+export function timeAgo(value, locale) {
   if (!value) return '—';
   const d = new Date(value);
   const seconds = Math.floor((Date.now() - d.getTime()) / 1000);
-  if (seconds < 60) return 'just now';
+  const lang = locale || (typeof document !== 'undefined' ? document.documentElement.lang : 'en') || 'en';
+
+  let rtf;
+  try {
+    rtf = new Intl.RelativeTimeFormat(lang, { numeric: 'auto' });
+  } catch {
+    rtf = null;
+  }
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes}m ago`;
   const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}h ago`;
   const days = Math.floor(hours / 24);
+
+  if (rtf) {
+    if (seconds < 60) return rtf.format(0, 'second'); // "now" / "अभी"
+    if (minutes < 60) return rtf.format(-minutes, 'minute');
+    if (hours < 24) return rtf.format(-hours, 'hour');
+    if (days < 30) return rtf.format(-days, 'day');
+    return formatDate(d);
+  }
+
+  // Fallback (no Intl.RelativeTimeFormat)
+  if (seconds < 60) return 'just now';
+  if (minutes < 60) return `${minutes}m ago`;
+  if (hours < 24) return `${hours}h ago`;
   if (days < 30) return `${days}d ago`;
   return formatDate(d);
 }

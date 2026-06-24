@@ -12,11 +12,13 @@ import { ROLES } from '@/lib/constants';
 import { initials, cn } from '@/lib/utils';
 import { NOTIF_TYPES, NOTIF_SEVERITY } from '@/lib/notifications';
 import { useNotifStore } from '@/store/notifStore';
+import { useNotifText } from '@/hooks/useNotifText';
 import LanguageSwitcher from '@/components/ui/LanguageSwitcher';
 import Tooltip from '@/components/ui/Tooltip';
 
 export default function Topbar() {
   const t = useTranslations('common');
+  const tr = useTranslations('roles');
   const router = useRouter();
   const toggleSidebar = useUiStore((s) => s.toggleSidebar);
   const toggleCollapsed = useUiStore((s) => s.toggleCollapsed);
@@ -26,6 +28,7 @@ export default function Topbar() {
   const notifs = useNotifStore((s) => s.notifications);
   const markRead = useNotifStore((s) => s.markRead);
   const markAllRead = useNotifStore((s) => s.markAllRead);
+  const notifText = useNotifText();
   const unread = notifs.filter((n) => !n.read).length;
   const openNotif = (n) => {
     markRead(n.id);
@@ -47,7 +50,7 @@ export default function Topbar() {
     return () => document.removeEventListener('mousedown', onClick);
   }, []);
 
-  const roleLabel = ROLES.find((r) => r.value === user?.role)?.label || 'User';
+  const roleLabel = user?.role && tr.has(user.role) ? tr(user.role) : (ROLES.find((r) => r.value === user?.role)?.label || 'User');
 
   const handleLogout = async () => {
     await logout();
@@ -130,6 +133,7 @@ export default function Topbar() {
                     const meta = NOTIF_TYPES[n.type] || { icon: 'Bell', severity: 'info' };
                     const sev = NOTIF_SEVERITY[meta.severity] || NOTIF_SEVERITY.info;
                     const NIcon = Icons[meta.icon] || Icons.Bell;
+                    const text = notifText(n);
                     return (
                       <button
                         key={n.id}
@@ -144,11 +148,11 @@ export default function Topbar() {
                         </span>
                         <span className="min-w-0 flex-1">
                           <span className="flex items-center gap-2">
-                            <span className="truncate text-sm font-semibold text-brand-navy">{n.title}</span>
+                            <span className="truncate text-sm font-semibold text-brand-navy">{text.title}</span>
                             {meta.api && <span className="rounded bg-brand-fastag/10 px-1 text-[9px] font-semibold text-brand-fastag">API</span>}
                           </span>
-                          <span className="mt-0.5 block text-xs leading-snug text-brand-muted">{n.message}</span>
-                          <span className="mt-1 block text-[11px] text-brand-muted/80">{n.time}</span>
+                          <span className="mt-0.5 block text-xs leading-snug text-brand-muted">{text.message}</span>
+                          <span className="mt-1 block text-[11px] text-brand-muted/80">{text.time}</span>
                         </span>
                         {!n.read && <span className={cn('mt-1.5 h-2 w-2 shrink-0 rounded-full', sev.dot)} />}
                       </button>

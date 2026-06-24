@@ -58,17 +58,17 @@ export default function ReportsPage() {
       <motion.div key={tab} {...fadeUp} className="card p-5">
         {tab === 'finance' && (
           <>
-            <h3 className="mb-4 font-display text-base font-semibold text-brand-navy">{t('clientRevenue')} — Revenue vs Cost</h3>
+            <h3 className="mb-4 font-display text-base font-semibold text-brand-navy">{t('revenueVsCost')}</h3>
             <div className="h-80">
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={mockRevenueSeries}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-                  <XAxis dataKey="month" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
+                  <XAxis dataKey="month" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(m) => (tc.has(`monthsShort.`) ? tc(`monthsShort.`) : m)} />
                   <YAxis stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => formatINRCompact(v)} />
                   <Tooltip formatter={(v) => formatINR(v)} contentStyle={{ borderRadius: 12, border: '1px solid #E2E8F0' }} />
                   <Legend />
-                  <Bar dataKey="revenue" name={tc('total')} fill="#1A56DB" radius={[6, 6, 0, 0]} isAnimationActive={false} />
-                  <Bar dataKey="cost" name="Cost" fill="#D97706" radius={[6, 6, 0, 0]} isAnimationActive={false} />
+                  <Bar dataKey="revenue" name={t('revenue')} fill="#1A56DB" radius={[6, 6, 0, 0]} isAnimationActive={false} />
+                  <Bar dataKey="cost" name={t('cost')} fill="#D97706" radius={[6, 6, 0, 0]} isAnimationActive={false} />
                 </BarChart>
               </ResponsiveContainer>
             </div>
@@ -81,10 +81,10 @@ export default function ReportsPage() {
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={tripPnl}>
                   <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
-                  <XAxis dataKey="month" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} />
+                  <XAxis dataKey="month" stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(m) => (tc.has(`monthsShort.`) ? tc(`monthsShort.`) : m)} />
                   <YAxis stroke="#64748B" fontSize={12} tickLine={false} axisLine={false} tickFormatter={(v) => formatINRCompact(v)} />
                   <Tooltip formatter={(v) => formatINR(v)} contentStyle={{ borderRadius: 12, border: '1px solid #E2E8F0' }} />
-                  <Line type="monotone" dataKey="pnl" name="Net P&L" stroke="#065F46" strokeWidth={2.5} dot={{ r: 4 }} isAnimationActive={false} />
+                  <Line type="monotone" dataKey="pnl" name={t('netPnl')} stroke="#065F46" strokeWidth={2.5} dot={{ r: 4 }} isAnimationActive={false} />
                 </LineChart>
               </ResponsiveContainer>
             </div>

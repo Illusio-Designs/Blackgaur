@@ -63,7 +63,21 @@
     "deleted": "deleted",
     "commandSearch": "Search trips, clients, vehicles, invoices…",
     "mobile": "Mobile",
-    "applicable": "applicable"
+    "applicable": "applicable",
+    "monthsShort": {
+      "Jan": "Jan",
+      "Feb": "Feb",
+      "Mar": "Mar",
+      "Apr": "Apr",
+      "May": "May",
+      "Jun": "Jun",
+      "Jul": "Jul",
+      "Aug": "Aug",
+      "Sep": "Sep",
+      "Oct": "Oct",
+      "Nov": "Nov",
+      "Dec": "Dec"
+    }
   },
   "nav": {
     "home": "Home",
@@ -128,7 +142,8 @@
     "account_manager": "Account Manager",
     "account_manager_desc": "Manages clients, generates LRs, creates invoices, tracks delivery and payment.",
     "driver": "Driver",
-    "driver_desc": "Sees assigned trip, logs expenses, uploads POD, updates trip status."
+    "driver_desc": "Sees assigned trip, logs expenses, uploads POD, updates trip status.",
+    "system": "System"
   },
   "dashboard": {
     "welcome": "Welcome back, {name}",
@@ -146,7 +161,9 @@
     "recentActivity": "Recent Activity",
     "quickActions": "Quick Actions",
     "auditShortcut": "View Audit Logs",
-    "manageUsers": "Manage Users"
+    "manageUsers": "Manage Users",
+    "today": "today",
+    "needsReview": "needs review"
   },
   "trips": {
     "title": "Trip Board",
@@ -350,7 +367,11 @@
     "vehicleUtil": "Vehicle Utilisation",
     "clientRevenue": "Client Revenue",
     "fromDate": "From",
-    "toDate": "To"
+    "toDate": "To",
+    "revenue": "Revenue",
+    "cost": "Cost",
+    "netPnl": "Net P&L",
+    "revenueVsCost": "Revenue vs Cost"
   },
   "users": {
     "title": "User Management",
@@ -378,7 +399,22 @@
     "saveChanges": "Save changes",
     "permissionsSaved": "Permissions updated",
     "adminFullAccess": "Admin has full system access",
-    "usersCount": "users"
+    "usersCount": "users",
+    "resources": {
+      "users": "Users",
+      "roles": "Roles",
+      "trips": "Trips",
+      "vehicles": "Vehicles",
+      "drivers": "Drivers",
+      "trip_expenses": "Trip expenses",
+      "fastag_wallets": "FASTag wallets",
+      "fuel_cards": "Fuel cards",
+      "invoices": "Invoices",
+      "clients": "Clients",
+      "lr": "LR",
+      "reports": "Reports",
+      "audit_logs": "Audit logs"
+    }
   },
   "audit": {
     "title": "Audit Logs",
@@ -674,7 +710,41 @@
     "subtitle": "Alerts across trips, FASTag, fuel, invoices and documents",
     "all": "All",
     "unread": "Unread",
-    "empty": "You are all caught up"
+    "empty": "You are all caught up",
+    "types": {
+      "fastag_low_balance": {
+        "title": "FASTag low balance",
+        "message": "{vehicle} balance is {balance} — recharge soon"
+      },
+      "expense_pending": {
+        "title": "Expenses awaiting approval",
+        "message": "{count} driver expense claims need your review"
+      },
+      "invoice_overdue": {
+        "title": "Invoice overdue",
+        "message": "{invoice} — {amount} from {party}"
+      },
+      "doc_expiry": {
+        "title": "Document expiring",
+        "message": "Permit for {vehicle} expires in {days} days"
+      },
+      "fastag_synced": {
+        "title": "FASTag synced",
+        "message": "{count} new toll transactions imported"
+      },
+      "trip_delivered": {
+        "title": "Trip delivered",
+        "message": "{lr} delivered — POD uploaded"
+      },
+      "fuel_card_blocked": {
+        "title": "Fuel card blocked",
+        "message": "{card} blocked — monthly limit exceeded"
+      },
+      "payment_received": {
+        "title": "Payment received",
+        "message": "{invoice} — {amount} from {party}"
+      }
+    }
   },
   "payments": {
     "title": "Payments & TDS",

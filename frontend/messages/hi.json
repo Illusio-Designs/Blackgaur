@@ -63,7 +63,21 @@
     "deleted": "हटाया गया",
     "commandSearch": "ट्रिप, क्लाइंट, वाहन, चालान खोजें…",
     "mobile": "मोबाइल",
-    "applicable": "लागू"
+    "applicable": "लागू",
+    "monthsShort": {
+      "Jan": "जन",
+      "Feb": "फ़र",
+      "Mar": "मार्च",
+      "Apr": "अप्रै",
+      "May": "मई",
+      "Jun": "जून",
+      "Jul": "जुला",
+      "Aug": "अग",
+      "Sep": "सित",
+      "Oct": "अक्तू",
+      "Nov": "नव",
+      "Dec": "दिस"
+    }
   },
   "nav": {
     "home": "होम",
@@ -128,7 +142,8 @@
     "account_manager": "खाता प्रबंधक",
     "account_manager_desc": "ग्राहकों का प्रबंधन करता है, LR उत्पन्न करता है, चालान बनाता है, डिलीवरी और भुगतान को ट्रैक करता है।",
     "driver": "ड्राइवर",
-    "driver_desc": "असाइन की गई ट्रिप देखता है, खर्च लॉग करता है, POD अपलोड करता है, ट्रिप स्थिति अपडेट करता है।"
+    "driver_desc": "असाइन की गई ट्रिप देखता है, खर्च लॉग करता है, POD अपलोड करता है, ट्रिप स्थिति अपडेट करता है।",
+    "system": "सिस्टम"
   },
   "dashboard": {
     "welcome": "वापसी पर स्वागत है, {name}",
@@ -146,7 +161,9 @@
     "recentActivity": "हाल की गतिविधि",
     "quickActions": "त्वरित क्रियाएं",
     "auditShortcut": "ऑडिट लॉग देखें",
-    "manageUsers": "उपयोगकर्ता प्रबंधित करें"
+    "manageUsers": "उपयोगकर्ता प्रबंधित करें",
+    "today": "आज",
+    "needsReview": "समीक्षा आवश्यक"
   },
   "trips": {
     "title": "ट्रिप बोर्ड",
@@ -350,7 +367,11 @@
     "vehicleUtil": "वाहन उपयोग",
     "clientRevenue": "ग्राहक राजस्व",
     "fromDate": "से",
-    "toDate": "तक"
+    "toDate": "तक",
+    "revenue": "राजस्व",
+    "cost": "लागत",
+    "netPnl": "शुद्ध लाभ-हानि",
+    "revenueVsCost": "राजस्व बनाम लागत"
   },
   "users": {
     "title": "उपयोगकर्ता प्रबंधन",
@@ -378,7 +399,22 @@
     "saveChanges": "परिवर्तन सहेजें",
     "permissionsSaved": "अनुमतियाँ अपडेट हुईं",
     "adminFullAccess": "एडमिन के पास पूर्ण सिस्टम एक्सेस है",
-    "usersCount": "उपयोगकर्ता"
+    "usersCount": "उपयोगकर्ता",
+    "resources": {
+      "users": "उपयोगकर्ता",
+      "roles": "भूमिकाएँ",
+      "trips": "ट्रिप",
+      "vehicles": "वाहन",
+      "drivers": "चालक",
+      "trip_expenses": "ट्रिप खर्च",
+      "fastag_wallets": "FASTag वॉलेट",
+      "fuel_cards": "फ्यूल कार्ड",
+      "invoices": "चालान",
+      "clients": "ग्राहक",
+      "lr": "LR",
+      "reports": "रिपोर्ट",
+      "audit_logs": "ऑडिट लॉग"
+    }
   },
   "audit": {
     "title": "ऑडिट लॉग",
@@ -674,7 +710,41 @@
     "subtitle": "ट्रिप, फास्टैग, ईंधन, चालान और दस्तावेज़ों की चेतावनियाँ",
     "all": "सभी",
     "unread": "अपठित",
-    "empty": "सब कुछ पढ़ लिया गया है"
+    "empty": "सब कुछ पढ़ लिया गया है",
+    "types": {
+      "fastag_low_balance": {
+        "title": "FASTag कम बैलेंस",
+        "message": "{vehicle} का बैलेंस {balance} है — जल्द रिचार्ज करें"
+      },
+      "expense_pending": {
+        "title": "खर्च स्वीकृति की प्रतीक्षा में",
+        "message": "{count} ड्राइवर खर्च दावों की समीक्षा आवश्यक है"
+      },
+      "invoice_overdue": {
+        "title": "चालान अतिदेय",
+        "message": "{invoice} — {party} से {amount}"
+      },
+      "doc_expiry": {
+        "title": "दस्तावेज़ समाप्त हो रहा",
+        "message": "{vehicle} का परमिट {days} दिनों में समाप्त हो रहा है"
+      },
+      "fastag_synced": {
+        "title": "FASTag सिंक हुआ",
+        "message": "{count} नए टोल लेनदेन आयात किए गए"
+      },
+      "trip_delivered": {
+        "title": "ट्रिप डिलीवर हुई",
+        "message": "{lr} डिलीवर हुई — POD अपलोड किया गया"
+      },
+      "fuel_card_blocked": {
+        "title": "फ्यूल कार्ड ब्लॉक",
+        "message": "{card} ब्लॉक — मासिक सीमा पार हो गई"
+      },
+      "payment_received": {
+        "title": "भुगतान प्राप्त",
+        "message": "{invoice} — {party} से {amount}"
+      }
+    }
   },
   "payments": {
     "title": "भुगतान और टीडीएस",
