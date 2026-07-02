@@ -4,6 +4,8 @@ const { z } = require('zod');
 const prisma = require('../lib/prisma');
 const AppError = require('../lib/AppError');
 const { ok } = require('../lib/response');
+const { listProviders } = require('../services/tracking/registry');
+const { syncAll } = require('../services/tracking/sync');
 
 // Provider/device webhook payload. A GPS unit (or telematics platform) pushes a
 // ping identified by the device id configured on the vehicle (Vehicle.gpsDeviceId).
@@ -95,4 +97,15 @@ async function ping(req, res) {
   return ok(res, { id: loc.id.toString(), vehicle_id: vehicle.id }, { status: 201 });
 }
 
-module.exports = { schemas: { pingSchema }, live, ping };
+/** GET /tracking/providers — available adapters for the fleet dropdown + settings. */
+async function providers(req, res) {
+  return ok(res, listProviders());
+}
+
+/** POST /tracking/sync — pull the latest positions from every enabled provider. */
+async function sync(req, res) {
+  const summary = await syncAll();
+  return ok(res, summary);
+}
+
+module.exports = { schemas: { pingSchema }, live, ping, providers, sync };

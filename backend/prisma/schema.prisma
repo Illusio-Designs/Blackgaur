@@ -198,6 +198,7 @@ model Vehicle {
   fuelCardId      Int?      @map("fuel_card_id") @db.UnsignedInt
   isAvailable     Boolean   @default(true) @map("is_available")
   gpsDeviceId     String?   @map("gps_device_id") @db.VarChar(80)
+  gpsProvider     String?   @map("gps_provider") @db.VarChar(40)
   createdAt       DateTime  @default(now()) @map("created_at")
   updatedAt       DateTime  @updatedAt @map("updated_at")
   deletedAt       DateTime? @map("deleted_at")

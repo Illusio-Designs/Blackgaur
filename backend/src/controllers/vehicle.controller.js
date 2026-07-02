@@ -25,6 +25,7 @@ const createSchema = z.object({
   fastag_tag_id: z.string().max(30).optional(),
   is_available: z.coerce.boolean().optional(),
   gps_device_id: z.string().max(80).optional(),
+  gps_provider: z.string().max(40).optional(),
 });
 
 const updateSchema = createSchema.partial();
@@ -79,6 +80,7 @@ const FIELD_MAP = {
   fastag_tag_id: 'fastagTagId',
   is_available: 'isAvailable',
   gps_device_id: 'gpsDeviceId',
+  gps_provider: 'gpsProvider',
 };
 
 /** POST /vehicles */

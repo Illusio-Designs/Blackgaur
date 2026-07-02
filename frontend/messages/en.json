@@ -663,7 +663,10 @@
       "fuelTitle": "Fuel cards",
       "fuelProviders": "Fuel providers",
       "fuelSyncCron": "Fuel sync schedule",
-      "cronHelp": "Cron expression (minute hour day month weekday)."
+      "cronHelp": "Cron expression (minute hour day month weekday).",
+      "gpsTitle": "GPS / Telematics",
+      "gpsHelp": "Set each provider’s API base URL and enable it. API tokens are read from server env (TRACKING_<PROVIDER>_TOKEN) — never stored here. Each truck picks its provider in Fleet.",
+      "enabled": "Enabled"
     },
     "alerts": {
       "title": "Alerts",
@@ -711,7 +714,8 @@
     "manage": "Manage",
     "renewals": "Documents & renewal",
     "details": "Vehicle details",
-    "saveChanges": "Save changes"
+    "saveChanges": "Save changes",
+    "gpsProvider": "GPS Provider"
   },
   "notificationsPage": {
     "title": "Notifications",

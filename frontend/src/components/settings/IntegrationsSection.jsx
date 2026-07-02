@@ -9,10 +9,13 @@ import FormInput from '@/components/ui/FormInput';
 import TaskCompleteFX from '@/components/animations/TaskCompleteFX';
 import { useToast } from '@/components/ui/Toast';
 import { useConfig, useUpdateConfig } from '@/hooks/useConfig';
+import { GPS_PROVIDERS } from '@/lib/constants';
 import { cn } from '@/lib/utils';
 
 const FASTAG_PROVIDERS = ['IHMCL', 'HDFC', 'SBI', 'ICICI', 'Paytm'];
 const FUEL_PROVIDERS = ['HPCL', 'IOCL', 'BPCL', 'Shell'];
+// Pull-based GPS providers that need a base URL (manual/webhook needs no config).
+const GPS_PULL_PROVIDERS = GPS_PROVIDERS.filter((p) => p.key && p.key !== 'manual');
 
 function StatusChip({ configured, label }) {
   return (
@@ -168,6 +171,24 @@ export default function IntegrationsSection() {
           helpText={t('cronHelp')}
           {...register('fuelSyncCron')}
         />
+      </div>
+
+      {/* GPS / Telematics — per-provider endpoint config (tokens live in .env) */}
+      <div className="card space-y-4 p-6">
+        <h3 className="font-display text-lg font-semibold text-brand-navy">{t('gpsTitle')}</h3>
+        <p className="text-xs text-brand-muted">{t('gpsHelp')}</p>
+        <div className="space-y-3">
+          {GPS_PULL_PROVIDERS.map((p) => (
+            <div key={p.key} className="grid gap-3 sm:grid-cols-[150px_1fr_auto] sm:items-center">
+              <span className="text-sm font-medium text-brand-navy">{p.label}</span>
+              <FormInput placeholder="https://…/api" {...register(`gpsProviders.${p.key}.baseUrl`)} />
+              <label className="inline-flex items-center gap-2 whitespace-nowrap text-sm text-brand-muted">
+                <input type="checkbox" className="h-4 w-4 rounded border-brand-border text-brand-blue" {...register(`gpsProviders.${p.key}.enabled`)} />
+                {t('enabled')}
+              </label>
+            </div>
+          ))}
+        </div>
       </div>
     </form>
   );

@@ -17,7 +17,8 @@ import DatePicker from '@/components/ui/DatePicker';
 import { useToast } from '@/components/ui/Toast';
 import { useVehicles, useCreateVehicle, useUpdateVehicle } from '@/hooks/useVehicles';
 import { useDrivers } from '@/hooks/useDrivers';
-import { VEHICLE_TYPES, OWNER_TYPES } from '@/lib/constants';
+import { useTrackingProviders } from '@/hooks/useTracking';
+import { VEHICLE_TYPES, OWNER_TYPES, GPS_PROVIDERS } from '@/lib/constants';
 import { formatDate, cn } from '@/lib/utils';
 
 // Days until a date (negative = already expired).
@@ -53,7 +54,7 @@ function DocChip({ label, date }) {
 const EMPTY = {
   registration_no: '', vehicle_type: 'Truck', capacity_tons: '', model: '', owner_type: 'own',
   driver_name: '', rc_expiry: '', insurance_expiry: '', fitness_expiry: '', permit_expiry: '',
-  fastag_tag_id: '', gps_device_id: '', is_available: true,
+  fastag_tag_id: '', gps_device_id: '', gps_provider: '', is_available: true,
 };
 
 export default function VehiclesPage() {
@@ -64,6 +65,10 @@ export default function VehiclesPage() {
   const mockDrivers = useDrivers().data?.data ?? [];
   const createVehicle = useCreateVehicle();
   const updateVehicle = useUpdateVehicle();
+  const providerRows = useTrackingProviders().data?.data;
+  const gpsProviders = providerRows?.length
+    ? [{ key: '', label: 'None' }, ...providerRows]
+    : GPS_PROVIDERS;
 
   const [local, setLocal] = useState(null);
   const [owner, setOwner] = useState('all');
@@ -252,7 +257,10 @@ export default function VehiclesPage() {
           <DatePicker label={t('insurance')} value={form.insurance_expiry} onChange={(v) => setForm({ ...form, insurance_expiry: v })} />
           <DatePicker label={t('fitness')} value={form.fitness_expiry} onChange={(v) => setForm({ ...form, fitness_expiry: v })} />
           <DatePicker label={t('permit')} value={form.permit_expiry} onChange={(v) => setForm({ ...form, permit_expiry: v })} />
-          <FormInput label={`${t('gps')} ID`} placeholder="GPS-AX-1001" value={form.gps_device_id} onChange={(e) => setForm({ ...form, gps_device_id: e.target.value })} />
+          <FormInput as="select" label={t('gpsProvider')} value={form.gps_provider || ''} onChange={(e) => setForm({ ...form, gps_provider: e.target.value })}>
+            {gpsProviders.map((p) => <option key={p.key} value={p.key}>{p.label}</option>)}
+          </FormInput>
+          <FormInput label={`${t('gps')} ID`} placeholder="IMEI / device id" value={form.gps_device_id} onChange={(e) => setForm({ ...form, gps_device_id: e.target.value })} />
           <FormInput label="FASTag ID" placeholder="34161FA8…" value={form.fastag_tag_id} onChange={(e) => setForm({ ...form, fastag_tag_id: e.target.value })} />
         </div>
 

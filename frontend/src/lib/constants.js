@@ -46,6 +46,19 @@ export const VEHICLE_TYPES = ['Truck', 'Trailer', 'Mini-truck', 'Tempo'];
 
 export const OWNER_TYPES = ['own', 'attached', 'market'];
 
+// Fallback GPS provider list (the live list comes from GET /tracking/providers).
+// Mirrors the backend adapter registry so the fleet dropdown works offline.
+export const GPS_PROVIDERS = [
+  { key: '', label: 'None' },
+  { key: 'manual', label: 'Webhook / Manual push' },
+  { key: 'traccar', label: 'Traccar (self-hosted)' },
+  { key: 'loconav', label: 'Loconav' },
+  { key: 'fleetx', label: 'Fleetx' },
+  { key: 'wialon', label: 'Wialon' },
+  { key: 'mappls', label: 'Mappls (MapmyIndia)' },
+  { key: 'generic', label: 'Generic REST' },
+];
+
 // Status badge color mapping (Tailwind text/bg classes) — section 13.1 tokens.
 export const STATUS_COLORS = {
   // trips
