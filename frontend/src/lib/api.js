@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { listFallback, oneFallback } from '@/lib/mockFallback';
 
 export const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/v1';
@@ -88,15 +89,34 @@ export function keysToSnake(value) {
   return value;
 }
 
-// Unwrap the standard envelope (section 5.1). Hard-wired to the API — no mock
-// fallback. `data` is snake-cased for the UI; `meta`/`filters_applied` are kept
-// as-is (the UI reads meta.totalPages / hasNext in camelCase).
+// Unwrap the standard envelope (section 5.1). API-first: when a real backend is
+// connected it always wins; if the request fails (e.g. no backend), fall back to
+// demo mock data so the app stays fully browsable standalone. `data` is
+// snake-cased for the UI; `meta` is kept as-is (UI reads meta.totalPages etc.).
 export async function fetchList(endpoint, params = {}) {
-  const { data } = await api.get(endpoint, { params });
-  return { ...data, data: keysToSnake(data?.data) };
+  try {
+    const { data } = await api.get(endpoint, { params });
+    return { ...data, data: keysToSnake(data?.data) };
+  } catch (err) {
+    const mock = listFallback(endpoint);
+    if (mock === undefined) throw err;
+    const items = Array.isArray(mock) ? mock : [];
+    return {
+      success: true,
+      data: items,
+      meta: { total: items.length, page: 1, limit: params.limit || 25, totalPages: 1, hasNext: false, hasPrev: false },
+      _mock: true,
+    };
+  }
 }
 
 export async function fetchOne(endpoint) {
-  const { data } = await api.get(endpoint);
-  return keysToSnake(data?.data ?? data);
+  try {
+    const { data } = await api.get(endpoint);
+    return keysToSnake(data?.data ?? data);
+  } catch (err) {
+    const mock = oneFallback(endpoint);
+    if (mock === undefined) throw err;
+    return mock;
+  }
 }
